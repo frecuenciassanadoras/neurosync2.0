@@ -1,0 +1,9 @@
+{
+  "name": "neurosync-app",
+  "version": "1.0.0",
+  "description": "Neurosync",
+  "main": "index.html",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  }
+}
