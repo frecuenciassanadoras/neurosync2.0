@@ -1,8 +1,0 @@
-{
-  "name": "portal-neurosync",
-  "version": "1.0.0",
-  "description": "Dependencias para el login de NeuroSync",
-  "dependencies": {
-    "@supabase/supabase-js": "^2.39.0"
-  }
-}
