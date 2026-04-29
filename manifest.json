@@ -1,0 +1,17 @@
+{
+  "name": "NeuroSync",
+  "short_name": "NeuroSync",
+  "description": "Autenticación de Protocolo y Sincronizador Binaural de Ondas Cerebrales",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0b0c10",
+  "theme_color": "#0a0a14",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

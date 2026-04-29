@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sincronizador Binaural - NeuroSync</title>
     
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="manifest" href="manifest.json">
+    
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -604,7 +607,7 @@
             Mezcla estos sonidos naturales interactivos. Escoge varios para crear tu ecosistema y ajusta su volumen.
         </p>
 
-        <div class="nature-grid" id="nature-grid" style="padding: 0 25px; overflow-y: auto;">
+        <div class="nature-grid" id="nature-grid" style="padding: 0 25px 140px 25px; overflow-y: auto;">
             <!-- Renderizado por JS -->
         </div>
 
@@ -838,7 +841,10 @@
             { id: "999", hz: "999 Hz", desc: "Cierre", ext: "Representa la finalización de ciclos planetarios o kármicos. Frecuencia para culminar proyectos y dejar ir, creando espacio para ascender.", color: "#fde047", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/999+Hz.mp3?v=1" }
         ];
 
-        // --- SISTEMA DE ESTADÍSTICAS Y GAMIFICACIÓN (localStorage) ---
+        const userEmail = localStorage.getItem("neurosync_user_email") || "anonimo@neurosync.com";
+        const userName = userEmail.split('@')[0];
+
+        // --- SISTEMA DE ESTADÍSTICAS Y GAMIFICACIÓN (localStorage + Supabase) ---
         let currentStatus = {
             total: 0, daily: 0, weekly: 0, streak: 1, 
             lastDate: new Date().toDateString(),
@@ -880,10 +886,35 @@
                 }
                 saveStats();
             }
+            // Después de cargar localmente, pedimos los datos reales a la red global
+            loadGlobalStats();
         }
 
         function saveStats() {
             localStorage.setItem('neurosync_stats', JSON.stringify(currentStatus));
+        }
+
+        async function syncMinutesToSupabase(minutesToAdd) {
+            try {
+                const ghost = document.getElementById('ghost-toggle') ? document.getElementById('ghost-toggle').checked : false;
+                const res = await fetch('/.netlify/functions/updateStats', {
+                    method: 'POST',
+                    body: JSON.stringify({ email: userEmail, name: userName, minutes: minutesToAdd, ghostMode: ghost })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    currentStatus.total = data.total_minutes * 60; // guardar localmente en segundos
+                    currentStatus.streak = data.streak;
+                    localStorage.setItem('neurosync_stats', JSON.stringify(currentStatus));
+                    if(document.getElementById('dashboard').classList.contains('open')) {
+                        updateDashboardUI(); 
+                    }
+                }
+            } catch(e) { console.error("Error sincronizando estadisticas:", e); }
+        }
+
+        async function loadGlobalStats() {
+            await syncMinutesToSupabase(0);
         }
 
         // Lógica de Niveles Cuánticos
@@ -1201,12 +1232,15 @@
             isAudioApiInitialized = true;
         }
 
+        let minutesToSync = 0;
+
         function startStatsTracking() {
             if(statsInterval) clearInterval(statsInterval);
             statsInterval = setInterval(() => {
                 currentStatus.total++;
                 currentStatus.daily++;
                 currentStatus.weekly++;
+                minutesToSync++;
                 
                 if(legacyPlayingID) {
                     if(!currentStatus.freqUsage[legacyPlayingID]) currentStatus.freqUsage[legacyPlayingID] = 0;
@@ -1218,14 +1252,22 @@
                     currentStatus.freqUsage[currentR_ID] += 0.5;
                 }
                 
-                // Guardar a disco cada minuto (60s)
-                if(currentStatus.total % 60 === 0) saveStats();
+                // Guardar a disco cada minuto (60s) y enviar al server global
+                if(minutesToSync >= 60) {
+                    saveStats();
+                    syncMinutesToSupabase(Math.floor(minutesToSync / 60));
+                    minutesToSync = minutesToSync % 60;
+                }
             }, 1000);
         }
 
         function stopStatsTracking() {
             if(statsInterval) clearInterval(statsInterval);
             saveStats();
+            if(minutesToSync >= 60) {
+                syncMinutesToSupabase(Math.floor(minutesToSync / 60));
+            }
+            minutesToSync = 0;
         }
 
         function handleTimerChange() { if(isPlaying) startSessionTimer(); }
@@ -1419,112 +1461,115 @@
         setInterval(checkScheduledNotification, 30000); // Revisar reloj cada 30 segundos
         loadNotificationSettings(); // Cargar estado de notificaciones al iniciar la app
 
-        // --- LEADERBOARD SIMULADO ---
-        const MOCK_LEADERBOARD = [
-            { name: "Viajero_09", min: 14500 },
-            { name: "Luz_Astral", min: 12300 },
-            { name: "Zen_Master", min: 9800 },
-            { name: "Quantum_Soul", min: 7500 },
-            { name: "Aura_Azul", min: 4200 },
-            { name: "VibracionAlta", min: 3100 },
-            { name: "Ser_Estelar", min: 1800 },
-            { name: "Paz_Infinita", min: 950 },
-            { name: "Cosmo_11", min: 600 },
-            { name: "Frecuencia_X", min: 250 }
-        ];
-
+        // --- LEADERBOARD GLOBAL (Supabase) ---
         function toggleLeaderboard() {
             const lm = document.getElementById('leaderboard-modal');
             if(lm.classList.contains('open')) lm.classList.remove('open');
-            else { lm.classList.add('open'); updateLeaderboard(); }
+            else { lm.classList.add('open'); fetchAndUpdateLeaderboard(); }
         }
 
-        function updateLeaderboard() {
-            let combinedList = [...MOCK_LEADERBOARD];
-            const myMin = Math.floor(currentStatus.total / 60);
-            
-            let isGhost = document.getElementById('ghost-toggle') ? document.getElementById('ghost-toggle').checked : false;
-            let myEntry = { name: "Tú (Local)", min: myMin, isMe: true };
-            
-            if(!isGhost) {
-                combinedList.push(myEntry);
-            }
-
-            combinedList.sort((a, b) => b.min - a.min);
-
+        async function fetchAndUpdateLeaderboard() {
             const lbList = document.getElementById('lb-list');
             if(!lbList) return;
-            lbList.innerHTML = '';
+            lbList.innerHTML = '<div style="text-align:center; color:#fff; padding: 20px;">Sincronizando con la red global...</div>';
             
-            let myRank = "--";
-
-            combinedList.forEach((user, index) => {
-                const pos = index + 1;
-                if(user.isMe) myRank = pos;
-
-                if(pos > 50) return;
-
-                let classExtra = '';
-                if(pos === 1) classExtra = 'lb-gold';
-                else if(pos === 2) classExtra = 'lb-silver';
-                else if(pos === 3) classExtra = 'lb-bronze';
+            try {
+                const res = await fetch('/.netlify/functions/getLeaderboard');
+                const data = await res.json();
                 
-                if(user.isMe) classExtra += ' lb-currentUser';
+                let isGhost = document.getElementById('ghost-toggle') ? document.getElementById('ghost-toggle').checked : false;
+                
+                let combinedList = data.map(u => ({
+                    name: u.email === userEmail ? "Tú" : u.name,
+                    min: u.total_minutes,
+                    isMe: u.email === userEmail
+                }));
+                
+                const myMin = Math.floor(currentStatus.total / 60);
+                let myEntryInList = combinedList.find(u => u.isMe);
+                
+                if (!myEntryInList && !isGhost) {
+                    combinedList.push({ name: "Tú", min: myMin, isMe: true });
+                    combinedList.sort((a, b) => b.min - a.min);
+                }
 
-                const r = getCurrentRank(user.min);
+                lbList.innerHTML = '';
+                let myRank = "--";
 
-                const div = document.createElement('div');
-                div.className = `lb-item ${classExtra}`;
-                div.innerHTML = `
-                    <div class="lb-pos">${pos}</div>
-                    <div class="lb-info">
-                        <div class="lb-name">${user.name} <i class="fas ${pos===1?'fa-crown':''} ${pos===2?'fa-medal':''} ${pos===3?'fa-award':''}" style="color:inherit; font-size:0.8rem;"></i></div>
-                        <div class="lb-rank" style="color: ${r.color}">${r.name}</div>
-                    </div>
-                    <div class="lb-score">${user.min}m</div>
-                `;
-                lbList.appendChild(div);
-            });
+                combinedList.forEach((user, index) => {
+                    const pos = index + 1;
+                    if(user.isMe) myRank = pos;
+                    if(pos > 50) return;
 
-            document.getElementById('my-lb-pos').innerText = isGhost ? "👻 Oculto" : "#" + myRank;
-            document.getElementById('my-lb-score').innerText = myMin;
-        }
+                    let classExtra = '';
+                    if(pos === 1) classExtra = 'lb-gold';
+                    else if(pos === 2) classExtra = 'lb-silver';
+                    else if(pos === 3) classExtra = 'lb-bronze';
+                    if(user.isMe) classExtra += ' lb-currentUser';
 
-        // --- SISTEMA SOCIAL (MURO DE RESONANCIA) ---
-        let socialFeed = [];
-        const ADMIN_EMAIL = "guilmarzy@gmail.com";
+                    const r = getCurrentRank(user.min);
 
-        function initSocialFeed() {
-            const saved = localStorage.getItem('neurosync_social');
-            if(saved) {
-                socialFeed = JSON.parse(saved);
-            } else {
-                socialFeed = [
-                    { id: 1, email: "guilmarzy@gmail.com", author: "Guilmarzy", text: "¡Bienvenidos sean todos a este espacio de ascensión! Espero que las frecuencias eleven su vibración el día de hoy. ✨", time: "Hace 2h", likes: 24, hasLiked: false, replies: [] },
-                    { id: 2, email: "user1@demo.com", author: "Viajero Cuántico", text: "Acabo de terminar la sesión de 432 Hz y wow... sentí un hormigueo por todo el cuerpo.", time: "Hace 10m", likes: 5, hasLiked: false, replies: [
-                        { id: 21, email: "guilmarzy@gmail.com", author: "Guilmarzy", text: "La frecuencia de 432 Hz es la armonía viva. ¡Sigue así, viajero!", time: "Hace 5m", likes: 10, hasLiked: false }
-                    ] },
-                    { id: 3, email: "user2@demo.com", author: "Alma Serena", text: "Primera vez probando la meditación profunda bloqueando la pantalla. Excelente experiencia.", time: "Hace 1h", likes: 2, hasLiked: false, replies: [] }
-                ];
-                saveSocialFeed();
+                    const div = document.createElement('div');
+                    div.className = `lb-item ${classExtra}`;
+                    div.innerHTML = `
+                        <div class="lb-pos">${pos}</div>
+                        <div class="lb-info">
+                            <div class="lb-name">${user.name} <i class="fas ${pos===1?'fa-crown':''} ${pos===2?'fa-medal':''} ${pos===3?'fa-award':''}" style="color:inherit; font-size:0.8rem;"></i></div>
+                            <div class="lb-rank" style="color: ${r.color}">${r.name}</div>
+                        </div>
+                        <div class="lb-score">${user.min}m</div>
+                    `;
+                    lbList.appendChild(div);
+                });
+
+                document.getElementById('my-lb-pos').innerText = isGhost ? "👻 Oculto" : "#" + myRank;
+                document.getElementById('my-lb-score').innerText = myMin;
+
+            } catch(e) {
+                lbList.innerHTML = '<div style="text-align:center; color:#f87171; padding: 20px;">Error al conectar con la red.</div>';
+                console.error(e);
             }
         }
 
-        function saveSocialFeed() {
-            localStorage.setItem('neurosync_social', JSON.stringify(socialFeed));
-        }
+        // --- SISTEMA SOCIAL (MURO DE RESONANCIA) GLOBAL ---
+        let socialFeed = [];
+        const ADMIN_EMAIL = "guilmarzy@gmail.com";
 
         function toggleWall() {
             const wm = document.getElementById('wall-modal');
             if(wm.classList.contains('open')) wm.classList.remove('open');
-            else { wm.classList.add('open'); renderWall(); }
+            else { wm.classList.add('open'); loadGlobalSocialFeed(); }
+        }
+
+        async function loadGlobalSocialFeed() {
+            const feed = document.getElementById('wall-feed');
+            if(!feed) return;
+            feed.innerHTML = '<div style="text-align:center; color:#fff; padding: 20px;">Sintonizando frecuencias globales...</div>';
+            
+            try {
+                const res = await fetch('/.netlify/functions/getSocial');
+                const data = await res.json();
+                
+                let mainPosts = data.filter(p => !p.parent_id);
+                let replies = data.filter(p => p.parent_id);
+                
+                mainPosts.forEach(p => {
+                    p.replies = replies.filter(r => r.parent_id === p.id).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                    p.time = new Date(p.created_at).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
+                    p.hasLiked = false;
+                });
+                
+                socialFeed = mainPosts;
+                renderWall();
+            } catch(e) {
+                feed.innerHTML = '<div style="text-align:center; color:#f87171; padding: 20px;">Ruido en la conexión. Intenta de nuevo.</div>';
+            }
         }
 
         function renderWall() {
             const feed = document.getElementById('wall-feed');
             if(!feed) return;
             feed.innerHTML = '';
-            
             socialFeed.forEach(post => {
                 feed.appendChild(createPostHTML(post));
             });
@@ -1539,18 +1584,19 @@
             div.className = `post-card ${extraClass} ${isReply ? 'reply-box' : ''}`;
             
             const boltClass = post.hasLiked ? 'active-elevar' : '';
+            const timeStr = post.time || new Date(post.created_at).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
             
             let html = `
                 <div class="post-header">
                     <div class="post-author">${post.author} ${badge}</div>
-                    <div class="post-time">${post.time}</div>
+                    <div class="post-time">${timeStr}</div>
                 </div>
                 <div class="post-text">${post.text}</div>
                 <div class="post-actions">
-                    <button class="action-btn ${boltClass}" onclick="toggleElevate(${post.id})">
+                    <button class="action-btn ${boltClass}" onclick="toggleElevate('${post.id}')">
                         <i class="fas fa-bolt"></i> <span id="like-count-${post.id}">${post.likes}</span> Elevar
                     </button>
-                    ${!isReply ? `<button class="action-btn" onclick="openReply(${post.id})"><i class="fas fa-reply"></i> Responder</button>` : ''}
+                    ${!isReply ? `<button class="action-btn" onclick="openReply('${post.id}')"><i class="fas fa-reply"></i> Responder</button>` : ''}
                 </div>
                 <div id="reply-container-${post.id}"></div>
             `;
@@ -1559,6 +1605,7 @@
             if(!isReply && post.replies && post.replies.length > 0) {
                 const repCont = div.querySelector(`#reply-container-${post.id}`);
                 post.replies.forEach(r => {
+                    r.time = r.time || new Date(r.created_at).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
                     repCont.appendChild(createPostHTML(r, true));
                 });
             }
@@ -1566,82 +1613,98 @@
             return div;
         }
 
-        function findPostById(id, list = socialFeed) {
-            for(let p of list) {
-                if(p.id === id) return p;
-                if(p.replies) {
-                    let r = findPostById(id, p.replies);
-                    if(r) return r;
-                }
-            }
-            return null;
+        async function toggleElevate(id) {
+            let targetPost = null;
+            socialFeed.forEach(p => {
+                if(p.id === id) targetPost = p;
+                if(p.replies) p.replies.forEach(r => { if(r.id === id) targetPost = r; });
+            });
+            
+            if(!targetPost) return;
+            
+            const likeSpan = document.getElementById(`like-count-${id}`);
+            if(targetPost.hasLiked) return; 
+            
+            targetPost.likes++;
+            targetPost.hasLiked = true;
+            if(likeSpan) likeSpan.innerText = targetPost.likes;
+            if(event && event.currentTarget) event.currentTarget.classList.add('active-elevar');
+            
+            try {
+                await fetch('/.netlify/functions/postSocial', {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'like', id: id })
+                });
+            } catch(e) { console.error("Error elevating", e); }
         }
 
-        function toggleElevate(id) {
-            const post = findPostById(id);
-            if(post) {
-                if(post.hasLiked) { post.likes--; post.hasLiked = false; }
-                else { post.likes++; post.hasLiked = true; }
-                saveSocialFeed();
-                renderWall();
-            }
-        }
-
-        function submitPost() {
-            const email = document.getElementById('post-email').value.trim() || 'anonimo@neurosync.com';
+        async function submitPost() {
+            const inputEmail = document.getElementById('post-email');
             const text = document.getElementById('post-text').value.trim();
             if(!text) return;
-
-            let authorName = "Sincronizador " + Math.floor(Math.random() * 999);
-            if(email === ADMIN_EMAIL) authorName = "Guilmarzy";
-
-            const newPost = {
-                id: Date.now(),
-                email: email, author: authorName,
-                text: text, time: "Ahora mismo",
-                likes: 0, hasLiked: false, replies: []
-            };
-
-            socialFeed.unshift(newPost);
-            saveSocialFeed();
-            document.getElementById('post-text').value = '';
-            renderWall();
+            
+            const email = inputEmail && inputEmail.value.trim() ? inputEmail.value.trim() : userEmail;
+            let authorName = email === ADMIN_EMAIL ? "Guilmarzy" : userName || "Sincronizador " + Math.floor(Math.random() * 999);
+            
+            document.getElementById('post-text').value = 'Emitiendo frecuencia...';
+            
+            try {
+                const res = await fetch('/.netlify/functions/postSocial', {
+                    method: 'POST',
+                    body: JSON.stringify({ email, author: authorName, text })
+                });
+                if(res.ok) {
+                    document.getElementById('post-text').value = '';
+                    loadGlobalSocialFeed();
+                } else {
+                    alert("No se pudo conectar a la red global. Intenta más tarde.");
+                    document.getElementById('post-text').value = text;
+                }
+            } catch(e) {
+                alert("Error de conexión.");
+                document.getElementById('post-text').value = text;
+            }
         }
 
-        function openReply(parentId) {
+        async function openReply(parentId) {
             const text = prompt("Escribe tu respuesta a esta vibración:");
             if(!text) return;
-            const email = document.getElementById('post-email').value.trim() || 'anonimo@neurosync.com';
-            let authorName = "Sincronizador " + Math.floor(Math.random() * 999);
-            if(email === ADMIN_EMAIL) authorName = "Guilmarzy";
+            
+            const inputEmail = document.getElementById('post-email');
+            const email = inputEmail && inputEmail.value.trim() ? inputEmail.value.trim() : userEmail;
+            let authorName = email === ADMIN_EMAIL ? "Guilmarzy" : userName || "Sincronizador " + Math.floor(Math.random() * 999);
 
-            const parentPost = findPostById(parentId);
-            if(parentPost && parentPost.replies) {
-                parentPost.replies.push({
-                    id: Date.now(), email: email, author: authorName, text: text, time: "Ahora mismo", likes: 0, hasLiked: false
+            try {
+                const res = await fetch('/.netlify/functions/postSocial', {
+                    method: 'POST',
+                    body: JSON.stringify({ email, author: authorName, text, parent_id: parentId })
                 });
-                saveSocialFeed();
-                renderWall();
+                if(res.ok) {
+                    loadGlobalSocialFeed();
+                } else {
+                    alert("No se pudo conectar a la red global.");
+                }
+            } catch(e) {
+                alert("Error de conexión.");
             }
         }
 
         // --- SONIDOS DE NATURALEZA ---
         const natureSounds = [
-            { id: "nat-1", name: "Lluvia Ligera", icon: "fas fa-cloud-showers-heavy", url: "https://mixrelax.com/wp-content/uploads/sounds/light-rain.mp3" },
-            { id: "nat-2", name: "Lluvia Media", icon: "fas fa-cloud-rain", url: "https://mixrelax.com/wp-content/uploads/sounds/medium-rain.mp3" },
-            { id: "nat-3", name: "Lluvia Fuerte", icon: "fas fa-poo-storm", url: "https://mixrelax.com/wp-content/uploads/sounds/heavy-rain.mp3" },
-            { id: "nat-4", name: "Lluvia Suave", icon: "fas fa-cloud-sun-rain", url: "https://mixrelax.com/wp-content/uploads/sounds/soft-rain.mp3" },
-            { id: "nat-5", name: "Bosque", icon: "fas fa-tree", url: "https://mixrelax.com/wp-content/uploads/sounds/rain-on-forest.mp3" },
-            { id: "nat-6", name: "Ventana", icon: "fas fa-border-all", url: "https://mixrelax.com/wp-content/uploads/sounds/rain-on-window.mp3" },
-            { id: "nat-7", name: "Trueno", icon: "fas fa-bolt", url: "https://mixrelax.com/wp-content/uploads/sounds/thunder.mp3" },
-            { id: "nat-8", name: "Viento", icon: "fas fa-wind", url: "https://mixrelax.com/wp-content/uploads/sounds/wind.mp3" },
-            { id: "nat-9", name: "Olas", icon: "fas fa-water", url: "https://mixrelax.com/wp-content/uploads/sounds/ocean-waves.mp3" },
-            { id: "nat-10", name: "Playa", icon: "fas fa-umbrella-beach", url: "https://mixrelax.com/wp-content/uploads/sounds/beach.mp3" },
-            { id: "nat-11", name: "Río", icon: "fas fa-tint", url: "https://mixrelax.com/wp-content/uploads/sounds/river.mp3" },
-            { id: "nat-12", name: "Cascada", icon: "fas fa-water", url: "https://mixrelax.com/wp-content/uploads/sounds/waterfall.mp3" },
-            { id: "nat-13", name: "Fuego", icon: "fas fa-fire", url: "https://mixrelax.com/wp-content/uploads/sounds/fire.mp3" },
-            { id: "nat-14", name: "Grillos", icon: "fas fa-bug", url: "https://mixrelax.com/wp-content/uploads/sounds/cricket.mp3" },
-            { id: "nat-15", name: "Pájaros", icon: "fas fa-dove", url: "https://mixrelax.com/wp-content/uploads/sounds/birds.mp3" },
+            { id: "nat-1", name: "Lluvia Ligera", icon: "fas fa-cloud-showers-heavy", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Lluvia+Ligera.mp3" },
+            { id: "nat-2", name: "Lluvia Media", icon: "fas fa-cloud-rain", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Lluvia+Media.mp3" },
+            { id: "nat-3", name: "Lluvia Fuerte", icon: "fas fa-poo-storm", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Lluvia+Fuerte.mp3" },
+            { id: "nat-4", name: "Lluvia Suave", icon: "fas fa-cloud-sun-rain", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Lluvia+Suave.mp3" },
+            { id: "nat-5", name: "Bosque", icon: "fas fa-tree", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Bosque.mp3" },
+            { id: "nat-7", name: "Trueno", icon: "fas fa-bolt", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Trueno.mp3" },
+            { id: "nat-8", name: "Viento", icon: "fas fa-wind", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Viento.mp3" },
+            { id: "nat-9", name: "Olas", icon: "fas fa-water", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Olas.mp3" },
+            { id: "nat-10", name: "Playa", icon: "fas fa-umbrella-beach", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Playa.mp3" },
+            { id: "nat-11", name: "Río", icon: "fas fa-tint", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Rio.mp3" },
+            { id: "nat-12", name: "Cascada", icon: "fas fa-water", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Cascada.mp3" },
+            { id: "nat-13", name: "Fuego", icon: "fas fa-fire", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Fuego.mp3" },
+            { id: "nat-14", name: "Grillos", icon: "fas fa-bug", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Grillos.mp3" },
+            { id: "nat-15", name: "Pájaros", icon: "fas fa-dove", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Pajaros.mp3" },
             { id: "nat-16", name: "Rana", icon: "fas fa-frog", url: "https://mixrelax.com/wp-content/uploads/sounds/frog.mp3" },
             { id: "nat-17", name: "Hojas", icon: "fas fa-leaf", url: "https://mixrelax.com/wp-content/uploads/sounds/leaves.mp3" },
             { id: "nat-18", name: "Bajo el Agua", icon: "fas fa-swimmer", url: "https://mixrelax.com/wp-content/uploads/sounds/underwater.mp3" }
@@ -1673,7 +1736,7 @@
                     <div class="nature-card" id="card-${sound.id}" onclick="toggleNatureSound('${sound.id}')">
                         <i class="${sound.icon} nature-icon"></i>
                         <div class="nature-title">${sound.name}</div>
-                        <input type="range" class="nature-vol" id="vol-${sound.id}" min="0" max="1" step="0.05" value="0.5" onchange="changeNatureVolume('${sound.id}')" onclick="event.stopPropagation()">
+                        <input type="range" class="nature-vol" id="vol-${sound.id}" min="0" max="1" step="0.05" value="0.5" oninput="changeNatureVolume('${sound.id}')" onclick="event.stopPropagation()">
                     </div>
                 `;
             });
@@ -1695,9 +1758,29 @@
                     const audio = new Audio(soundConfig.url);
                     audio.loop = natureMasterLoop;
                     audio.volume = document.getElementById(`vol-${id}`).value;
+                    
+                    // Manejo de errores de carga (ej. mixrelax.com caído)
+                    audio.addEventListener('error', (e) => {
+                        console.error("Error al cargar el audio:", soundConfig.url);
+                        alert(`El sonido "${soundConfig.name}" no está disponible temporalmente (enlace roto).`);
+                        card.classList.remove('active');
+                    });
+                    
                     natureAudioElements[id] = audio;
                 }
-                natureAudioElements[id].play().catch(e => console.log(e));
+                
+                let playPromise = natureAudioElements[id].play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(e => {
+                        console.log("Audio play error:", e);
+                        if (e.name === 'NotAllowedError') {
+                            alert("Por favor interactúa con la página antes de reproducir audios.");
+                            card.classList.remove('active');
+                        } else if (e.name === 'NotSupportedError') {
+                            card.classList.remove('active');
+                        }
+                    });
+                }
             }
         }
 
@@ -1709,12 +1792,20 @@
         }
 
         function natureMasterPlay() {
+            let hasActive = false;
             Object.keys(natureAudioElements).forEach(id => {
                 const card = document.getElementById(`card-${id}`);
                 if(card && card.classList.contains('active')) {
-                    natureAudioElements[id].play().catch(e => console.log(e));
+                    hasActive = true;
+                    let playPromise = natureAudioElements[id].play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(e => console.log("Master play error:", e));
+                    }
                 }
             });
+            if (!hasActive) {
+                alert("Selecciona al menos un sonido de la naturaleza primero haciendo clic en su icono.");
+            }
         }
 
         function natureMasterPause() {
@@ -1899,9 +1990,8 @@
             return bufferData;
         }
 
-        initSocialFeed();
         initSelectors();
-        loadStats(); // Cargar estadísticas guardadas al iniciar
+        loadStats(); // Cargar estadísticas guardadas y sincronizar
         initNatureSounds();
 
     </script>
