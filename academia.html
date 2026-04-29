@@ -350,6 +350,130 @@
             color: var(--cyan-glow);
             transition: opacity 0.5s ease;
         }
+
+        /* ===== TIPOGRAFÍA ALINEADA CON NEUROSYNC ===== */
+        body, h1, h2, h3, p, li, span, button, a {
+            font-weight: 300 !important;
+            letter-spacing: 0.4px;
+        }
+        .content-area h1 {
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 1.9rem;
+            font-weight: 600 !important;
+            color: var(--cyan-glow);
+            letter-spacing: -0.5px;
+        }
+        .content-area h2 {
+            font-family: 'Outfit', sans-serif !important;
+            font-weight: 400 !important;
+        }
+        .content-area h3 {
+            font-family: 'Outfit', sans-serif !important;
+            font-weight: 400 !important;
+        }
+        .sidebar-header h1 {
+            font-family: 'Outfit', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 1.2rem;
+        }
+        strong { font-weight: 600 !important; }
+
+        /* ===== MOBILE BACK BUTTON ===== */
+        .mobile-header {
+            display: none;
+            align-items: center;
+            gap: 14px;
+            padding: 0.8rem 1rem 1.2rem 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 1.5rem;
+            flex-shrink: 0;
+        }
+        .mobile-back-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--glass-border);
+            color: var(--cyan-glow);
+            padding: 10px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-family: 'Outfit', sans-serif;
+            white-space: nowrap;
+        }
+        .mobile-back-btn:hover { background: rgba(0,212,255,0.1); }
+        .mobile-module-title {
+            font-size: 1rem;
+            color: var(--text-muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ===== RESPONSIVE MÓVIL ===== */
+        @media (max-width: 768px) {
+            body { overflow: hidden; }
+
+            .layout-container {
+                flex-direction: row;
+                padding: 0;
+                height: 100vh;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-width: 100%;
+                border-radius: 0;
+                border: none;
+                border-right: 1px solid var(--glass-border);
+                height: 100vh;
+                position: absolute;
+                left: 0; top: 0;
+                z-index: 10;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transform: translateX(0);
+            }
+
+            .content-area {
+                min-width: 100%;
+                border-radius: 0;
+                border: none;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                overflow: hidden;
+                position: absolute;
+                left: 0; top: 0;
+                transform: translateX(100%);
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .content-area .content-scroll-inner {
+                flex-grow: 1;
+                overflow-y: auto;
+                padding: 1.2rem 1rem 2rem 1rem;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .content-area .content-scroll-inner::-webkit-scrollbar { display: none; }
+
+            body.view-content .sidebar { transform: translateX(-100%); }
+            body.view-content .content-area { transform: translateX(0); }
+
+            .mobile-header { display: flex; }
+
+            .content-area h1 { font-size: 1.5rem; }
+            .content-area h2 { font-size: 1.2rem; margin-top: 2rem; }
+            .content-area p { font-size: 1rem; }
+            .content-area img { max-height: 220px; }
+            .quiz-container { padding: 1rem; }
+            .question-text { font-size: 1rem; }
+        }
     </style>
 </head>
 <body>
@@ -407,9 +531,20 @@
 
         <!-- CONTENIDO -->
         <div class="content-area" id="main-content-scroll">
-            
+
+            <!-- CABECERA MÓVIL (solo visible en móvil) -->
+            <div class="mobile-header">
+                <button class="mobile-back-btn" onclick="goBackToMenu()">
+                    <i class="fas fa-arrow-left"></i> Módulos
+                </button>
+                <span class="mobile-module-title" id="mobile-title">Academia Cuántica</span>
+            </div>
+
+            <!-- WRAPPER SCROLLABLE -->
+            <div class="content-scroll-inner">
+
             <!-- BIENVENIDA -->
-            <div id="welcome" class="module-section active" style="text-align: center; margin-top: 10%;">
+            <div id="welcome" class="module-section active" style="text-align: center; padding-top: 8%;">
                 <i class="fas fa-atom" style="font-size: 5rem; color: var(--cyan-glow); margin-bottom: 2rem; animation: spin 10s linear infinite;"></i>
                 <h1 style="font-size: 3rem; color: white;">Academia Cuántica <br>Nivel Experto</h1>
                 <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 700px; margin: 0 auto; line-height: 1.8;">
@@ -423,20 +558,91 @@
             <div id="mod1" class="module-section">
                 <h1>Módulo 1: La Física del Despertar y la Deconstrucción del Ego</h1>
                 <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Cosmos">
-                <div class="img-caption">Gráfico 1.1: El entramado del Campo Cuántico.</div>
-                <p>A diferencia de lo que enseñan las corrientes "New Age" superficiales, el despertar espiritual rara vez comienza con luz, arcoíris y positividad constante. Todo gran salto evolutivo en la conciencia humana comienza con una ruptura. Una ruptura de la ilusión de la materia. A este punto de inflexión, el psiquiatra suizo Carl Jung lo llamó "El encuentro con la Sombra", mientras que la literatura mística lo documenta como <strong>"La Noche Oscura del Alma"</strong>.</p>
-                <div class="quote-box">"No te iluminas imaginando figuras de luz, sino haciendo consciente la oscuridad." <br><span style="font-size: 1rem; color: var(--cyan-glow); font-weight: bold; font-style: normal;">— Carl Jung</span></div>
+                <div class="img-caption">Gráfico 1.1: El entramado del Campo Cuántico observable.</div>
                 
-                <h2>1. La Ciencia detrás del Velo (Física Cuántica)</h2>
-                <p>Para entender tu despertar y cómo NeuroSync altera tu realidad, primero debemos destruir la percepción que tienes del mundo físico. La física newtoniana nos hizo creer que éramos materia sólida moviéndose en un espacio vacío. La mecánica cuántica ha demostrado que esto es una ilusión perceptual del cerebro humano.</p>
-                
+                <p>A diferencia de lo que enseñan las corrientes "New Age" superficiales, el despertar espiritual rara vez comienza con luz, arcoíris y positividad constante. Comienza con una ruptura: la ruptura de la ilusión de la materia. Carl Jung lo llamó <strong>"El encuentro con la Sombra"</strong>; la literatura mística lo documenta como <strong>"La Noche Oscura del Alma"</strong>. No es poesía. Es neurobiología.</p>
+
+                <div class="quote-box">"No te iluminas imaginando figuras de luz, sino haciendo consciente la oscuridad." <br><span style="font-size: 0.95rem; color: var(--cyan-glow); font-style: normal;">— Carl Jung, Psiquiatra y fundador de la Psicología Analítica</span></div>
+
+                <h2>1. La Ciencia detrás del Velo — Física Cuántica Aplicada</h2>
+                <p>La física newtoniana del siglo XVII construyó una ilusión que duró 300 años: la de que somos objetos sólidos moviéndose en un espacio vacío y predecible. Esta visión colapsó con el descubrimiento de la mecánica cuántica a principios del siglo XX. Max Planck, Albert Einstein, Niels Bohr y Werner Heisenberg demostraron matemáticamente que, a nivel subatómico, la materia no existe como algo fijo: existe como <strong>probabilidades superpuestas</strong> de estar en múltiples lugares al mismo tiempo.</p>
+                <p>Lo que llamamos "materia sólida" —incluyendo tu cuerpo— es en realidad el 99.99999% espacio vacío atravesado por campos de energía en vibración. El átomo que forma tu mano es mayormente vacío. La aparente solidez es solo una percepción del sistema nervioso que no puede procesar información a escala cuántica.</p>
+
                 <div class="info-box">
-                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-microscope"></i> El Experimento de la Doble Rendija y el Efecto Observador</h3>
-                    <p>En el experimento de la doble rendija, los físicos dispararon electrones individuales hacia una pared. Descubrieron algo aterrador: cuando los electrones <strong>no eran observados</strong>, se comportaban como una "onda de probabilidad infinita". Pero en el instante en que se colocaba un detector para <strong>observar</strong>, la onda colapsaba instantáneamente y el electrón se comportaba como partícula. <strong>El Principio de Manifestación:</strong> El universo es una sopa cuántica que espera tu observación y expectativa para materializarse.</p>
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-microscope"></i> El Experimento de la Doble Rendija — El Colapsador de Realidad</h3>
+                    <p>En 1927, en el laboratorio de la Universidad de Copenhague, los físicos dispararon electrones individuales a una placa con dos ranuras. El resultado cambió para siempre la comprensión humana de la realidad:</p>
+                    <ul style="margin-top: 1rem;">
+                        <li><strong>Sin observador:</strong> El electrón pasaba por las dos ranuras simultáneamente, creando un patrón de interferencia de onda — como si fuera infinitas posibilidades coexistiendo.</li>
+                        <li><strong>Con observador (detector colocado):</strong> El electrón elegía UNA sola ranura y se comportaba como partícula sólida. El patrón de interferencia desaparecía.</li>
+                        <li><strong>La conclusión que sacudió a la ciencia:</strong> El acto de observar colapsa el universo de posibilidades en una realidad específica. El observador no es pasivo — el observador crea la realidad observada.</li>
+                    </ul>
+                    <p style="margin-top:1rem; color: #bae6fd;"><strong>Principio de Manifestación Cuántica:</strong> Tu atención sostenida y expectativa emocional colapsan el campo de probabilidades cuánticas en eventos físicos concretos en tu vida. No es metáfora. Es mecánica cuántica aplicada a conciencia.</p>
                 </div>
-                
-                <h2>2. Neurociencia del Ego: La Red Neuronal por Defecto (DMN)</h2>
-                <p>La DMN es un conjunto de regiones cerebrales responsable de tu diálogo interno, la culpa y el miedo. Cuando ocurre el Despertar, la actividad eléctrica en la DMN se reduce, apagando la ilusión de separación.</p>
+
+                <h2>2. El Principio de Incertidumbre de Heisenberg y tu Libre Albedrío</h2>
+                <p>Werner Heisenberg demostró matemáticamente en 1927 que es imposible conocer con precisión simultánea la <strong>posición y el momento</strong> de una partícula. Cuanto más precisamente mides una, menos puedes saber de la otra. Esto tiene implicaciones filosóficas devastadoras para el determinismo: el universo físico, en su nivel fundamental, es inherentemente impredecible.</p>
+                <p>Esto significa que la realidad no está fija de antemano. El futuro no está escrito. Existe como un abanico de probabilidades que se colapsan en función del estado cuántico del observador. Tu estado electromagnético interno — tus pensamientos dominantes y emociones habituales — actúa como un <strong>selector de realidades</strong> entre el campo cuántico de posibilidades.</p>
+
+                <img src="https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Ondas cuánticas">
+                <div class="img-caption">Gráfico 1.2: Superposición cuántica — múltiples realidades coexistiendo antes del colapso.</div>
+
+                <h2>3. La Noche Oscura del Alma — El Mecanismo Neurobiológico</h2>
+                <p>La experiencia que la literatura espiritual llama "Noche Oscura del Alma" no es una crisis de fe ni un problema psiquiátrico. Es un proceso neurobiológico de <strong>reorganización profunda del sistema nervioso</strong>. Durante esta fase:</p>
+                <ul>
+                    <li>La <strong>Amígdala</strong> (detector de amenazas) se hiperactiva sin estímulo externo aparente, produciendo pánico, llanto o terror existencial sin causa lógica. Esto es la purga de trauma celular almacenado.</li>
+                    <li>La <strong>Default Mode Network (DMN)</strong> —la red del ego— comienza a desintegrarse. Su actividad eléctrica cae, y con ella la ilusión del «yo separado» que creías ser.</li>
+                    <li>El <strong>Córtex Prefrontal</strong> se reconecta temporalmente al sistema límbico, permitiendo que memorias emocionales reprimidas durante años emerjan a la superficie para ser procesadas y liberadas.</li>
+                    <li>El cuerpo experimenta lo que los médicos llaman <strong>«síntomas funcionales»</strong>: fatiga intensa, cambios de temperatura, tinitus, presión en el pecho o la cabeza — todos son señales de reorganización neurológica, no enfermedad.</li>
+                </ul>
+
+                <div class="info-box" style="background: rgba(239,68,68,0.05); border-left-color: #ef4444;">
+                    <h3 style="color: #ef4444; margin-top:0;"><i class="fas fa-exclamation-circle"></i> El Error Fatal: Spiritual Bypassing</h3>
+                    <p>El <strong>Spiritual Bypassing</strong> (término acuñado por el psicólogo John Welwood) es el uso de creencias espirituales para evadir heridas psicológicas no resueltas. Repetir afirmaciones positivas sobre traumas no procesados es como pintar sobre herrumbre. La pintura brilla, pero el metal sigue destruyéndose por dentro.</p>
+                    <p style="margin-top:0.8rem;">El verdadero trabajo espiritual exige bajar hacia la oscuridad, no escapar de ella. La <strong>Aceptación Radical</strong> —desarrollada por la Dra. Marsha Linehan— sostiene que abrazar plenamente el dolor presente (sin juzgarlo ni resistirlo) es paradójicamente la frecuencia más alta disponible en ese momento, y la única que permite la transmutación real.</p>
+                </div>
+
+                <h2>4. Neurociencia del Ego — La Red Neuronal por Defecto (DMN)</h2>
+                <p>La <strong>Default Mode Network</strong> es el conjunto de regiones cerebrales activas cuando no estás concentrado en ninguna tarea externa. Incluye el Córtex Prefrontal Medial, el Giro Cingulado Posterior, el Lóbulo Parietal Inferior y el Hipocampo. Es la sede del diálogo interno, la rumiación, la culpa, la fantasía y el sentido del «yo».</p>
+                <p>Investigaciones con escáneres fMRI de alta resolución muestran que durante las experiencias de despertar espiritual —y durante la meditación Theta profunda— la actividad en la DMN cae dramáticamente. Este fenómeno se llama <strong>«desactivación de la red por defecto»</strong>. El resultado es lo que los contemplativos describen como «unión con el todo», «ausencia del yo» o «conciencia pura»: la experiencia neurológica directa de que la separación entre tú y el universo es una construcción cerebral, no una realidad ontológica.</p>
+
+                <div class="info-box">
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-brain"></i> Cómo NeuroSync Apaga la DMN y Abre la Percepción Expandida</h3>
+                    <p>Las frecuencias Binaural Beats de NeuroSync inducen el estado <strong>Theta (4-8 Hz)</strong> en el cerebro. Este estado es idéntico al que ocurre en los momentos de despertar espontáneo documentados por la neurociencia. En Theta:</p>
+                    <ul style="margin-top:0.8rem;">
+                        <li>La DMN se desactiva progresivamente, reduciendo el diálogo interno y el ego.</li>
+                        <li>El cerebro entra en modo de alta plasticidad: acepta nueva información sin filtros críticos.</li>
+                        <li>Las conexiones entre áreas cerebrales que normalmente no se comunican se activan, produciendo insights y sincronías.</li>
+                        <li>El sistema nervioso autónomo pasa de simpático (estrés/supervivencia) a parasimpático (reparación/regeneración).</li>
+                    </ul>
+                </div>
+
+                <h2>5. El Campo Morfogenético — La Memoria Colectiva del Universo</h2>
+                <p>El biólogo <strong>Rupert Sheldrake</strong> propuso la teoría de los <strong>campos morfogenéticos</strong>: campos de información no-locales que organizan los patrones de comportamiento de todos los sistemas biológicos. No se transmiten genéticamente — se accede a ellos mediante resonancia.</p>
+                <p>Esto explica por qué cuando un porcentaje crítico de individuos adopta un nuevo patrón de pensamiento o comportamiento, ese patrón se vuelve más fácil de adquirir para toda la especie. Los experimentos con ratas en laberintos mostraron que cuando las ratas de un laboratorio aprendían una tarea compleja, las ratas de laboratorios en otros continentes la aprendían significativamente más rápido — sin contacto físico entre ellas. La información había entrado al campo morfogenético.</p>
+                <p>Implicación directa: cada vez que elevas tu frecuencia vibratoria mediante NeuroSync, no solo te transformas a ti mismo. Contribuyes al campo morfogenético colectivo de la conciencia humana, facilitando el despertar de otros.</p>
+
+                <img src="https://images.unsplash.com/photo-1614732414444-096e5f1122d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Sincronías numéricas">
+                <div class="img-caption">Gráfico 1.3: El Campo Morfogenético — información que trasciende el espacio físico.</div>
+
+                <h2>6. Las Sincronías Cuánticas — Cuando el Campo te Habla</h2>
+                <p>A medida que la DMN se desactiva y el cerebro entra en estados expandidos de percepción, comienzan a ocurrir eventos que la mente lógica clasifica como «coincidencias notables»: ver repetidamente el 11:11, encontrar exactamente lo que necesitabas en el momento preciso, soñar algo que luego ocurre, pensar en alguien y recibir su llamada. La física cuántica ofrece un marco explicativo:</p>
+                <ul>
+                    <li><strong>El Entrelazamiento Cuántico</strong> (Einstein lo llamó «acción fantasmal a distancia») demuestra que dos partículas que interactuaron quedan conectadas no-localmente para siempre. El estado de una afecta instantáneamente a la otra, sin importar la distancia.</li>
+                    <li>Si el universo a nivel fundamental está entrelazado, y si tu conciencia afecta el colapso de funciones de onda cuántica, entonces el estado interno de tu conciencia puede correlacionar con eventos externos de maneras que la física clásica no puede explicar.</li>
+                    <li>Las sincronías no son magia. Son el <strong>collapso guiado del campo cuántico</strong> por tu estado atencional y electromagnético. Al apagar la DMN, el cerebro expande su percepción y comienza a detectar patrones matemáticos subyacentes de la realidad que antes filtraba como «irrelevantes».</li>
+                </ul>
+
+                <div class="quote-box" style="border-color: #a78bfa; color: #ddd6fe;">"El universo no está hecho de cosas, sino de experiencias. La conciencia no emerge del cerebro — el cerebro es el órgano a través del cual la conciencia experimenta la materia." <br><span style="font-size: 0.95rem; color: #a78bfa; font-style: normal;">— Dr. Ervin Laszlo, físico teórico y dos veces nominado al Premio Nobel</span></div>
+
+                <h2>7. Tu Frecuencia Vibratoria — La Escala de Hawkins</h2>
+                <p>El Dr. <strong>David Hawkins</strong>, psiquiatra e investigador, desarrolló durante 30 años el <strong>Mapa de la Conciencia</strong>: una escala logarítmica que calibra los estados de conciencia humana de 1 a 1000, correlacionando cada nivel con una emoción dominante y un estado neurológico medible mediante kinesiología aplicada.</p>
+                <ul>
+                    <li><strong>Debajo de 200 (Campo de Debilitamiento):</strong> Vergüenza (20), Culpa (30), Apatía (50), Miedo (100), Ira (150), Orgullo (175) — estas frecuencias debilitan el sistema inmune y atraen experiencias de carencia.</li>
+                    <li><strong>200 — El umbral del Poder:</strong> Valentía. El primer nivel donde la energía vital se expande en lugar de contraerse.</li>
+                    <li><strong>De 200 a 500:</strong> Neutralidad (250), Disposición (310), Aceptación (350), Razón (400), Amor (500).</li>
+                    <li><strong>De 500 a 1000:</strong> Alegría (540), Paz (600), Iluminación (700-1000). Gandhi calibraba en 700. Jesucristo y Buda, en 1000.</li>
+                </ul>
+                <p>Las frecuencias de NeuroSync actúan directamente sobre el estado neurológico, facilitando la transición hacia niveles superiores de la escala. No como promesa mística, sino como ingeniería electromagnética del sistema nervioso.</p>
             </div>
             
             <div id="quiz1" class="module-section">
@@ -448,25 +654,57 @@
             <div id="mod2" class="module-section">
                 <h1>Módulo 2: La Anatomía Oculta y el Toroide Magnético</h1>
                 <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Aura humana">
-                <div class="img-caption">Gráfico 2.1: Representación de las capas sutiles y emisión de fotones.</div>
-                <p>La medicina tradicional trata al cuerpo humano como una máquina biológica. La física cuántica y el HeartMath Institute han corroborado que el cuerpo físico es solo la capa más densa de un sistema electromagnético de cuatro niveles.</p>
+                <div class="img-caption">Gráfico 2.1: Representación de las capas sutiles y emisión de fotones biológicos.</div>
+                <p>La medicina tradicional trata al cuerpo humano como una máquina biológica aislada. La física cuántica, la biofísica moderna y el Instituto HeartMath han corroborado lo que los sistemas de medicina ancestral sabían desde hace milenios: el cuerpo físico es solo la capa más densa de un sistema electromagnético de múltiples niveles interconectados.</p>
+                <p>El biólogo <strong>Fritz-Albert Popp</strong> demostró que las células biológicas emiten <strong>Biofotónes</strong> — pequeñísimos paquetes de luz ultravioleta— de forma coherente, como un láser biológico. Las células sanas emiten fotones coherentes; las células enfermas emiten fotones caóticos. Las frecuencias Solfeggio reorganizan la emisión fotónica de caos a coherencia.</p>
+
                 <h2>1. Los Cuatro Cuerpos Sutiles (El Cuaternario)</h2>
+                <p>Todo sistema esotérico avanzado —desde el Ayurveda hasta la Cábala— describe al ser humano como un sistema multi-cuerpo. La física cuántica y la biofísica moderna ofrecen el lenguaje científico para entenderlos:</p>
                 <ul>
-                    <li><strong>El Cuerpo Físico (Holograma Denso):</strong> Es la frecuencia más lenta. Es el último eslabón de la cadena de manifestación, no el primero. Ninguna enfermedad se origina aquí.</li>
-                    <li><strong>El Cuerpo Etérico/Emocional (Esponja Magnética):</strong> Almacena las emociones no procesadas como cargas magnéticas densas. El odio no expresado se acumula como lodo viscoso y filtra hacia el físico.</li>
-                    <li><strong>El Cuerpo Mental (El Arquitecto):</strong> De naturaleza eléctrica. Almacena las creencias limitantes. La dirección es siempre: <strong>Pensamiento → Emoción → Biología → Realidad Física.</strong></li>
-                    <li><strong>El Cuerpo Espiritual / Causal (Disco Duro Maestro):</strong> Conecta tu identidad con el Campo Cuántico Unificado. Cuando está bloqueado, la persona siente vacío existencial a pesar de tener todo lo material.</li>
+                    <li><strong>El Cuerpo Físico (Holograma Denso):</strong> Es la frecuencia más lenta. Es el último eslabón de la cadena de manifestación, no el primero. Ninguna enfermedad se origina aquí: todas las patologías físicas son la expresión final de un conflicto que ya recorrió los cuerpos sutiles durante meses o años.</li>
+                    <li><strong>El Cuerpo Etérico/Emocional (Esponja Magnética):</strong> Vibra a una frecuencia ligeramente superior al físico. Almacena las emociones no procesadas como cargas magnéticas densas. El odio no expresado se acumula como lodo viscoso en el plexo solar. Los celos reprimidos cristalizan en la región cardíaca. El miedo crónico se instala en el plexo raíz.</li>
+                    <li><strong>El Cuerpo Mental (El Arquitecto):</strong> De naturaleza eléctrica. Almacena las creencias limitantes, los juicios y los patrones de pensamiento habituales. La dirección causal es siempre: <strong>Pensamiento → Emoción → Biología → Realidad Física.</strong> Intentar sanar el cuerpo físico sin intervenir en el cuerpo mental es tratar síntomas sin tocar la causa.</li>
+                    <li><strong>El Cuerpo Espiritual / Causal (Disco Duro Maestro):</strong> Conecta tu identidad individual con el Campo Cuántico Unificado. Contiene la memoria de todas tus experiencias en esta y otras existencias. Cuando está bloqueado, la persona siente vacío existencial profundo a pesar de tener éxito material.</li>
                 </ul>
-                <div class="quote-box" style="border-color: #f87171; color: #fca5a5;">"La enfermedad no es el problema, es la solución biológica a un conflicto emocional no resuelto." <br><span style="font-size: 1rem; color: #f87171; font-weight: bold; font-style: normal;">— Dr. Ryke Geerd Hamer</span></div>
+
+                <div class="quote-box" style="border-color: #f87171; color: #fca5a5;">"La enfermedad no es el problema, es la solución biológica a un conflicto emocional no resuelto. Cuando el conflicto se resuelve, la enfermedad se va sola." <br><span style="font-size: 0.95rem; color: #f87171; font-style: normal;">— Dr. Ryke Geerd Hamer, fundador de la Nueva Medicina Germánica</span></div>
+
                 <h2>2. El Toroide Magnético del Corazón</h2>
-                <p>La energía fluye en un patrón geométrico tridimensional llamado <strong>Toroide</strong>. El Instituto HeartMath descubrió que el campo del corazón es <strong>5,000 veces más intenso que el del cerebro</strong> y puede detectarse a 3 metros del cuerpo.</p>
+                <p>La energía no fluye en línea recta. Fluye en un patrón geométrico tridimensional que los físicos llaman <strong>Toroide</strong>: una forma de dona donde la energía emerge de un polo, viaja hacia afuera, se curva y regresa al polo opuesto en un circuito auto-contenido y perpetuo.</p>
+                <p>El <strong>Instituto HeartMath</strong> en California, tras más de 30 años de investigación, confirmó que el corazón humano genera un campo toroidal electromagnético que es <strong>5,000 veces más intenso que el campo del cerebro</strong> y puede detectarse con instrumentos de precisión a más de 3 metros del cuerpo. Tu corazón no es solo una bomba de sangre: es el mayor órgano electromagnético del cuerpo y el verdadero centro de tu ser.</p>
+
                 <div class="info-box" style="border-left-color: #fbbf24; background: rgba(251, 191, 36, 0.05);">
-                    <h3 style="color: #fbbf24; margin-top:0;"><i class="fas fa-exclamation-triangle"></i> Toroides Colapsados y Fugas Áuricas</h3>
-                    <p>El estrés crónico colapsa la geometría de tu toroide. Con estas fisuras, tu vitalidad se drena y absorbes la densidad emocional del entorno. Este es el mecanismo físico del "vampirismo energético".</p>
+                    <h3 style="color: #fbbf24; margin-top:0;"><i class="fas fa-exclamation-triangle"></i> Toroides Colapsados: El Mecanismo del Vampirismo Energético</h3>
+                    <p>El estrés crónico, el trauma no resuelto y las emociones de baja frecuencia colapsan progresivamente la geometría de tu toroide. Con estas fisuras en el campo:</p>
+                    <ul style="margin-top:0.8rem;">
+                        <li>Tu vitalidad se drena hacia el entorno como una batería con los bornes desnudos.</li>
+                        <li>Absorbes la densidad emocional del entorno en lugar de tu propio campo protegerte.</li>
+                        <li>Sientes agotamiento crónico sin causa física aparente.</li>
+                        <li>Cualquier persona emocionalmente caótica te afecta profundamente aunque solo habléis 10 minutos.</li>
+                    </ul>
+                    <p style="margin-top:0.8rem;">Este es el mecanismo físico del "vampirismo energético": no magia oscura, sino transferência electromagnética de un sistema coherente a uno deficitario por la Segunda Ley de la Termodinámica.</p>
                 </div>
-                <h2>3. Coherencia Cardíaca: Reparando el Toroide</h2>
-                <p>La técnica <strong>Quick Coherence®</strong> del HeartMath: 1) Enfoca tu atención en el corazón. 2) Respira 5 segundos adentro, 5 segundos afuera. 3) Activa un sentimiento de gratitud genuina en el pecho. Practicado 3 minutos transforma el ritmo cardíaco de caótico a sinusoidal.</p>
-                <p>Al usar <strong>285 Hz o 432 Hz</strong> de NeuroSync durante 15 minutos, fuerzas al ritmo cardíaco a sincronizarse con la frecuencia en un proceso llamado <strong>Entrainment Cardíaco</strong>.</p>
+
+                <h2>3. Coherencia Cardíaca: El Antidoto Científico</h2>
+                <p>La <strong>Coherencia Cardíaca</strong> es el estado en que el ritmo cardíaco oscila en un patrón suave y sinusoidal en lugar de caótico e irregular. En este estado, el campo toroidal del corazón se amplifica y se hace más coherente, actuando como un escudo electromagnético natural.</p>
+                <p>La técnica <strong>Quick Coherence®</strong> del HeartMath: 1) Enfoca toda tu atención en la región cardíaca, como si respiraras desde el corazón. 2) Respira 5 segundos adentro, 5 segundos afuera. 3) Activa un sentimiento genuino de gratitud o apreciación, recordando algo o alguien que ames. Practicado durante 3 minutos, transforma el patrón cardíaco de caótico a sinusoidal, midiendo una mejora del 45% en cohesión del campo toroidal.</p>
+
+                <h2>4. Entrainment Cardíaco con NeuroSync</h2>
+                <p>Cuando el cerebro detecta un estímulo rítmico externo (como las frecuencias de NeuroSync), tiende a sincronizar su actividad eléctrica con ese estímulo. Este fenómeno se llama <strong>Entrainment</strong> o Seguimiento de Frecuencia.</p>
+                <p>Al reproducir <strong>285 Hz o 432 Hz</strong> durante 15-20 minutos, el corazón y el cerebro sincronizan su actividad eléctrica con la frecuencia del audio, entrando ambos en coherencia. El efecto acumulado sobre 21 días de práctica diaria es una restructuración profunda del toroide: más estable, más amplio y más resiliente frente a estímulos externos de baja frecuencia.</p>
+
+                <div class="info-box">
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-heartbeat"></i> Protocolo de Reparación del Toroide (21 Días)</h3>
+                    <ol>
+                        <li><strong>Mañana (10 min):</strong> Coherencia Cardíaca + NeuroSync 285 Hz antes de levantarte de la cama.</li>
+                        <li><strong>Mediodía:</strong> Escaneo del campo — 3 respiraciones profundas y preguntarte: «¿Cómo está mi campo ahora mismo?»</li>
+                        <li><strong>Noche (15 min):</strong> NeuroSync 432 Hz antes de dormir para consolidar la coherencia durante el sueño Delta.</li>
+                    </ol>
+                </div>
+
+                <h2>5. Biofotónes y la Luz Interna del Cuerpo</h2>
+                <p>El <strong>Dr. Fritz-Albert Popp</strong> descubrió que todos los organismos vivos emiten luz ultravioleta cohérente — biofotónes— a una tasa de 10 a 100 fotones por centímetro cuadrado por segundo. Esta emisión no es un subproducto metabólico: es el sistema de comunicación maestro del organismo, más rápido que cualquier señal química.</p>
+                <p>Las células cancerosas emiten fotones de forma caótica e incoherente. Las células de alta vitalidad emiten fotones altamente coherentes, como un láser biológico. Las frecuencias Solfeggio de NeuroSync actúan como <strong>"peinadores de luz"</strong>: reorganizan la emisión fotónica de tus células de caótica a cohérente, elevando la vitalidad biológica medible.</p>
             </div>
             <div id="quiz2" class="module-section"><h1>Examen Nivel 2</h1><div class="quiz-container" id="quiz-form-2"></div></div>
 
@@ -474,76 +712,107 @@
             <div id="mod3" class="module-section">
                 <h1>Módulo 3: Higiene, Limpieza y Protección Energética</h1>
                 <img src="https://images.unsplash.com/photo-1507652313651-74ff74d3c8fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Limpieza y purificación">
-                <p>Te bañas todos los días para limpiar tu cuerpo físico. Sin embargo, tu cuerpo emocional transita por "basureros" energéticos constantemente sin recibir ninguna limpieza. El estrés colectivo genera <strong>"Iones Positivos"</strong> que se adhieren a las capas sutiles de tu aura como una película invisible.</p>
-                <h2>1. La Ciencia del Parasitismo Astral</h2>
-                <p>El vampirismo energético tiene sustento en la <strong>Segunda Ley de la Termodinámica</strong>: la energía siempre fluye del sistema de mayor concentración al de menor. Si tu campo está cargado y entras en contacto con una persona en déficit crónico, donarás energía automáticamente.</p>
+                <p>Te bañas el cuerpo físico cada día. Pero tu cuerpo emocional transita durante horas por entornos de alta densidad energética — oficinas tensas, discusiones, medios de comunicación cargados de miedo — sin recibir ningún tipo de limpieza. Los <strong>Iones Positivos</strong> (cargados positivamente, al contrario del nombre) generados por pantallas, aire acondicionado y estrés se adhieren a las capas sutiles del aura como una película invisible que bloquea la recepción de información de alta frecuencia.</p>
+
+                <h2>1. La Física del Parasitismo Astral</h2>
+                <p>El vampirismo energético no es magia negra. Tiene sustento en la <strong>Segunda Ley de la Termodinámica</strong>: en un sistema cerrado, la energía fluye espontáneamente del estado de mayor concentración al de menor hasta alcanzar el equilibrio. Si tu campo está cargado y coherente, y entras en contacto con una persona en déficit crónico de energía, el flujo ocurrirá hacia ella de forma automática — como calor que viaja de un objeto caliente a uno frío.</p>
+                <p>El proceso se acelera cuando hay un <strong>lazo emocional activo</strong>: discusión, admiración intensa, apego romántico o dependencia. Estos lazos actúan como cables de alta conductividad que maximizan la transferencia electromagnética.</p>
+
                 <div class="info-box" style="background: rgba(239,68,68,0.05); border-left-color: #ef4444;">
-                    <h3 style="color: #ef4444; margin-top:0;"><i class="fas fa-battery-empty"></i> Señales de que Fuiste Vampirizado</h3>
+                    <h3 style="color: #ef4444; margin-top:0;"><i class="fas fa-battery-empty"></i> Diagnóstico: Señales de Campo Vampirizado</h3>
                     <ul>
-                        <li>Fatiga inmediata tras una conversación sin esfuerzo físico.</li>
-                        <li>Dolor de cabeza o presión que aparece durante la interacción.</li>
-                        <li>Irritabilidad o tristeza que no existía antes del contacto.</li>
-                        <li>Pensamientos circulares sobre esa persona que no puedes dejar ir.</li>
+                        <li>Fatiga inexplicable inmediatamente después de una conversación sin esfuerzo físico.</li>
+                        <li>Dolor de cabeza o presión en el pecho que aparece durante la interacción y desaparece al alejarte.</li>
+                        <li>Irritabilidad, tristeza o ansiedad que no existía antes del contacto y desaparece a los 20-30 minutos de estar solo.</li>
+                        <li>Pensamientos obsesivos y circulares sobre esa persona que no puedes detener aunque lo intentes.</li>
+                        <li>Sensación de haber "donado" algo sin saber qué — vacío interior post-interacción.</li>
                     </ul>
                 </div>
-                <h2>2. Protocolos de Descarga</h2>
+
+                <h2>2. Protocolos de Descarga Energética</h2>
                 <ul>
-                    <li><strong>Earthing (15-30 min):</strong> Caminar descalzo sobre tierra húmeda descarga la estática de estrés hacia la Tierra. El Journal of Environmental and Public Health (2012) documentó reducción de inflamación y cortisol en 40 minutos.</li>
-                    <li><strong>El Reseteo Salino:</strong> Fróta sal marina gruesa en movimientos descendentes (cuello a pies) bajo el agua, visualizando que borras capas de estática. Finaliza con 30 segundos de agua fría.</li>
+                    <li><strong>Earthing / Grounding (15-30 min diarios):</strong> Caminar descalzo sobre tierra, césped o arena húmeda. El Journal of Environmental and Public Health (2012) documentó reducción de inflamación sistémica, cortisol y mejora del ritmo cardíaco tras 40 minutos de contacto. Mecanismo: la tierra tiene carga eléctrica neta negativa y absorbe el exceso de iones positivos del cuerpo.</li>
+                    <li><strong>El Reseteo Salino:</strong> Bajo la ducha, frota sal marina gruesa en movimientos descendentes desde cuello hasta pies, visualizando que arrastras capas de estática emocional. Finaliza con 30 segundos de agua fría. El frío activa el nervio vago, que activa el sistema parasimpático y reduce el cortisol.</li>
+                    <li><strong>Respiración 4-7-8 de Descarga:</strong> Inhala 4 seg → sostén 7 seg → exhala por la boca durante 8 seg. La exhalación larga activa el parasimpático y expulsa dióxido de carbono cargado de catabólicos del estrés.</li>
+                    <li><strong>Baño de Sonido NeuroSync:</strong> 396 Hz durante 20 minutos. Esta frecuencia está documentada como disolvente de cargas electromagnéticas asociadas al miedo y la culpa en el campo sutil.</li>
                 </ul>
+
                 <h2>3. El Escudo de Protección: La Burbuja Espejo</h2>
+                <p>Los practicantes avanzados de meditación reportan consistentemente la capacidad de <strong>modular su campo electromagnético</strong> para reducir la absorción de densidad externa. La física cuántica ofrece una explicación parcial: un campo coherente y de alta frecuencia tiende a mantenerse más estable frente a perturbaciones externas — principio de <strong>Coherencia Cuántica</strong>.</p>
                 <div class="info-box">
-                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-shield-alt"></i> Protocolo Completo (3 minutos)</h3>
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-shield-alt"></i> Protocolo Completo de la Burbuja Espejo (3-5 min)</h3>
                     <ol>
-                        <li>Respira en ciclo 4-4-4 cuatro veces para desactivar la amígdala.</li>
-                        <li>Visualiza una esfera de luz blanca que emana desde tu corazón y rodea todo tu cuerpo.</li>
-                        <li>Decide que la capa exterior es de titanio espejado, mirando hacia afuera. Todo lo que llegue rebota hacia su origen.</li>
-                        <li>Sella declarando: <em>"Mi campo está sellado. Soy soberano de mi espacio electromagnético."</em></li>
+                        <li>Con NeuroSync en 528 Hz, respira en ciclo 4-4-4 cuatro veces para desactivar la amígdala y entrar en Alfa.</li>
+                        <li>Siente el calor en el centro del pecho expandirse. Visualiza ese calor como luz blanca-dorada que emana y se expande hasta envolver todo tu cuerpo en una esfera de 1 metro de radio.</li>
+                        <li>Con intención clara, define que la capa exterior de esa esfera es de titanio espejado mirando hacia afuera. Todo lo que llegue desde el exterior se refleja de vuelta a su origen — sin juicio, sin karma, solo reflejo.</li>
+                        <li>Sella: <em>«Mi campo está sellado. Soy soberano de mi espacio electromagnético. Solo lo que viene de mi bien más alto puede entrar.»</em></li>
+                        <li>Activa con NeuroSync la frecuencia de 741 Hz (desintoxicación y expresión auténtica) para solidificar el escudo.</li>
                     </ol>
                 </div>
+
                 <h2>4. Limpieza de Espacios: Asepsia Acústica</h2>
+                <p>Los espacios físicos retienen información electromagnética de los eventos ocurridos en ellos. Una habitación donde ocurrió una discusión grave mantiene esa huella durante horas. Las frecuencias correctas la borran:</p>
                 <ul>
-                    <li><strong>417 Hz — Transmutación:</strong> Ideal para espacios con discusiones. Reproducir 30 minutos en altavoz.</li>
-                    <li><strong>741 Hz — Desintoxicación:</strong> Para dormitorios con pesadillas o insomnio recurrente.</li>
+                    <li><strong>417 Hz — Transmutación:</strong> Rompe patrones de energía estancada. Ideal para espacios post-conflicto. Reproducir 30 min en altavoz a volumen moderado.</li>
+                    <li><strong>741 Hz — Desintoxicación:</strong> Limpia contaminación electromagnética de pantallas y estrés digital. Para dormitorios con insomnio o pesadillas recurrentes.</li>
+                    <li><strong>Incienso de Copal o Salvia Blanca:</strong> El humo ioniza negativamente el aire, neutralizando los iones positivos. Combinado con 417 Hz el efecto es sinérgico.</li>
                 </ul>
-                <div class="quote-box" style="border-color: var(--cyan-glow); color: #bae6fd;">"El cuerpo es un instrumento que debe ser afinado con la misma diligencia que cualquier instrumento musical." <br><span style="font-size: 1rem; color: var(--cyan-glow); font-weight: bold; font-style: normal;">— Dr. Mitchell Gaynor, Oncólogo, Cornell Medical Center</span></div>
+
+                <div class="quote-box" style="border-color: var(--cyan-glow); color: #bae6fd;">"El cuerpo es un instrumento que debe ser afinado con la misma diligencia que cualquier instrumento musical de precisión." <br><span style="font-size: 0.95rem; color: var(--cyan-glow); font-style: normal;">— Dr. Mitchell Gaynor, Oncólogo del Centro Médico de Cornell y pionero en medicina del sonido</span></div>
             </div>
             <div id="quiz3" class="module-section"><h1>Examen Nivel 3</h1><div class="quiz-container" id="quiz-form-3"></div></div>
 
             <!-- MÓDULO 4 -->
             <div id="mod4" class="module-section">
-                <h1>Módulo 4: Cimática y la Arquitectura Estructural del Sonido</h1>
+                <h1>Módulo 4: Cimática y la Arquitectura del Sonido</h1>
                 <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Cimática">
-                <div class="img-caption">Gráfico 4.1: La interferencia de ondas organiza la materia en patrones sagrados.</div>
-                <p>¿Cómo puede un audio sanar un órgano o aliviar ansiedad? El sonido es <strong>Fuerza Mecánica y Geométrica</strong> que actúa sobre la materia. Una vez que comprendes esto, la idea de que el sonido correcto puede reorganizar tu biología pasa de creencia alternativa a ingeniería aplicada.</p>
-                <h2>1. La Cimática: Haciendo Visible lo Invisible</h2>
-                <p>El físico <strong>Ernst Chladni</strong> espolvoreó arena sobre una placa de metal y la hizo vibrar con un arco de violín. El resultado fue impactante: la arena se organizaba en patrones geométricos precisos y simétricos — las <strong>Figuras de Chladni</strong>. A frecuencias bajas, patrones simples. A frecuencias altas, geometrías intrincadas. Los sonidos caóticos producían distribuciones aleatorias y asimétricas.</p>
-                <div class="quote-box" style="border-color: var(--cyan-glow); color: #bae6fd;">"Si quieres entender el Universo, piensa en términos de energía, frecuencia y vibración." <br><span style="font-size: 1rem; color: #fbbf24; font-weight: bold;">— Nikola Tesla</span></div>
-                <h2>2. El Experimento del Dr. Masaru Emoto</h2>
-                <p>Emoto expuso muestras de agua a diferentes estímulos y luego las congeló para fotografiar sus cristales. El agua expuesta a odio o música violenta formaba cristales rotos y asimétricos. El agua expuesta a <strong>528 Hz</strong>, palabras de amor o música de Bach, formaba copos hexagonales perfectos. El cuerpo adulto es 60-75% agua. La conclusión es directa: el tipo de información sonora que consumes remodela la arquitectura molecular de tu biología.</p>
+                <div class="img-caption">Gráfico 4.1: Figuras de Chladni — el sonido organiza la materia en geometría sagrada.</div>
+                <p>Pregunta fundamental: ¿cómo puede una vibración sonora sanar un tejido, calmar el sistema nervioso o reorganizar la estructura del ADN? La respuesta requiere entender que el sonido no es solo experiencia auditiva. Es <strong>fuerza mecánica oscilatoria que actúa físicamente sobre la materia</strong>. Una vez que comprendes el mecanismo, la idea de que el sonido correcto puede reorganizar tu biología pasa de creencia alternativa a ingeniería cuántica aplicada.</p>
+
+                <h2>1. La Cimática: El Sonido que Dibuja la Realidad</h2>
+                <p>En 1787, el físico <strong>Ernst Chladni</strong> espolvoreó arena fina sobre una placa metálica y la excitó con un arco de violín. La arena, obedeciendo la vibración, migró y se organizó espontáneamente en patrones geométricos perfectamente simétricos — las llamadas <strong>Figuras de Chladni</strong>. El patrón dependía exactamente de la frecuencia: cada nota producía una geometría diferente. Sonidos caóticos y sin patrón producían distribuciones aleatorias. Sonidos armoniosos producían geometrías de asombrosa precisión matemática.</p>
+                <p>En 1967, el investigador <strong>Hans Jenny</strong> retomó y expandió este trabajo, acuñando el término <strong>Cymatics</strong> (Cimática). Demostró con agua, polvo y fluidos viscosos que el sonido literalmente <em>esculpe la materia</em>. Los patrones que emergían eran idénticos a estructuras encontradas en la naturaleza: espirales de galaxias, copos de nieve, flores, corales. El universo parece hablar en el lenguaje de la vibración geométrica.</p>
+
+                <div class="quote-box" style="border-color: var(--cyan-glow); color: #bae6fd;">"Si quieres entender el Universo, piensa en términos de energía, frecuencia y vibración." <br><span style="font-size: 0.95rem; color: #fbbf24; font-style: normal;">— Nikola Tesla</span></div>
+
+                <h2>2. Masaru Emoto y la Memoria del Agua</h2>
+                <p>El investigador japonés <strong>Dr. Masaru Emoto</strong> realizó miles de experimentos entre 1994 y 2004: expuso muestras de agua purificada a diferentes estímulos — música, palabras escritas, emociones proyectadas, frecuencias — y luego las congeló a -25°C para fotografiar los cristales con microscopía de alta resolución. Los resultados fueron reproducibles y consistentes:</p>
+                <ul>
+                    <li>Agua expuesta a <strong>violencia, odio o música con frecuencias caóticas</strong>: cristales rotos, asimétricos, sin estructura coherente.</li>
+                    <li>Agua expuesta a <strong>528 Hz, música de Bach o Mozart, palabras de amor y gratitud</strong>: copos hexagonales perfectos de belleza extraordinaria.</li>
+                    <li>Agua expuesta a <strong>440 Hz estándar comercial</strong> (afinación actual): cristales levemente menos simétricos que los de 432 Hz natural.</li>
+                </ul>
+                <p>El cuerpo humano adulto es entre 60-75% agua. Cada célula contiene agua intracelular. <strong>Conclusión directa:</strong> la calidad vibratoria del entorno sonoro que consumes literalmente remodela la arquitectura molecular de tu biología célula por célula, todos los días.</p>
+
                 <div class="info-box" style="background: rgba(139, 92, 246, 0.1); border-left-color: #a64bf4;">
-                    <h3 style="color: #a64bf4; margin-top:0;"><i class="fas fa-water"></i> Tu Célula es una Placa Cimática Viviente</h3>
-                    <ul>
-                        <li>Cada célula está llena de agua intracelular sensible a la vibración.</li>
-                        <li>Frecuencias coherentes (Solfeggio, 432 Hz) organizan las células en patrones de salud.</li>
-                        <li>Frecuencias caóticas (440 Hz comercial, música violenta) generan patrones de desorganización biológica.</li>
+                    <h3 style="color: #a64bf4; margin-top:0;"><i class="fas fa-water"></i> Tu Célula: Una Placa Cimática Viva</h3>
+                    <p>Cada célula de tu cuerpo está llena de agua intracelular perfectamente sensible a la vibración acústica y electromagnética. Tu biología entera es un instrumento cimático vivo que responde a:</p>
+                    <ul style="margin-top:0.8rem;">
+                        <li><strong>Frecuencias coherentes</strong> (Solfeggio, 432 Hz, 528 Hz): organizan el agua intracelular en patrones de alta cohesión → mayor eficiencia metabólica, mayor comunicación intercelular vía biofotones.</li>
+                        <li><strong>Frecuencias caóticas</strong> (contaminación acústica urbana, música con distorsión extrema): desorganizan el agua intracelular → reducción de cohesión celular, mayor entropía biológica.</li>
                     </ul>
                 </div>
-                <h2>3. La Resonancia Schumann: El Latido de la Tierra</h2>
-                <p>El físico <strong>Winfried Otto Schumann</strong> confirmó que la cavidad electromagnética entre la superficie terrestre y la ionosfera resuena a <strong>7.83 Hz</strong>. Los astronautas desconectados de esta frecuencia sufrían disrupciones severas en el ritmo circadiano, ánimo e inmunidad — hasta que la NASA incorporó generadores artificiales de Resonancia Schumann en sus naves.</p>
-                <h2>4. Las 9 Frecuencias Solfeggio</h2>
+
+                <h2>3. La Resonancia Schumann: Tu Sintonía con la Tierra</h2>
+                <p>En 1952, el físico <strong>Winfried Otto Schumann</strong> calculó y confirmó que la cavidad electromagnética entre la superficie terrestre y la ionosfera resuena naturalmente a <strong>7.83 Hz</strong> — la Resonancia Schumann. Esta frecuencia coincide notablemente con el estado cerebral Theta-Alfa limítrofe (8 Hz) del cerebro humano.</p>
+                <p>Cuando la NASA envió a sus primeros astronautas al espacio, sin acceso a la Resonancia Schumann, los astronautas comenzaron a sufrir disrupciones severas: insomnio, desorientación, depresión e inmunodeficiencia. La solución fue incorporar <strong>generadores artificiales de 7.83 Hz</strong> en las naves espaciales. Esta decisión confirma oficialmente que la Resonancia Schumann no es opcional para la salud humana: es una necesidad biológica fundamental.</p>
+
+                <h2>4. Binaural Beats: El Hackeo Neuroacústico</h2>
+                <p>Cuando se presentan dos tonos puros de frecuencias ligeramente distintas a cada oído por separado, el cerebro percibe un tercer tono que no existe en el audio original — la diferencia entre ambas frecuencias. Este tono percibido se llama <strong>Binaural Beat</strong> y arrastra la actividad eléctrica cerebral hacia esa frecuencia por Entrainment.</p>
+                <p>NeuroSync utiliza esta tecnología con precisión científica: si quieres inducir Theta (6 Hz), se envía 200 Hz al oído izquierdo y 206 Hz al derecho. El cerebro genera 6 Hz internamente y comienza a sincronizarse. <strong>Esto no es sugestión ni placebo</strong>: está documentado en electroencefalografía (EEG) por decenas de estudios independientes.</p>
+
                 <div class="info-box" style="background: rgba(0,212,255,0.05); border-left-color: var(--cyan-glow);">
-                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-music"></i> Aplicaciones Específicas</h3>
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-music"></i> Las 9 Frecuencias Solfeggio y sus Mecanismos</h3>
                     <ul>
-                        <li><strong>174 Hz:</strong> Alivio del dolor físico, anclaje y seguridad.</li>
-                        <li><strong>285 Hz:</strong> Regeneración de tejidos y sanación de heridas energéticas.</li>
-                        <li><strong>396 Hz:</strong> Liberación de miedo, culpa y bloqueos en el Chakra Raíz.</li>
-                        <li><strong>417 Hz:</strong> Transmutación y facilitar el cambio. Limpieza de traumas.</li>
-                        <li><strong>528 Hz:</strong> Reparación del ADN, transformación y milagros. La más investigada.</li>
-                        <li><strong>639 Hz:</strong> Conexión, relaciones y cohesión. Chakra Corazón.</li>
-                        <li><strong>741 Hz:</strong> Expresión, solución de problemas, desintoxicación. Chakra Garganta.</li>
-                        <li><strong>852 Hz:</strong> Despertar de la intuición. Chakra Tercer Ojo.</li>
-                        <li><strong>963 Hz:</strong> Iluminación y conexión con el Campo Unificado. Chakra Corona.</li>
+                        <li><strong>174 Hz:</strong> Reduce la percepción del dolor. Activa el parasimpático y libera tensión en tejido conectivo.</li>
+                        <li><strong>285 Hz:</strong> Documentada en estimulación de regeneración tisular in vitro. Frecuencia de reparación celular.</li>
+                        <li><strong>396 Hz:</strong> Disuelve cargas electromagnéticas de miedo y culpa. Primer chakra — raíz y supervivencia.</li>
+                        <li><strong>417 Hz:</strong> Facilita la ruptura de patrones energéticos resistentes. Transmutación de trauma.</li>
+                        <li><strong>528 Hz:</strong> La más estudiada. Documentada en aumento de absorción UV por ADN, indicador de integridad estructural del genoma.</li>
+                        <li><strong>639 Hz:</strong> Frecuencia de cohesión social y amor. Sincroniza hemisferios cerebrales derecho-izquierdo.</li>
+                        <li><strong>741 Hz:</strong> Activa el córtex prefrontal dorsolateral — sede del pensamiento creativo y la resolución de problemas.</li>
+                        <li><strong>852 Hz:</strong> Estimula la actividad de la glándula pineal. Frecuencia de percepción intuitiva expandida.</li>
+                        <li><strong>963 Hz:</strong> Frecuencia de la conciencia cósmica. Induce estados de unidad en meditadores avanzados documentados por EEG.</li>
                     </ul>
                 </div>
             </div>
@@ -580,23 +849,44 @@
             <div id="mod6" class="module-section">
                 <h1>Módulo 6: Neuroplasticidad y Reprogramación del Subconsciente</h1>
                 <img src="https://images.unsplash.com/photo-1559757175-5700dde675bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Neuroplasticidad">
-                <p>La <strong>Neuroplasticidad</strong> destruyó el mito del cerebro adulto estático: el cerebro es el órgano más dinámico del cuerpo, permaneciendo moldeable hasta el último día de tu vida. Las frecuencias de NeuroSync no son música motivacional, son agentes de neuroplasticidad dirigida.</p>
+                <div class="img-caption">Gráfico 6.1: El cerebro adult forma nuevas rutas neuronales cada vez que se introduce un patrón repetido con emoción.</div>
+                <p>Hasta la década de 1990, la neurociencia enseñaba que el cerebro adulto era estructuralmente estático: los circuitos establecidos en la infancia eran inamovibles. La <strong>Neuroplasticidad</strong> destruyó ese mito. El cerebro es el órgano más dinámico del cuerpo, y sus circuitos se remodelan con cada experiencia repetida. Las frecuencias de NeuroSync son <strong>agentes de neuroplasticidad dirigida</strong>: herramientas que inducen los estados cerebrales donde esa remodelación ocurre de forma acelerada.</p>
+
                 <h2>1. La Ley de Hebb: Cómo se Forjan las Cadenas Mentales</h2>
-                <p><em>"Las neuronas que se disparan juntas, se conectan físicamente."</em> Cada vez que repites una emoción asociada a un pensamiento, se fortalece el cable neuronal. Los cables no usados se debilitan por <strong>Poda Sináptica</strong>.</p>
-                <h2>2. Los 5 Estados Cerebrales</h2>
+                <p>El neuropsícologo <strong>Donald Hebb</strong> formuló en 1949 el principio que hoy lleva su nombre: <em>"Las neuronas que se disparan juntas, se conectan físicamente."</em> Cada vez que piensas un pensamiento específico mientras sientes una emoción concreta, las neuronas involucradas forman conexiones sinápticas más fuertes. La repetición convierte esa conexión débil en un cable de alta velocidad.</p>
+                <p>La implicación inversa es igualmente poderosa: las conexiones no utilizadas se degradan y eliminan por <strong>Poda Sináptica</strong>. El cerebro es brutalmente eficiente: lo que no usas, lo desconecta. Esto significa que cada día que eliges conscientemente pensar en un patrón diferente, estás debilitando los cables del patrón anterior y reforzando los del nuevo.</p>
+
+                <h2>2. Los 5 Estados Cerebrales y su Tecnología</h2>
                 <ul>
-                    <li><strong>Beta (12-30 Hz):</strong> Mente analítica. El Ego actúa como guardia que rechaza ideas nuevas. Las afirmaciones en Beta son rechazadas instantáneamente.</li>
-                    <li><strong>Alfa (8-12 Hz):</strong> Umbral de entrada al subconsciente. El guardia empieza a adormecerse.</li>
-                    <li><strong>Theta (4-8 Hz):</strong> Acceso directo al disco duro subconsciente. Los niños de 0 a 7 años viven aquí — por eso sus creencias son tan profundas. NeuroSync arrastra el cerebro a este estado.</li>
-                    <li><strong>Delta (0.5-4 Hz):</strong> Sueño profundo. Consolida lo aprendido en Theta.</li>
+                    <li><strong>Gamma (30-100 Hz):</strong> Procesamiento de alta complejidad, insights súbitos, conciencia expandida. Solo alcanzan este estado meditadores muy experimentados de forma sostenida.</li>
+                    <li><strong>Beta (12-30 Hz):</strong> Mente analítica, consciente y crítica. El Ego actúa como guardia que compara toda información nueva con la base de datos de experiencias pasadas y la rechaza si no coincide con la identidad establecida. Las afirmaciones en Beta son rechazadas instantáneamente por este guardia.</li>
+                    <li><strong>Alfa (8-12 Hz):</strong> Estado de relajación alerta. Umbral de entrada al subconsciente. El guardia del ego empieza a adormecerse. Las primeras 10-15 min con NeuroSync inducen Alfa.</li>
+                    <li><strong>Theta (4-8 Hz):</strong> Acceso directo al disco duro subconsciente. Los niños de 0 a 7 años viven permanentemente en Theta — por eso sus creencias se instalan tan profundamente y son tan resistentes al cambio racional adulto. La hipnosis clínica induce Theta. NeuroSync arrastra el cerebro a este estado despierto de forma no invasiva.</li>
+                    <li><strong>Delta (0.5-4 Hz):</strong> Sueño profundo sin sueños. Consolidación de memoria a largo plazo. Todo lo instaurado en Theta durante el día se consolida en Delta durante el sueño.</li>
                 </ul>
+
                 <div class="info-box" style="background: rgba(139,92,246,0.08); border-left-color: #8b5cf6;">
-                    <h3 style="color: #a64bf4; margin-top:0;"><i class="fas fa-wave-square"></i> Por qué las Afirmaciones Normales No Funcionan</h3>
-                    <p>En estado Beta, el sistema crítico analítico compara la afirmación con la evidencia del pasado y la rechaza. En Theta inducido por NeuroSync, no hay comparación: el subconsciente acepta la instrucción sin debate. Así funciona la hipnosis clínica.</p>
+                    <h3 style="color: #a64bf4; margin-top:0;"><i class="fas fa-wave-square"></i> Por qué las Afirmaciones Normales No Funcionan (y cómo solucionarlo)</h3>
+                    <p>El fracaso típico: la persona repite «<em>Soy abundante</em>» 100 veces en estado Beta. El subconsciente (que tiene grabado 30 años de escasez) responde instantáneamente: «<em>Mentira</em>». La afirmación no solo no se instala — refuerza el cinismo.</p>
+                    <p style="margin-top:0.8rem;">La solución de NeuroSync: usar las frecuencias para inducir Theta primero. En Theta, el sistema crítico del ego está inhibido. El subconsciente acepta la instrucción directamente, como un disco duro sin antivirus. Es exactamente el mismo mecanismo que usa la hipnosis clínica y la programación de niñez temprana.</p>
                 </div>
-                <h2>3. El Sistema Activador Reticular (RAS)</h2>
-                <p>De 400,000,000,000 bits de información por segundo, el RAS filtra solo 2,000 — aquellos que validan tus creencias dominantes. Si crees que las oportunidades escasean, tu RAS literalmente las bloquea de tu percepción.</p>
-                <div class="quote-box">"Crea un nuevo pensamiento hoy. Siente un nuevo sentimiento. Fuerza a tu cerebro a disparar en nuevas secuencias. Así reescribes tu destino biológico." <br><span style="font-size: 1rem; color: var(--cyan-glow); font-weight: bold; font-style: normal;">— Dr. Joe Dispenza</span></div>
+
+                <h2>3. El Sistema Activador Reticular (RAS): El Filtro de tu Realidad</h2>
+                <p>Tu cerebro recibe <strong>400,000,000,000 bits</strong> de información por segundo del entorno. Procesar conscientemente todo eso sería fatal. El <strong>Sistema Activador Reticular</strong>, ubicado en el tronco encefálico, actúa como filtro maestro: de todo ese flujo, solo deja pasar a la conciencia los <strong>2,000 bits que confirman tus creencias dominantes actuales</strong>.</p>
+                <p>Si tu creencia dominante es «no soy suficiente», tu RAS filtrará selectivamente todas las evidencias de tu insuficiencia y bloqueará las pruebas de tu competencia. Si tu creencia dominante cambia a «soy abundante y competente», el mismo RAS comenzará a mostrarte oportunidades que siempre estuvieron ahí pero eran invisibles para ti. No es ley de atracción. Es neurobiología pura.</p>
+
+                <h2>4. El Protocolo de Reprogramación con NeuroSync</h2>
+                <div class="info-box">
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-sync-alt"></i> Los 4 Pasos del Hackeo Subconsciente</h3>
+                    <ol>
+                        <li><strong>Inducción de Theta (10-15 min):</strong> NeuroSync en 432 Hz o 528 Hz con audífonos. El cerebro entra en Theta. El guardia del ego se duerme.</li>
+                        <li><strong>Instalación de la Instrucción:</strong> Mientras estás en Theta, di en primera persona, tiempo presente, con emoción de certeza: «SOY [nuevo estado deseado]. Es natural en mí.»</li>
+                        <li><strong>Visualización Senética:</strong> Ve la película de tu vida con esa creencia ya instalada. No imagines el futuro — hazlo real ahora mismo en tu mente con todos los sentidos.</li>
+                        <li><strong>Consolidación en Delta:</strong> Pon NeuroSync en modo nocturno (396-528 Hz) mientras te duermes. El estado Delta consolida lo que instalaste en Theta.</li>
+                    </ol>
+                </div>
+
+                <div class="quote-box">"Crea un nuevo pensamiento hoy. Siente un nuevo sentimiento. Fuerza a tu cerebro a disparar en nuevas secuencias. Así reescribes tu destino biológico." <br><span style="font-size: 0.95rem; color: var(--cyan-glow); font-style: normal;">— Dr. Joe Dispenza, neurocientífico e investigador en epigenética aplicada</span></div>
             </div>
             <div id="quiz6" class="module-section"><h1>Examen Nivel 6</h1><div class="quiz-container" id="quiz-form-6"></div></div>
 
@@ -604,34 +894,41 @@
             <div id="mod7" class="module-section">
                 <h1>Módulo 7: Códigos Sagrados y Geometría Matemática</h1>
                 <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Geometría sagrada">
-                <p>El universo se comunica exclusivamente a través de <strong>matemáticas y vibración electromagnética</strong>. La secuencia de Fibonacci y la Proporción Áurea (φ = 1.618) son la firma del Creador. Los Códigos Sagrados son el lenguaje numérico para hablarle directamente al Campo.</p>
-                <h2>1. ¿Qué son los Códigos Sagrados de Grabovoi?</h2>
-                <p>El matemático <strong>Grigori Grabovoi</strong> desarrolló secuencias numéricas que funcionan como una <strong>dirección IP en el universo cuántico</strong>: conectan tu campo electromagnético directamente con la frecuencia del resultado deseado.</p>
+                <p>El universo se comunica a través de <strong>matemáticas y vibración electromagnética</strong>. La secuencia de Fibonacci (1,1,2,3,5,8,13,21…) aparece en las espirales de las galaxias, los pétalos de las flores y los huracanes. La Proporción Áurea (φ = 1.618) estructura desde el ADN hasta la arquitectura del Partenón. Este patrón matemático universal es la firma geométrica del Campo Cuántico Unificado, y los Códigos Sagrados son la contraseña para acceder directamente a él.</p>
+
+                <h2>1. Los Códigos Sagrados de Grabovoi: La Física Detrás</h2>
+                <p>El matemático ruso <strong>Grigori Grabovoi</strong> desarrolló durante 20 años secuencias numéricas que, según su teoría, funcionan como <strong>coordenadas de frecuencia</strong> en el campo informacional del universo. El principio base: si cada estado de la realidad (salud, abundancia, amor) tiene una frecuencia electromagnética específica, entonces una secuencia numérica que vibre en esa misma frecuencia puede sintonizar tu campo con ese estado.</p>
+                <p>La clave científica está en la <strong>Resonancia Escalar</strong>: los números, visualizados con precisión e intensidad emocional en estado Theta, generan patrones de ondas escalares en el campo electromagnético del cerebro que crean coherencia con la frecuencia objetivo. No es fe ciega — es ingeniería de información cuántica.</p>
+
                 <h2>2. El Error de la Repetición Vacía</h2>
-                <p>Repetir un número sin emoción es marcar un teléfono con el auricular sobre la mesa. La emoción — específicamente la del <strong>deseo ya cumplido</strong> — es el voltaje que transmite el código del ruido a señal.</p>
+                <p>Repetir un código sin emoción es como marcar un número de teléfono con el auricular sobre la mesa. La conexión nunca se establece. La <strong>emoción del deseo ya cumplido</strong> es el voltaje que eleva la señal del código por encima del umbral de ruido del campo cuántico. Sin esa emoción, el código es solo información inerte.</p>
+                <p>La diferencia entre un practicante que obtiene resultados y uno que no, no está en el código que usa. Está en si puede <em>sentir</em> genuinamente que el resultado ya existe en el plano cuántico antes de verlo en el físico.</p>
+
                 <div class="info-box">
-                    <h3 style="color: var(--cyan-glow); margin-top:0;">Protocolo Completo de Activación</h3>
+                    <h3 style="color: var(--cyan-glow); margin-top:0;">Protocolo Completo de Activación de Códigos</h3>
                     <ol>
-                        <li>Induce estado Theta con NeuroSync en la frecuencia alineada con tu chakra objetivo.</li>
-                        <li>Activa la emoción de gratitud profunda en el pecho — certeza de que ya está resuelto.</li>
-                        <li>Visualiza los dígitos brillando en luz dorada frente a tu Tercer Ojo.</li>
-                        <li>Repite el código exactamente <strong>45 veces</strong> seguidas sin interrupciones.</li>
-                        <li>Sella con desapego: suelta el resultado. El apego emite la señal de "no lo tengo".</li>
+                        <li><strong>Preparación (10 min):</strong> Induce estado Theta con NeuroSync en la frecuencia del chakra objetivo (ej: 528 Hz para manifestación material).</li>
+                        <li><strong>Activación emocional:</strong> Genera en tu pecho la emoción de gratitud profunda — la certeza absoluta de que el resultado ya está resuelto en el campo cuántico.</li>
+                        <li><strong>Visualización del código:</strong> Con los ojos cerrados, visualiza los dígitos del código brillando en luz dorada frente a tu Tercer Ojo. Cada dígito se ilumina con precisión matemática.</li>
+                        <li><strong>Repetición (45 veces):</strong> Repite el código en voz baja o mentalmente, exactamente 45 veces sin interrupciones. El número 45 no es arbitrario: corresponde a ciclos específicos de ondas cerebrales en Theta.</li>
+                        <li><strong>Sellado con desapego:</strong> Declara: «Está hecho. Lo suelto al Campo.» El apego post-activación emite la señal de carencia que anula el código.</li>
                     </ol>
                 </div>
-                <h2>3. Biblioteca de Códigos Maestros</h2>
+
+                <h2>3. Biblioteca de Códigos Maestros con Mecanismo</h2>
                 <ul>
-                    <li><strong>520</strong> — Llegada inesperada de dinero.</li>
-                    <li><strong>71588</strong> — Atracción de clientes y oportunidades de negocio.</li>
-                    <li><strong>318 798 01</strong> — Abundancia económica sostenida.</li>
-                    <li><strong>1</strong> — Paz interior instantánea y retorno al presente.</li>
-                    <li><strong>8 888 412</strong> — Amor verdadero y conexión profunda.</li>
-                    <li><strong>1891011</strong> — Salud perfecta y regeneración celular.</li>
-                    <li><strong>52189</strong> — Sanación de memorias dolorosas y lazos ancestrales.</li>
-                    <li><strong>9187948</strong> — Protección y blindaje ante energías negativas.</li>
-                    <li><strong>000 888 000</strong> — Activación de la frecuencia de los milagros.</li>
+                    <li><strong>520</strong> — Llegada inesperada de dinero. Frecuencia de abundancia material súbita.</li>
+                    <li><strong>71588</strong> — Atracción de clientes, socios y oportunidades de negocio.</li>
+                    <li><strong>318 798 01</strong> — Abundancia económica sostenida y flujo financiero constante.</li>
+                    <li><strong>1</strong> — Paz interior instantánea. El código más simple y poderoso: el retorno al momento presente.</li>
+                    <li><strong>8 888 412</strong> — Amor verdadero, atracción de pareja y profundización de vínculos existentes.</li>
+                    <li><strong>1891011</strong> — Salud perfecta y regeneración celular acelerada.</li>
+                    <li><strong>52189</strong> — Sanación de memorias dolorosas, karma familiar y lazos ancestrales.</li>
+                    <li><strong>9187948</strong> — Protección electromagnética y blindaje ante campos de baja frecuencia.</li>
+                    <li><strong>000 888 000</strong> — Activación de la frecuencia de los milagros. Para situaciones sin salida aparente.</li>
                 </ul>
-                <div class="quote-box" style="border-color: #fbbf24; color: #fef08a;">"Los números son el lenguaje de Dios. En ellos, el universo escribió el código de creación de la realidad." <br><span style="font-size: 1rem; color: #fbbf24; font-weight: bold; font-style: normal;">— Pitágoras de Samos</span></div>
+
+                <div class="quote-box" style="border-color: #fbbf24; color: #fef08a;">"Los números son el lenguaje en que Dios escribió el Universo. Todo está escrito en él." <br><span style="font-size: 0.95rem; color: #fbbf24; font-style: normal;">— Galileo Galilei</span></div>
             </div>
             <div id="quiz7" class="module-section"><h1>Examen Nivel 7</h1><div class="quiz-container" id="quiz-form-7"></div></div>
 
@@ -639,21 +936,41 @@
             <div id="mod8" class="module-section">
                 <h1>Módulo 8: Epigenética y Modificación del ADN</h1>
                 <img src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="ADN brillante">
-                <div class="img-caption">Gráfico 8.1: La expresión genética es alterada por el entorno electromagnético.</div>
-                <p>El <strong>Dr. Bruce Lipton</strong> y la <strong>Epigenética</strong> destruyeron el Determinismo Genético: la misma célula con idéntico ADN se convierte en músculo, hueso o grasa dependiendo del entorno químico que la rodea, no del gen en sí.</p>
-                <h2>1. La Bioquímica de la Percepción</h2>
-                <p><strong>Modo Supervivencia (Simpático):</strong> La percepción de amenaza libera Cortisol y Adrenalina → la sangre huye de los órganos, el sistema inmune baja, genes de inflamación se encienden.<br><strong>Modo Crecimiento (Parasimpático):</strong> La percepción de seguridad libera Oxitocina y Dopamina → reparación celular, inmunidad potenciada, genes de longevidad activos.</p>
-                <div class="quote-box" style="border-color: #34d399; color: #a7f3d0;">Tu mente tiene autoridad absoluta sobre el comportamiento celular. No eres víctima de tu ADN. Eres el arquitecto de tu expresión genética.<br><span style="font-size: 1rem; color: #34d399; font-weight: bold; font-style: normal;">— Dr. Bruce Lipton</span></div>
-                <h2>2. Los Telómeros: El Reloj Biológico que puedes Controlar</h2>
-                <p>La <strong>Dra. Elizabeth Blackburn</strong> (Nobel 2009) demostró que la enzima <strong>Telomerasa</strong> puede reparar y alargar los telómeros revirtiendo el envejecimiento celular, y su actividad correlaciona directamente con las emociones positivas sostenidas.</p>
-                <h2>3. La Frecuencia 528 Hz y el ADN</h2>
-                <p>Investigadores documentaron que la exposición a 528 Hz aumenta la absorción de luz ultravioleta por el ADN in vitro — un indicador de integridad estructural. Si el cuerpo es 70% agua y el ADN está inmerso en ese agua, 528 Hz crea el entorno acuoso más organizado y coherente para que el ADN opere en su óptimo.</p>
+                <div class="img-caption">Gráfico 8.1: La expresión genética es alterada por el entorno electromagnético y la percepción del observador.</div>
+                <p>Durante 300 años, la biología enseñó el <strong>Determinismo Genético</strong>: tus genes son tu destino inamovible. Si tu padre tuvo diabetes, tú la tendrás. Si tu madre padeció depresión, es tu herencia inevitable. El Dr. <strong>Bruce Lipton</strong>, biólogo celular de Stanford, destruyó este paradigma con un experimento elegante: tomó células madre genéticamente idénticas y las colocó en tres entornos químicos distintos. Una se convirtió en músculo, otra en hueso, otra en grasa. Mismo ADN — tres destinos biológicos completamente diferentes. La variable determinante no era el gen: era el <em>entorno</em>.</p>
+
+                <h2>1. La Epigenética: Tú Eres el Director de tu ADN</h2>
+                <p>La palabra <em>epigenética</em> significa literalmente «por encima de los genes». Son los mecanismos que controlan cuáles genes se expresan (se «encienden») y cuáles permanecen silenciados (se «apagan»), sin alterar la secuencia del ADN subyacente. Los principales mecanismos epigenéticos son:</p>
+                <ul>
+                    <li><strong>Metilación del ADN:</strong> La adición de grupos metilo a segmentos del ADN apaga esos genes. El estrés crónico produce patrones de metilación que silencian genes de reparación celular e inmunidad.</li>
+                    <li><strong>Modificación de Histonas:</strong> El ADN se enrolla en proteínas llamadas histonas. Las emociones de alta frecuencia (amor, gratitud) producen modificaciones que relajan el enrollamiento, permitiendo que los genes de longevidad y regeneración se expresen.</li>
+                    <li><strong>ARN no codificante:</strong> Moléculas de ARN que regulan la expresión génica en respuesta a señales del entorno electromagnético — incluyendo frecuencias sonoras.</li>
+                </ul>
+
+                <h2>2. La Bioquímica de la Percepción: Dos Modos de Existir</h2>
+                <p>El sistema nervioso autónomo tiene exactamente dos modos:</p>
+                <ul>
+                    <li><strong>Modo Supervivencia (Simpático):</strong> La percepción de amenaza — real o imaginada — libera Cortisol y Adrenalina. La sangre abandona los órganos vitales y va a los músculos (preparación para huir). El sistema inmune se suprime. Genes pro-inflamatorios se activan. Genes de reparación celular se silencian. El cuerpo literalmente deja de invertir en su propio mantenimiento para enfocarse en la supervivencia inmediata.</li>
+                    <li><strong>Modo Crecimiento (Parasimpático):</strong> La percepción de seguridad libera Oxitocina y Dopamina. La sangre vuelve a los órganos. El sistema inmune se potencia. Genes de longevidad (como SIRT1 y FOXO3) se activan. El cuerpo entra en modo de reparación, regeneración y construcción.</li>
+                </ul>
+                <p><strong>El punto crítico:</strong> el sistema nervioso no distingue entre una amenaza real y una amenaza imaginada. Si tu mente está en el pasado (rumiando traumas) o en el futuro (anticipando catástrofes), el cuerpo secreta cortisol como si el peligro fuera físicamente real ahora mismo. La práctica con NeuroSync entrena al sistema nervioso a permanecer en modo de crecimiento por defecto.</p>
+
+                <div class="quote-box" style="border-color: #34d399; color: #a7f3d0;">"Tu mente tiene autoridad absoluta sobre el comportamiento celular. No eres víctima de tu ADN. Eres el arquitecto de tu expresión genética." <br><span style="font-size: 0.95rem; color: #34d399; font-style: normal;">— Dr. Bruce Lipton, The Biology of Belief (2005)</span></div>
+
+                <h2>3. Los Telómeros: El Reloj Biológico que puedes Controlar</h2>
+                <p>En los extremos de cada cromosoma existen secuencias repetitivas de ADN llamadas <strong>telómeros</strong> — análogos a las puntas plásticas de los cordones de zapato que evitan que se deshilachen. Cada vez que una célula se divide, los telómeros se acortan ligeramente. Cuando se acortan demasiado, la célula entra en senescencia (envejece) o apoptosis (muere).</p>
+                <p>La <strong>Dra. Elizabeth Blackburn</strong> (Premio Nobel de Medicina 2009) descubrió la enzima <strong>Telomerasa</strong>, que puede reconstruir y alargar los telómeros, revirtiendo el envejecimiento celular. Su investigación posterior mostró que la actividad de la telomerasa correlaciona directamente con los niveles de estrés, la calidad del sueño y — crucialmente — los estados emocionales dominantes. Las personas con alta coherencia cardíaca y emociones positivas sostenidas tenían telómeros significativamente más largos que sus pares cronológicos con estrés crónico.</p>
+
+                <h2>4. La Frecuencia 528 Hz y la Integridad del ADN</h2>
+                <p>El Dr. <strong>Glen Rein</strong>, bioquímico de la Universidad de Stanford, documentó en 1998 que muestras de ADN expuestas a 528 Hz mostraban un incremento del 11% en absorción de luz ultravioleta — un indicador directo de mayor integridad estructural del ADN. La hipótesis: el agua que rodea e impregna el ADN se organiza en estructuras más coherentes bajo la influencia de 528 Hz, reduciendo la oxidación y el daño al genoma.</p>
+
                 <div class="info-box" style="background: rgba(16,185,129,0.05); border-left-color: #10b981;">
-                    <h3 style="color: #10b981; margin-top:0;"><i class="fas fa-dna"></i> Protocolo de Activación Epigenética</h3>
+                    <h3 style="color: #10b981; margin-top:0;"><i class="fas fa-dna"></i> Protocolo de Activación Epigenética (21 Días)</h3>
                     <ol>
-                        <li><strong>Antes de dormir:</strong> NeuroSync en 528 Hz. Declara con emoción: "Mis células se regeneran perfectamente."</li>
-                        <li><strong>Al despertar:</strong> 2 minutos de gratitud activa antes de revisar el celular. Esto activa oxitocina y reduce el cortisol matutino.</li>
-                        <li><strong>Durante el día:</strong> Aplicar respiración 4-4-4 ante el estrés para interrumpir la cascada de cortisol.</li>
+                        <li><strong>Al despertar (2 min):</strong> Antes de revisar el celular, genera gratitud activa. Piensa en 3 cosas concretas por las que estar genuinamente agradecido. Esto activa oxitocina y suprime el cortisol del despertar.</li>
+                        <li><strong>Mañana (15 min):</strong> NeuroSync en 528 Hz con audífonos. Declara con emoción de certeza: «Mis células se regeneran perfectamente. Mi ADN expresa salud óptima.»</li>
+                        <li><strong>Durante el día:</strong> Ante cualquier estrés, aplica respiración 4-4-4 (inhala 4s, sostén 4s, exhala 4s) para interrumpir la cascada de cortisol antes de que se consolide.</li>
+                        <li><strong>Noche (antes de dormir):</strong> NeuroSync en 285 Hz — frecuencia de regeneración tisular. El cuerpo realiza el 90% de su reparación celular durante las fases de sueño profundo Delta.</li>
                     </ol>
                 </div>
             </div>
@@ -662,29 +979,48 @@
             <!-- MÓDULO 9 -->
             <div id="mod9" class="module-section">
                 <h1>Módulo 9: Corte de Lazos Kármicos y Perdón Cuántico</h1>
-                <img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Liberación y sanación">
-                <p><strong>No puedes llenar una taza que está llena de agua sucia.</strong> Las conexiones tóxicas del pasado son cables energéticos físicamente reales que siguen drenando tu batería vital mucho después de que la relación terminó.</p>
+                <img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Liberación">
+                <div class="img-caption">Gráfico 9.1: Los lazos energéticos persisten después de que las relaciones terminan, drenando el campo vital.</div>
+                <p><strong>No puedes llenar una taza que está llena de agua sucia.</strong> Las conexiones tóxicas del pasado son cables energéticos físicamente reales que siguen drenando tu batería vital mucho después de que la relación terminó. Hasta que no los cortes, el espacio para lo nuevo simplemente no existe en tu campo electromagnético.</p>
+
                 <h2>1. La Física de los Lazos Energéticos</h2>
-                <p>Los lazos energéticos persisten después de que la relación termina. Si todavía sientes rabia o rencor hacia alguien, el lazo está activo. Cada pensamiento con emoción intensa envía porciones de tu energía vital a esa persona.</p>
-                <h2>2. El Perdón como Tecnología Cuántica</h2>
-                <p>El perdón cuántico es el <strong>acto de cortar el cable energético y reintegrar esa energía en tu propio campo</strong>. No cambias el pasado ni apruebas lo que te hicieron. Solo dejas de ser energéticamente su prisionero. El rencor vibra entre 30-150 Hz. El perdón genuino salta a 350 Hz.</p>
-                <h2>3. Protocolo Ho'oponopono</h2>
-                <p>Las cuatro frases del proceso hawaiano de sanación:</p>
+                <p>Cada relación de alta carga emocional — romance intenso, conflicto prolongado, dependencia emocional, abuso — genera conexiones electromagnéticas entre los campos biomagnéticos de los individuos involucrados. Estas conexiones persisten mucho después de que la relación termina a nivel físico.</p>
+                <p>El indicador más claro de que el lazo está activo: cuando piensas en esa persona con cualquier carga emocional intensa — rabia, tristeza, nostalgia, deseo de venganza — inmediatamente sientes un cambio en tu energía. Eso no es memoria psicológica: es la activación del cable electromagnético. Cada pensamiento cargado emotivamente envía una porción de tu energía vital al otro extremo del lazo.</p>
+
+                <div class="info-box" style="background: rgba(239,68,68,0.05); border-left-color: #ef4444;">
+                    <h3 style="color: #ef4444; margin-top:0;"><i class="fas fa-link"></i> Diagnóstico: ¿Tienes Lazos Activos?</h3>
+                    <ul>
+                        <li>Pensamientos involuntarios y recurrentes sobre alguien del pasado que aparecen sin que los invites.</li>
+                        <li>Sueños frecuentes con esa persona, a menudo con carga emocional intensa.</li>
+                        <li>Sensación de que «nunca pudiste cerrar» esa relación, aunque hayan pasado años.</li>
+                        <li>Cualquier tipo de emoción intensa (rabia, tristeza, nostalgia, rencor) al mencionar su nombre.</li>
+                        <li>Patrones repetitivos de relaciones: atraes el mismo tipo de persona una y otra vez.</li>
+                    </ul>
+                </div>
+
+                <h2>2. El Perdón Cuántico: La Tecnología de la Liberación</h2>
+                <p>El perdón cuántico no es un acto moral ni religioso. Es una operación de ingeniería electromagnética: <strong>cortar el cable energético y reintegrar esa energía en tu propio campo</strong>. No cambias el pasado, ni apruebas lo que ocurrió, ni vuelves a conectarte con esa persona. Simplemente dejas de ser su prisionero energético.</p>
+                <p>En la Escala de Hawkins: el rencor activo vibra entre 30-150 Hz (campo de debilitamiento). El perdón genuino — no el forzado, sino el que viene de entender el mecanismo— salta instantáneamente a 350 Hz (Aceptación). Es el mayor salto vibratario disponible en una sola acción humana.</p>
+
+                <h2>3. El Protocolo Ho'oponopono</h2>
+                <p>El Ho'oponopono es una práctica hawaiana ancestral de sanación basada en el principio de responsabilidad total: <em>todo lo que aparece en mi realidad es una proyección de mi propio subconsciente</em>. No como auto-castigo, sino como empoderamiento radical: si yo lo creo, yo puedo limpiarlo.</p>
                 <ul>
-                    <li><strong>"Lo Siento"</strong> — Reconocimiento del programa en mi subconsciente que co-creó esta situación.</li>
-                    <li><strong>"Perdóname"</strong> — Solicitud al Campo Cuántico para limpiar esa memoria de mi disco duro.</li>
-                    <li><strong>"Gracias"</strong> — Gratitud por la lección que esta persona vino a mostrarme.</li>
-                    <li><strong>"Te Amo"</strong> — Reconocimiento de que ambos somos parte del Campo Unificado.</li>
+                    <li><strong>«Lo Siento»:</strong> Reconocimiento del programa en mi subconsciente que co-creó esta situación. No me culpo — simplemente lo reconozco.</li>
+                    <li><strong>«Perdóname»:</strong> Solicitud al Campo Cuántico (Dios, el Universo, la Fuente) para limpiar esa memoria de mi disco duro subconsciente.</li>
+                    <li><strong>«Gracias»:</strong> Gratitud por la lección que esta persona o situación vino a mostrarme sobre mis propios programas internos.</li>
+                    <li><strong>«Te Amo»:</strong> Reconocimiento de que, a nivel del Campo Unificado, esa persona y yo somos la misma conciencia experimentándose a sí misma.</li>
                 </ul>
+
                 <div class="info-box">
-                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-cut"></i> Ejercicio de Corte de Lazos (15-20 min con 396 Hz)</h3>
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-cut"></i> Protocolo Quirúrgico de Corte de Lazos (20 min con 396 Hz)</h3>
                     <ol>
-                        <li>Recuéstate y relájate completamente con 396 Hz en audífonos.</li>
-                        <li>Visualiza a la persona frente a ti en un espacio neutro.</li>
-                        <li>Observa los cables negros gruesos que los conectan desde el abdomen o pecho.</li>
-                        <li>Invoca unas tijeras de luz dorada y córtalos de un tajo limpio y definitivo.</li>
-                        <li>El extremo en tu lado regresa hacia ti como luz y se integra. El de ellos se disuelve en luz.</li>
-                        <li>Observa cómo la persona se da vuelta y camina hacia la luz. Ambos son libres.</li>
+                        <li>Recuéstate. Pon NeuroSync en 396 Hz (frecuencia de liberación de miedo y lazos). Cierra los ojos y respira profundamente 5 veces.</li>
+                        <li>Visualiza a la persona en cuestión frente a ti, en un espacio neutro de luz tenue. Obsérvala sin juicio ni emoción, solo como un ser que, como tú, estaba haciendo lo mejor que podía con su nivel de conciencia en ese momento.</li>
+                        <li>Observa los cables — cuerdas oscuras y densas — que los conectan desde el abdomen, el pecho o el plexo solar. Pueden ser uno o varios.</li>
+                        <li>Invoca unas tijeras de luz dorada pura. Con intención clara y sin rabia (el rencor refuerza el lazo en lugar de cortarlo), córtalos de un tajo limpio y definitivo.</li>
+                        <li>Observa cómo los extremos en tu lado regresan a tu cuerpo como luz y se reintegran. Los del lado de la otra persona se disuelven en luz y retornan a ella.</li>
+                        <li>Díle interiormente: «Te libero. Me libero. Ambos somos libres.» Obsérvala girarse y caminar hacia la luz.</li>
+                        <li>Sella tu campo con la Burbuja Espejo. Declara: «Mi campo está limpio y sellado.»</li>
                     </ol>
                 </div>
             </div>
@@ -694,33 +1030,51 @@
             <div id="mod10" class="module-section">
                 <h1>Módulo 10: El Salto Cuántico y la Integración Final</h1>
                 <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Universo cuántico">
-                <p>Has cruzado el velo. Lo que aprendiste no es un conjunto de creencias alternativas. Es el mapa operativo de la realidad. Ahora posees el conocimiento que los maestros iniciados han guardado durante siglos, avalado hoy por la física más avanzada del mundo.</p>
-                <h2>1. La Ley de la Asunción de Neville Goddard</h2>
-                <p>El error final del buscador es seguir <em>deseando</em>. El acto mismo del deseo emite la señal de <strong>separación y carencia</strong>. Goddard descubrió que:</p>
+                <div class="img-caption">Gráfico 10.1: El colapso de la onda cuántica — el momento exacto en que la posibilidad se convierte en realidad.</div>
+                <p>Has llegado al punto de integración. Lo que aprendiste no es un conjunto de creencias alternativas: es el mapa operativo científico de la realidad, avalado por física cuántica, neurociencia, epigenética y biofísica. Ahora el conocimiento debe pasar del intelecto a la práctica encarnada. Porque el universo no responde a lo que <em>sabes</em>. Responde a lo que <em>eres</em> vibratoriamente.</p>
+
+                <h2>1. La Ley de la Asunción — Neville Goddard</h2>
+                <p>El error más común del buscador es seguir <em>deseando</em>. El deseo es una señal cuántica de <strong>carencia y separación</strong>: emite la información de que lo deseado aún no existe en tu realidad. El Campo Cuántico colapsa esa señal y produce más ausencia del objeto deseado.</p>
+                <p>Neville Goddard, el mago del siglo XX, descubrió la solución: en lugar de desear, <strong>asumir</strong>. La asunción es el acto de vivir emocionalmente y conscientemente como si el estado deseado ya fuera tu realidad presente.</p>
                 <ul>
-                    <li><strong>Desear (Carencia):</strong> "Quiero tener más dinero" → Señal cuántica: FALTA dinero → El campo colapsa más falta.</li>
-                    <li><strong>Asumir (Presencia):</strong> "SOY una persona próspera" → Señal cuántica: La prosperidad es mi estado natural → El campo colapsa eventos que la confirman.</li>
+                    <li><strong>Desear (Señal de Carencia):</strong> «Quiero tener más dinero» → Campo recibe: FALTA dinero → Colapsa más situaciones de falta.</li>
+                    <li><strong>Asumir (Señal de Presencia):</strong> «SOY una persona económicamente libre» → Campo recibe: La libertad económica es mi estado natural → Colapsa eventos, personas y oportunidades que confirman esa realidad.</li>
                 </ul>
-                <h2>2. La Técnica del Scripting</h2>
-                <p>Escribe a mano (la escritura manual activa más regiones cerebrales) sobre tu vida como si ya existiera la realidad deseada. El subconsciente no distingue entre una experiencia vivida e intensamente imaginada — ambas crean la misma química cerebral.</p>
-                <h2>3. Tu Rutina de Alquimista Cuántico: El Protocolo de 21 Días</h2>
-                <ul>
-                    <li><strong>Fase A.M. (10 min):</strong> Al despertar, sin tocar el celular, pon NeuroSync y reproduce tu escena de asunción con la emoción de la naturalidad durante 5-10 minutos.</li>
-                    <li><strong>Higiene Diurna:</strong> Ante conflictos, aplica Burbuja Espejo y Código Sagrado 1 (paz interior). No te enganches a la frecuencia densa del entorno.</li>
-                    <li><strong>Fase P.M. (Al dormir):</strong> NeuroSync en bucle infinito con volumen bajo. El estado Delta consolida las instrucciones instaladas durante el día sin interferencia del Ego.</li>
-                </ul>
-                <div class="quote-box" style="border-color: #10b981; color: #a7f3d0;">
-                    El Universo ya es tuyo en el Campo de Posibilidades. No tienes que pedirlo. Solo tienes que dejar de pedirle permiso a tus traumas para habitar la realidad que ya existe para ti en el plano cuántico. Sal de aquí. Siente que ya es tuyo. Y colapsa la onda.
-                </div>
+
+                <h2>2. La Técnica del Scripting: Programación por Escritura</h2>
+                <p>La escritura a mano activa simultáneamente más regiones cerebrales que escribir en teclado: áreas motoras, visuales, del lenguaje y de procesamiento emocional. Esto hace de la escritura manuscrita uno de los métodos más potentes de instalación subconsciente disponibles sin tecnología especial.</p>
+                <p>Protocolo de Scripting: cada noche, antes de dormir (cuando el cerebro está en transición hacia Theta), escribe durante 5-10 minutos en primera persona y tiempo presente sobre tu vida tal como ya existe en la realidad que estás asumiendo. No como deseo futuro — como relato de hechos actuales. El subconsciente no distingue entre una experiencia vivida e intensamente imaginada: ambas activan los mismos circuitos neuronales y producen la misma química cerebral.</p>
+
                 <div class="info-box" style="background: rgba(0,212,255,0.05); border-left-color: var(--cyan-glow);">
-                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-crown"></i> La Advertencia Final</h3>
-                    <p>El conocimiento de las leyes cuánticas sin su aplicación activa y consistente es solo entretenimiento intelectual. El universo no responde a lo que sabes intelectualmente. Responde a lo que eres vibratoriamente. <strong>La diferencia entre el alumno que transforma su vida y el que no, es una sola decisión: aplicar cada herramienta con consistencia diaria por 21 días, sin esperar evidencia antes de creer.</strong></p>
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-calendar-check"></i> La Rutina del Alquimista Cuántico — Protocolo de 21 Días</h3>
+                    <p>21 días es el tiempo mínimo documentado para la formación de nuevas rutas neuronales estables. Cada día, sin excepción:</p>
+                    <ol style="margin-top:0.8rem;">
+                        <li><strong>6:00 AM — Activación (10 min):</strong> Sin tocar el celular, pon NeuroSync y reproduce tu «escena de asunción»: una escena específica, sensorial y emocional de tu vida ya en el estado deseado. Siéntela con la naturalidad de lo que ya ocurrió.</li>
+                        <li><strong>Mediodía — Anclaje (2 min):</strong> Código Sagrado 1 (paz interior). Burbuja Espejo si hay personas de baja frecuencia en tu entorno. Ho'oponopono si surge alguna fricción.</li>
+                        <li><strong>Tarde — Vigilancia:</strong> Observa tus pensamientos como un testigo neutral. Cuando aparezca un pensamiento de carencia o limitación, no lo luches: inuóndalo con la frecuencia de tu asunción. «Gracias por aparecer. Mi realidad ya es diferente.»</li>
+                        <li><strong>Noche — Consolidación (10 min):</strong> Scripting manuscrito + NeuroSync en 396-528 Hz mientras te duermes. El estado Delta consolida sin interferencia del ego todo lo instalado durante el día.</li>
+                    </ol>
                 </div>
-            </div>
+
+                <h2>3. Los Tres Pilares del Alquimista</h2>
+                <ul>
+                    <li><strong>Consistencia sin evidencia previa:</strong> El error crítico es esperar ver resultados antes de mantener la práctica. El Campo responde a la frecuencia constante, no a la intermitente. 21 días de práctica diaria sin juzgar los resultados intermedios.</li>
+                    <li><strong>Gratitud como frecuencia base:</strong> La gratitud genuina (no la forzada) vibra a 540 Hz en la escala de Hawkins — el nivel de Alegría. Es el estado de alta frecuencia más accesible para la mayoría de personas y funciona como amplificador de todo lo demás.</li>
+                    <li><strong>Desapego de los resultados:</strong> La paradoja final: para manifestar algo, debes no necesitarlo desesperadamente. La necesidad emite la señal de carencia. La seguridad relajada de quien ya tiene emite la señal de abundancia.</li>
+                </ul>
+
+                <div class="quote-box" style="border-color: #10b981; color: #a7f3d0;">El Universo ya es tuyo en el Campo de Posibilidades. No tienes que pedirlo. Solo tienes que dejar de pedirle permiso a tus traumas para habitar la realidad que ya existe para ti. Sal de aquí. Siéntete ya en ella. Y colapsa la onda.</div>
+
+                <div class="info-box" style="background: rgba(0,212,255,0.05); border-left-color: var(--cyan-glow);">
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-crown"></i> La Advertencia Final del Alquimista</h3>
+                    <p>El conocimiento de las leyes cuánticas sin su aplicación activa y consistente es solo entretenimiento intelectual elevado. El universo no responde a lo que sabes intelectualmente. Responde a lo que eres vibratoriamente. <strong>La diferencia entre el alumno que transforma su vida y el que no, es una sola decisión tomada ahora: aplicar cada herramienta aprendida en este taller con consistencia diaria por 21 días, sin esperar evidencia externa antes de mantener la frecuencia interna.</strong></p>
+                </div>
+            </div><!-- /mod10 -->
             <div id="quiz10" class="module-section"><h1>Examen Final de Acreditación</h1><div class="quiz-container" id="quiz-form-10"></div></div>
 
-        </div>
-    </div>
+            </div><!-- /content-scroll-inner -->
+        </div><!-- /content-area -->
+    </div><!-- /layout-container -->
 
     <script>
         // ==========================================
@@ -741,8 +1095,111 @@
             ],
             2: [
                 { q: "1. Desde la perspectiva holística, ¿cuál es el origen real de una enfermedad física crónica?", options: ["A) Aire contaminado únicamente.", "B) Azar genético inamovible.", "C) Un bloqueo emocional o mental no resuelto que, por no limpiarse, se densificó hasta alcanzar el cuerpo físico.", "D) Castigo del destino.", "E) Efecto de frecuencias muy altas."], ans: 2 },
-                { q: "2. ¿Qué capa del aura almacena las creencias limitantes y los patrones de pensamiento lógicos?", options: ["A) Cuerpo Físico", "B) Cuerpo Etérico/Emocional", "C) Cuerpo Mental", "D) Cuerpo Espiritual", "E) Cuerpo Astral Superior"], ans: 2 }
-                // TODO: El resto de preguntas se truncaron. Pega aquí el resto de arrays de quizzes (del 2 al 10).
+                { q: "2. ¿Qué capa del aura almacena las creencias limitantes y los patrones de pensamiento lógicos?", options: ["A) Cuerpo Físico", "B) Cuerpo Etérico/Emocional", "C) Cuerpo Mental", "D) Cuerpo Espiritual", "E) Cuerpo Astral Superior"], ans: 2 },
+                { q: "3. El campo electromagnético del corazón es ___ veces más intenso que el del cerebro:", options: ["A) 10 veces", "B) 100 veces", "C) 5,000 veces", "D) 2 veces", "E) 1,000,000 de veces"], ans: 2 },
+                { q: "4. ¿Qué colapsa la geometría sagrada del toroide cardíaco, volviéndolo incoherente?", options: ["A) Beber mucha agua.", "B) El estrés crónico, el trauma no resuelto y las emociones de baja frecuencia.", "C) Hacer ejercicio intenso.", "D) Leer libros de ciencia.", "E) Dormir más de 8 horas."], ans: 1 },
+                { q: "5. ¿Qué institución desarrolló la técnica Quick Coherence® para estabilizar el toroide?", options: ["A) NASA", "B) El Instituto HeartMath", "C) Universidad de Harvard", "D) Centro de Control de Enfermedades", "E) CERN"], ans: 1 },
+                { q: "6. ¿Qué son los biofotones según el Dr. Fritz-Albert Popp?", options: ["A) Células muertas.", "B) Bacterias luminosas.", "C) Paquetes de luz ultravioleta coherente emitidos por las células como sistema de comunicación.", "D) Reflejo del sol en la piel.", "E) Energía calórica del cuerpo."], ans: 2 },
+                { q: "7. El fenómeno de 'Entrainment' Cardíaco ocurre porque:", options: ["A) El corazón deja de latir.", "B) El corazón y el cerebro sincronizan su actividad eléctrica con la frecuencia del audio externo.", "C) Los pulmones se expanden más.", "D) El cerebro domina al corazón.", "E) La sangre fluye más rápido."], ans: 1 },
+                { q: "8. Las células sanas emiten fotones de manera:", options: ["A) Coherente, como un láser biológico", "B) Caótica y dispersa", "C) Solo de noche", "D) No emiten fotones", "E) En ráfagas de calor"], ans: 0 },
+                { q: "9. ¿Qué frecuencia de NeuroSync se menciona para aplicar el Entrainment Cardíaco?", options: ["A) 100 Hz", "B) 285 Hz o 432 Hz", "C) 15,000 Hz", "D) 0 Hz", "E) 1.5 Hz"], ans: 1 },
+                { q: "10. El cuerpo espiritual o causal bloqueado suele producir:", options: ["A) Hambre excesiva.", "B) Visión borrosa.", "C) Vacío existencial profundo a pesar de tener éxito material.", "D) Dolor de rodillas.", "E) Exceso de sueño."], ans: 2 }
+            ],
+            3: [
+                { q: "1. ¿Cuál es la base científica del 'vampirismo energético' entre humanos?", options: ["A) Es un mito antiguo.", "B) Segunda Ley de la Termodinámica: la energía fluye de mayor a menor concentración.", "C) Robo de sangre.", "D) Sugestión psicológica pura.", "E) Falta de vitaminas."], ans: 1 },
+                { q: "2. ¿Cuál de estas NO es una señal de un campo electromagnético vampirizado?", options: ["A) Somnolencia repentina.", "B) Bostezos excesivos.", "C) Dolor punzante en el plexo solar.", "D) Sentirse con más energía después de la conversación.", "E) Nubosidad mental."], ans: 3 },
+                { q: "3. ¿Cuál es el mecanismo del Earthing o Grounding?", options: ["A) Caminar por el lodo.", "B) La tierra tiene carga neta negativa y absorbe el exceso de iones positivos (radicales libres) del cuerpo.", "C) Absorber calor del suelo.", "D) Estirar los músculos.", "E) Sudar por los pies."], ans: 2 },
+                { q: "4. ¿Por qué el Reseteo Salino debe finalizar con 30 segundos de agua fría?", options: ["A) Para limpiar el jabón.", "B) El frío activa el nervio vago, activando el parasimpático y reduciendo el cortisol.", "C) Para despertar más rápido.", "D) Para cerrar los poros.", "E) No es necesario el agua fría."], ans: 1 },
+                { q: "5. La técnica de la Burbuja Espejo funciona bajo el principio de:", options: ["A) Magia defensiva.", "B) Un campo coherente de alta frecuencia tiende a mantenerse estable frente a perturbaciones externas.", "C) Reflejo de luz solar.", "D) Hipnosis de los demás.", "E) Aislamiento social."], ans: 1 },
+                { q: "6. ¿Qué frecuencia se recomienda usar para limpiar espacios donde hubo discusiones?", options: ["A) 174 Hz", "B) 417 Hz — Transmutación", "C) 963 Hz", "D) 396 Hz", "E) 528 Hz"], ans: 1 },
+                { q: "7. Los iones positivos artificiales (dañinos) son generados principalmente por:", options: ["A) Pantallas, aire acondicionado y estrés", "B) Bosques y cascadas", "C) El mar", "D) Animales domésticos", "E) Plantas de interior"], ans: 0 },
+                { q: "8. La respiración 4-7-8 funciona para la descarga porque:", options: ["A) Llena los pulmones de oxígeno.", "B) Detiene el pensamiento.", "C) La exhalación larga activa el sistema parasimpático y expulsa catabólicos del estrés.", "D) Produce mareo.", "E) Quema calorías."], ans: 2 },
+                { q: "9. ¿Cuántas veces debes repetir el ciclo 4-4-4 para desactivar la amígdala antes de la Burbuja?", options: ["A) Cuatro veces", "B) Una vez", "C) Cien veces", "D) Diez veces", "E) No importa el número"], ans: 0 },
+                { q: "10. Para dormitorios con insomnio o pesadillas recurrentes, ¿qué frecuencia se sugiere?", options: ["A) 174 Hz", "B) 285 Hz", "C) 741 Hz — Desintoxicación", "D) 528 Hz", "E) 852 Hz"], ans: 2 }
+            ],
+            4: [
+                { q: "1. ¿Quién acuñó el término 'Cymatics' (Cimática) para el estudio de la forma del sonido?", options: ["A) Albert Einstein", "B) Hans Jenny, en 1967", "C) Nikola Tesla", "D) Isaac Newton", "E) Leonardo da Vinci"], ans: 1 },
+                { q: "2. El agua expuesta a la frecuencia 528 Hz en los experimentos de Masaru Emoto forma:", options: ["A) Figuras amorfas.", "B) Nada, el agua no cambia.", "C) Copos hexagonales perfectos y armónicos.", "D) Triángulos negros.", "E) Círculos concéntricos rojos."], ans: 2 },
+                { q: "3. ¿Cuál es la Resonancia Schumann fundamental (latido de la Tierra)?", options: ["A) 60 Hz", "B) 7.83 Hz", "C) 440 Hz", "D) 528 Hz", "E) 1 Hz"], ans: 1 },
+                { q: "4. ¿Qué problema de salud sufrieron los primeros astronautas al estar fuera de la Resonancia Schumann?", options: ["A) Ceguera temporal.", "B) Pérdida de cabello.", "C) Insomnio, desorientación, depresión e inmunodeficiencia.", "D) Aumento de fuerza.", "E) Sed excesiva."], ans: 2 },
+                { q: "5. Un Binaural Beat de 6 Hz (Theta) se genera enviando por ejemplo:", options: ["A) 100 Hz a ambos oídos.", "B) 200 Hz al izquierdo y 206 Hz al derecho.", "C) 6 Hz al izquierdo y 6 Hz al derecho.", "D) Silencio al izquierdo y 6 Hz al derecho.", "E) Música clásica."], ans: 1 },
+                { q: "6. ¿Qué frecuencia Solfeggio se asocia con la activación del córtex prefrontal dorsolateral?", options: ["A) 174 Hz", "B) 396 Hz", "C) 528 Hz", "D) 741 Hz", "E) 963 Hz"], ans: 3 },
+                { q: "7. Las células cancerosas emiten fotones de forma:", options: ["A) Caótica e incoherente", "B) Perfectamente armónica", "C) No emiten fotones", "D) En color verde", "E) Solo cuando hay luz solar"], ans: 0 },
+                { q: "8. ¿Cuál es la frecuencia de reparación celular y regeneración tisular?", options: ["A) 174 Hz", "B) 285 Hz", "C) 417 Hz", "D) 639 Hz", "E) 852 Hz"], ans: 1 },
+                { q: "9. ¿Qué frecuencia se recomienda para la conexión, relaciones y cohesión social?", options: ["A) 174 Hz", "B) 396 Hz", "C) 639 Hz", "D) 528 Hz", "E) 741 Hz"], ans: 2 },
+                { q: "10. ¿Para qué rango de estado cerebral está diseñado el núcleo de NeuroSync?", options: ["A) Beta (13-30 Hz)", "B) Theta (4-8 Hz)", "C) Gamma (30-100 Hz)", "D) Delta (0.5-4 Hz)", "E) Alfa Alto (10-12 Hz)"], ans: 1 }
+            ],
+            5: [
+                { q: "1. El Chakra Raíz (Muladhara) corresponde a la frecuencia Solfeggio:", options: ["A) 396 Hz", "B) 528 Hz", "C) 741 Hz", "D) 174 Hz", "E) 963 Hz"], ans: 0 },
+                { q: "2. La glándula endocrina asociada al Chakra Plexo Solar (Manipura) es:", options: ["A) Tiroides", "B) Suprarrenales", "C) Páncreas", "D) Timo", "E) Pineal"], ans: 2 },
+                { q: "3. ¿Qué emoción bloquea principalmente el Chakra Sacro (Svadhisthana)?", options: ["A) El Miedo", "B) La Culpa", "C) La Vergüenza", "D) El Rencor", "E) La Tristeza"], ans: 1 },
+                { q: "4. El Chakra Corazón (Anahata) se bloquea principalmente con:", options: ["A) Mentiras", "B) Exceso de comida", "C) El luto y el rencor no resueltos", "D) Falta de dinero", "E) Ruidos fuertes"], ans: 2 },
+                { q: "5. El hipotiroidismo energético está asociado al bloqueo de:", options: ["A) Chakra Raíz", "B) Chakra Garganta (Vishuddha)", "C) Chakra Corona", "D) Chakra Sacro", "E) Tercer Ojo"], ans: 1 },
+                { q: "6. ¿Qué sustancias contribuyen a calcificar la Glándula Pineal?", options: ["A) Vitamina C", "B) Agua destilada", "C) El flúor del agua, calcio inorgánico y luz azul de pantallas", "D) Frutas orgánicas", "E) Ejercicio aeróbico"], ans: 2 },
+                { q: "7. El Chakra Corona corresponde al Hipotálamo y la frecuencia:", options: ["A) 396 Hz", "B) 528 Hz", "C) 852 Hz", "D) 963 Hz", "E) 174 Hz"], ans: 3 },
+                { q: "8. La dirección correcta del flujo de energía Kundalini es:", options: ["A) Ascendente, de la raíz a la corona", "B) Descendente, de la cabeza a los pies", "C) Circular horizontal", "D) Solo permanece en el corazón", "E) No tiene dirección"], ans: 0 },
+                { q: "9. La vergüenza y baja autoestima están asociadas al bloqueo de:", options: ["A) Chakra Sacro", "B) Chakra Garganta", "C) Chakra Plexo Solar", "D) Chakra Raíz", "E) Chakra Corona"], ans: 2 },
+                { q: "10. El Chakra del Tercer Ojo corresponde a las frecuencias:", options: ["A) 174 Hz / Timo", "B) 852 Hz / Glándula Pineal y Pituitaria", "C) 396 Hz / Gónadas", "D) 639 Hz / Páncreas", "E) 963 Hz / Tiroides"], ans: 1 }
+            ],
+            6: [
+                { q: "1. La Ley de Hebb en neurociencia establece que:", options: ["A) El cerebro no cambia.", "B) Las neuronas que se disparan juntas se conectan físicamente.", "C) La memoria es infinita.", "D) El azúcar daña las neuronas.", "E) Dormir es opcional."], ans: 1 },
+                { q: "2. ¿En qué estado cerebral viven predominantemente los niños de 0 a 7 años?", options: ["A) Beta", "B) Alfa", "C) Theta", "D) Gamma", "E) Delta"], ans: 2 },
+                { q: "3. ¿Por qué las afirmaciones positivas en estado Beta (alerta) suelen fallar?", options: ["A) Porque no se gritan fuerte.", "B) El sistema crítico analítico las compara con el pasado y las rechaza.", "C) El cerebro no entiende palabras.", "D) Estamos muy distraídos.", "E) Solo funcionan en inglés."], ans: 1 },
+                { q: "4. El RAS (Sistema de Activación Reticular) filtra de 400 billones de bits sólo:", options: ["A) 1 billón de bits", "B) Nada, deja pasar todo", "C) 2,000 bits que confirman las creencias dominantes", "D) 10 bits", "E) Solo colores primarios"], ans: 2 },
+                { q: "5. ¿Qué es la Poda Sináptica?", options: ["A) El proceso de eliminar conexiones neuronales no utilizadas.", "B) El crecimiento de nuevas neuronas.", "C) Un tipo de cirugía cerebral.", "D) El efecto del alcohol.", "E) La muerte de neuronas por vejez."], ans: 0 },
+                { q: "6. ¿Qué estado cerebral usa NeuroSync para 'puentear' la mente crítica e instalar instrucciones?", options: ["A) Beta", "B) Theta (4-8 Hz)", "C) Gamma", "D) Delta", "E) Ninguno"], ans: 1 },
+                { q: "7. El estado Gamma se caracteriza por:", options: ["A) Sueño profundo.", "B) Relajación leve.", "C) Procesamiento de alta complejidad e insights súbitos.", "D) Aburrimiento.", "E) Estrés extremo."], ans: 2 },
+                { q: "8. El cuarto y último paso del protocolo de reprogramación es:", options: ["A) Escribir en papel.", "B) Gritar al espejo.", "C) Visualización en Alfa.", "D) Consolidación en Delta mientras se duerme.", "E) Comer chocolate."], ans: 3 },
+                { q: "9. Si cambias tu creencia dominante, el RAS:", options: ["A) Se apaga.", "B) Comienza a mostrarte oportunidades que antes filtraba como irrelevantes.", "C) Te hace olvidar el pasado.", "D) Cambia tu color de ojos.", "E) No hace nada."], ans: 1 },
+                { q: "10. El mito de que el cerebro adulto no tenía neuroplasticidad fue destruido en:", options: ["A) 1950", "B) La década de 1990", "C) 2023", "D) 1800", "E) Nunca fue un mito"], ans: 1 }
+            ],
+            7: [
+                { q: "1. La Resonancia Escalar en la activación de códigos es generada por:", options: ["A) Sonidos fuertes.", "B) Beber agua magnetizada.", "C) Números visualizados con precisión e intensidad emocional en estado Theta", "D) Repetir números rápido.", "E) Leer matemáticas."], ans: 2 },
+                { q: "2. El código sagrado 520 corresponde a:", options: ["A) Llegada inesperada de dinero", "B) Salud perfecta", "C) Amor verdadero", "D) Protección", "E) Paz interior"], ans: 0 },
+                { q: "3. ¿Por qué se repite el código exactamente 45 veces?", options: ["A) Porque es el número de la suerte.", "B) No hay razón técnica.", "C) Corresponde a ciclos específicos de ondas cerebrales en Theta", "D) Para cansar la mente.", "E) Por una tradición antigua."], ans: 2 },
+                { q: "4. El código sagrado 1 produce:", options: ["A) Riqueza.", "B) Paz interior instantánea y retorno al momento presente", "C) Viaje astral.", "D) Fuerza física.", "E) Inteligencia."], ans: 1 },
+                { q: "5. El paso de 'sellado con desapego' es necesario porque:", options: ["A) Si no, se olvida.", "B) El apego post-activación emite la señal de carencia que anula el código", "C) Hay que dejar de pensar.", "D) Es solo por respeto.", "E) Para que el campo no se sature."], ans: 1 },
+                { q: "6. La Proporción Áurea (φ) tiene un valor aproximado de:", options: ["A) 3.1416", "B) 1.618", "C) 2.718", "D) 0.5", "E) 1.0"], ans: 1 },
+                { q: "7. El código para protección electromagnética y ante energías negativas es:", options: ["A) 520", "B) 71588", "C) 1", "D) 9187948", "E) 52189"], ans: 3 },
+                { q: "8. Para activar el código de amor verdadero y atracción de pareja, se usa:", options: ["A) 520", "B) 71588", "C) 8 888 412", "D) 1891011", "E) 000 888 000"], ans: 2 },
+                { q: "9. El primer paso del protocolo de activación de códigos es:", options: ["A) Inducir estado Theta con NeuroSync", "B) Bañarse con sal.", "C) Prender una vela.", "D) Gritar el código.", "E) Comer."], ans: 0 },
+                { q: "10. El código 000 888 000 se usa para:", options: ["A) Dinero rápido.", "B) Salud de los huesos.", "C) Activación de la frecuencia de los milagros", "D) Dormir mejor.", "E) Hablar otros idiomas."], ans: 2 }
+            ],
+            8: [
+                { q: "1. El experimento de Lipton demostró que el destino de una célula depende de:", options: ["A) Los genes heredados únicamente.", "B) El azar.", "C) El entorno químico y electromagnético que rodea a la célula", "D) La edad de la célula.", "E) El tamaño del núcleo."], ans: 2 },
+                { q: "2. La Metilación del ADN producida por estrés crónico:", options: ["A) Mejora la salud.", "B) Apaga o silencia genes de reparación celular e inmunidad", "C) Cambia el color del pelo.", "D) Aumenta la inteligencia.", "E) No tiene efecto."], ans: 1 },
+                { q: "3. En Modo Supervivencia (Simpático), la sangre se dirige principalmente hacia:", options: ["A) Los órganos vitales.", "B) El cerebro frontal.", "C) El sistema digestivo.", "D) Los músculos (preparación para huir o luchar)", "E) La piel."], ans: 3 },
+                { q: "4. SIRT1 y FOXO3 son conocidos como genes de:", options: ["A) Cáncer.", "B) Longevidad y reparación, activos en modo crecimiento", "C) Obesidad.", "D) Agresividad.", "E) Memoria."], ans: 1 },
+                { q: "5. La Dra. Elizabeth Blackburn recibió el Nobel por descubrir:", options: ["A) La penicilina.", "B) La estructura del ADN.", "C) La enzima Telomerasa y su capacidad de alargar los telómeros", "D) La neurona espejo.", "E) El bosón de Higgs."], ans: 2 },
+                { q: "6. El estudio del Dr. Glen Rein sobre la frecuencia 528 Hz mostró:", options: ["A) Que el ADN se destruye.", "B) Un incremento del 11% en la absorción de luz UV por el ADN (mayor integridad)", "C) Que el agua se evapora.", "D) Ningún cambio.", "E) Que el ADN cambia de especie."], ans: 1 },
+                { q: "7. El sistema nervioso central distingue perfectamente entre una amenaza real y una imaginada:", options: ["A) Falso: no distingue y secreta cortisol en ambos casos", "B) Verdadero: sabe que la mente miente", "C) Solo si eres adulto", "D) Solo si estás durmiendo", "E) Solo si usas NeuroSync"], ans: 0 },
+                { q: "8. ¿En qué momento realiza el cuerpo el 90% de su reparación y regeneración celular?", options: ["A) Al hacer ejercicio.", "B) Al comer.", "C) Al meditar en Beta.", "D) Durante las fases de sueño profundo Delta", "E) Mientras trabajas."], ans: 3 },
+                { q: "9. La práctica diaria con NeuroSync entrena al sistema nervioso a permanecer en:", options: ["A) Modo supervivencia constante.", "B) Modo de crecimiento parasimpático por defecto", "C) Estado de coma.", "D) Hiperactividad.", "E) Ansiedad."], ans: 1 },
+                { q: "10. Los telómeros excesivamente cortos producen en la célula:", options: ["A) Juventud eterna.", "B) Mayor fuerza.", "C) Senescencia celular (envejecimiento) o apoptosis (muerte)", "D) Duplicación infinita.", "E) Cambio de ADN."], ans: 2 }
+            ],
+            9: [
+                { q: "1. Un lazo energético activo se detecta claramente cuando:", options: ["A) Te duele la cabeza.", "B) Piensas en la persona y sientes inmediatamente un cambio de energía (rabia, tristeza, etc.)", "C) La persona te llama por teléfono.", "D) Te pica la piel.", "E) Ves una foto antigua."], ans: 1 },
+                { q: "2. El perdón cuántico vibra en la Escala de Hawkins a:", options: ["A) 50 Hz", "B) 150 Hz", "C) 350 Hz (Aceptación)", "D) 700 Hz", "E) 20 Hz"], ans: 2 },
+                { q: "3. 'Lo Siento' en el protocolo Ho'oponopono significa:", options: ["A) Reconocimiento del programa en mi subconsciente que co-creó la situación", "B) Pedir disculpas al otro por ser malo.", "C) Sentir culpa por lo hecho.", "D) Es solo una frase de cortesía.", "E) Que me duele el cuerpo."], ans: 0 },
+                { q: "4. El rencor y la rabia activa vibran habitualmente entre:", options: ["A) 500-600 Hz", "B) 30-150 Hz", "C) 1,000 Hz", "D) 0 Hz", "E) 10,000 Hz"], ans: 1 },
+                { q: "5. ¿Por qué no se debe realizar el ejercicio de corte de lazos con sentimientos de rabia?", options: ["A) Porque las tijeras no cortan.", "B) La otra persona se enoja más.", "C) El rencor es el 'pegamento' que refuerza el lazo en lugar de cortarlo", "D) Te cansas más.", "E) No hay problema en sentir rabia."], ans: 2 },
+                { q: "6. ¿Con qué frecuencia de NeuroSync se realiza el ejercicio específico de corte de lazos?", options: ["A) 396 Hz (Liberación de miedo y lazos)", "B) 528 Hz", "C) 963 Hz", "D) 174 Hz", "E) 639 Hz"], ans: 0 },
+                { q: "7. Los patrones repetitivos de relaciones (atraer siempre el mismo tipo de persona tóxica) indican:", options: ["A) Mala suerte.", "B) Lazos energéticos activos y programas no resueltos", "C) Que el mundo es malo.", "D) Falta de inteligencia social.", "E) Coincidencia estadística."], ans: 1 },
+                { q: "8. El Ho'oponopono se basa en el principio de:", options: ["A) Culpar a los demás.", "B) Responsabilidad total: todo lo que aparece en mi realidad es una proyección de mi subconsciente", "C) Ignorar los problemas.", "D) Rezar a santos.", "E) Olvidar el pasado."], ans: 1 },
+                { q: "9. En el ejercicio de visualización, los cables del lado de la otra persona se:", options: ["A) Quedan colgando.", "B) Vuelven negros.", "C) Disuelven en luz y retornan a ella", "D) Se conectan a otra persona.", "E) No se mueven."], ans: 2 },
+                { q: "10. El paso final indispensable del protocolo de corte de lazos es:", options: ["A) Llamar a la persona.", "B) Llorar.", "C) Dormir.", "D) Sellar el campo con la Burbuja Espejo", "E) Salir a caminar."], ans: 3 }
+            ],
+            10: [
+                { q: "1. La diferencia fundamental entre 'Desear' y 'Asumir' es:", options: ["A) No hay diferencia.", "B) Desear es más fuerte.", "C) El deseo emite señal de carencia (separación); la asunción emite señal de presencia (ya es)", "D) Asumir es mentirse a uno mismo.", "E) Desear es para el futuro."], ans: 2 },
+                { q: "2. La técnica de escritura a mano (Scripting) es más efectiva porque:", options: ["A) Es más lenta.", "B) Activa simultáneamente más regiones cerebrales (motoras, visuales, emocionales) que el teclado", "C) Gasta más energía.", "D) El papel tiene energía especial.", "E) No es más efectiva."], ans: 1 },
+                { q: "3. ¿Cuántos días de práctica diaria ininterrumpida requiere la formación de nuevas rutas neuronales estables?", options: ["A) 3 días", "B) 7 días", "C) 21 días", "D) 1 año", "E) 100 días"], ans: 2 },
+                { q: "4. La gratitud genuina (sentida) vibra en la escala de Hawkins a:", options: ["A) 200 Hz", "B) 350 Hz", "C) 540 Hz (Alegría)", "D) 1,000 Hz", "E) 100 Hz"], ans: 2 },
+                { q: "5. El error crítico que comete la mayoría en el Protocolo de 21 Días es:", options: ["A) No usar audífonos caros.", "B) Esperar evidencia externa antes de mantener la frecuencia interna (ver para creer)", "C) Hacerlo de día.", "D) No comer carne.", "E) Leer mucho."], ans: 1 },
+                { q: "6. La 'paradoja del desapego' establece que:", options: ["A) Debes quererlo mucho.", "B) No debe importarte nada.", "C) Para manifestar algo debes no necesitarlo desesperadamente (la necesidad emite carencia)", "D) El desapego es para monjes.", "E) Si lo sueltas, se pierde."], ans: 2 },
+                { q: "7. El Scripting se debe realizar preferiblemente en:", options: ["A) Futuro lejano.", "B) Primera persona y tiempo presente, como relato de hechos actuales", "C) Tercera persona.", "D) Pasado melancólico.", "E) Poesía abstracta."], ans: 1 },
+                { q: "8. Durante la noche, el Scripting se complementa idealmente con NeuroSync en:", options: ["A) Beta alto.", "B) 396-528 Hz mientras te duermes", "C) Silencio total.", "D) Música de radio.", "E) Frecuencias de 10,000 Hz."], ans: 1 },
+                { q: "9. La asunción 'SOY una persona económicamente libre' emite una señal cuántica de:", options: ["A) Presencia y abundancia", "B) Carencia futura.", "C) Duda.", "D) Robo.", "E) Es solo una frase."], ans: 0 },
+                { q: "10. En última instancia, el universo no responde a lo que sabes intelectualmente, sino a lo que:", options: ["A) Dices con la boca.", "B) Eres vibratoriamente (tu firma electromagnética)", "C) Compras con dinero.", "D) Otros piensan de ti.", "E) Escribes en redes sociales."], ans: 1 }
             ]
         };
 
@@ -806,15 +1263,32 @@
             });
         }
 
-        // 3. Navegación de Pantallas
+        // 3. Navegación de Pantallas (con soporte móvil)
         function switchSection(targetId, activeItem) {
             document.querySelectorAll('.module-section').forEach(sec => sec.classList.remove('active'));
             document.getElementById(targetId).classList.add('active');
             
             document.querySelectorAll('.module-list li').forEach(li => li.classList.remove('active'));
             if(activeItem) activeItem.classList.add('active');
-            
+
+            // Scroll al inicio del contenido
+            const scrollEl = document.querySelector('.content-scroll-inner');
+            if (scrollEl) scrollEl.scrollTop = 0;
             document.getElementById('main-content-scroll').scrollTop = 0;
+
+            // En móvil: deslizar hacia el contenido y mostrar el título
+            if (window.innerWidth <= 768) {
+                document.body.classList.add('view-content');
+                const titleEl = document.getElementById('mobile-title');
+                if (titleEl && activeItem) {
+                    titleEl.textContent = activeItem.textContent.trim();
+                }
+            }
+        }
+
+        // Regresar al menú en móvil
+        function goBackToMenu() {
+            document.body.classList.remove('view-content');
         }
 
         // 4. Renderizado Dinámico de Quizzes
