@@ -367,6 +367,34 @@
         .wave-option input:checked + .wave-btn { background: rgba(96, 165, 250, 0.2); border-color: #60a5fa; color: #60a5fa; }
         #gen-freq-input:focus { border-color: #60a5fa !important; box-shadow: 0 0 15px rgba(96, 165, 250, 0.3); }
 
+        .reset-audio-btn {
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            z-index: 5;
+            text-transform: uppercase;
+        }
+        .reset-audio-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        .reset-audio-btn i {
+            font-size: 0.8rem;
+        }
+
         /* --- MODO MEDITACIÓN PROFUNDA --- */
         .meditation-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #000000; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; }
         .meditation-overlay.active { opacity: 1; pointer-events: all; cursor: pointer; }
@@ -770,6 +798,10 @@
                 <i class="fas fa-play" style="margin-left: 5px;"></i>
             </div>
         </div>
+        <!-- BOTÓN REINICIAR -->
+        <button class="reset-audio-btn" onclick="resetAudio()" title="Limpiar y reiniciar motor de audio">
+            <i class="fas fa-sync-alt"></i> REINICIAR SISTEMA
+        </button>
     </div>
 
     <div class="bottom-sheet">
@@ -1332,6 +1364,45 @@
             isPlaying = !isPlaying;
         }
 
+        function resetAudio() {
+            // 1. Detener estados lógicos
+            if (isPlaying) toggleMasterPlay();
+            if (legacyIsPlaying) controlLegacyStop();
+            
+            // 2. Limpiar buffers y pausar físicamente
+            const allAudios = [audioL, audioR, audioLegacy];
+            allAudios.forEach(a => {
+                a.pause();
+                a.src = "";
+                a.load();
+            });
+
+            // 3. Detener sonidos de naturaleza y generador
+            if(typeof natureMasterStop === 'function') natureMasterStop();
+            if(typeof stopGenerator === 'function') stopGenerator();
+
+            // 4. Resetear UI y Variables
+            currentL_ID = null;
+            currentR_ID = null;
+            statusText.innerText = "Motor Reiniciado";
+            
+            // Feedback visual en el botón
+            const btn = document.querySelector('.reset-audio-btn');
+            const originalHTML = btn.innerHTML;
+            btn.style.borderColor = "#34d399";
+            btn.style.color = "#34d399";
+            btn.innerHTML = '<i class="fas fa-check"></i> LIMPIEZA EXITOSA';
+            
+            setTimeout(() => {
+                btn.style.borderColor = "";
+                btn.style.color = "";
+                btn.innerHTML = originalHTML;
+                updateUI(); // Recargar las frecuencias seleccionadas actualmente
+            }, 1500);
+            
+            console.log("NeuroSync Audio Engine Reset.");
+        }
+
         function changeVolume() { audioL.volume = volSlider.value; audioR.volume = volSlider.value; }
         
         function toggleMenu() {
@@ -1774,17 +1845,12 @@
                 if(!natureAudioElements[id]) {
                     const audio = new Audio(soundConfig.url);
                     audio.loop = natureMasterLoop;
-                    audio.volume = document.getElementById(`vol-${id}`).value;
-                    
-                    // Manejo de errores de carga (ej. mixrelax.com caído)
-                    audio.addEventListener('error', (e) => {
-                        console.error("Error al cargar el audio:", soundConfig.url);
-                        alert(`El sonido "${soundConfig.name}" no está disponible temporalmente (enlace roto).`);
-                        card.classList.remove('active');
-                    });
-                    
+                    audio.crossOrigin = "anonymous";
                     natureAudioElements[id] = audio;
                 }
+                
+                // Asegurar que el volumen sea el del slider actual al activarlo
+                natureAudioElements[id].volume = document.getElementById(`vol-${id}`).value;
                 
                 let playPromise = natureAudioElements[id].play();
                 if (playPromise !== undefined) {
@@ -1802,9 +1868,12 @@
         }
 
         function changeNatureVolume(id) {
-            if(natureAudioElements[id]) {
-                const vol = document.getElementById(`vol-${id}`).value;
-                natureAudioElements[id].volume = vol;
+            const audio = natureAudioElements[id];
+            const slider = document.getElementById(`vol-${id}`);
+            if(audio && slider) {
+                const vol = parseFloat(slider.value);
+                audio.volume = vol;
+                console.log(`Cambiando volumen de ${id} a ${vol}`);
             }
         }
 
@@ -1812,9 +1881,12 @@
             let hasActive = false;
             Object.keys(natureAudioElements).forEach(id => {
                 const card = document.getElementById(`card-${id}`);
-                if(card && card.classList.contains('active')) {
+                const audio = natureAudioElements[id];
+                if(card && card.classList.contains('active') && audio) {
                     hasActive = true;
-                    let playPromise = natureAudioElements[id].play();
+                    // Actualizar volumen antes de play por si se movió el slider
+                    audio.volume = document.getElementById(`vol-${id}`).value;
+                    let playPromise = audio.play();
                     if (playPromise !== undefined) {
                         playPromise.catch(e => console.log("Master play error:", e));
                     }
