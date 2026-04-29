@@ -407,7 +407,7 @@
             <a href="#" class="menu-item" onclick="toggleMenu(); toggleLegacyPlayer();">
                 <i class="fas fa-compact-disc" style="color: #ffb000;"></i> Reproductor 1.0
             </a>
-            <a href="#" class="menu-item">
+            <a href="academia.html" class="menu-item" onclick="toggleMenu();">
                 <i class="fas fa-chalkboard-teacher" style="color: #fbbf24;"></i> Taller Cuántico
             </a>
             <a href="#" class="menu-item" onclick="toggleMenu(); toggleNatureModal();">
@@ -584,7 +584,6 @@
         </p>
 
         <div class="new-post-form">
-            <input type="email" id="post-email" class="post-input-email" placeholder="Test Creador: escribe guilmarzy@gmail.com" autocomplete="off">
             <textarea id="post-text" class="post-input-text" rows="3" placeholder="¿Qué sientes en tu interior ahora mismo?"></textarea>
             <div style="overflow: hidden;">
                 <button class="post-btn-submit" onclick="submitPost()">Compartir Vibración</button>
@@ -842,7 +841,27 @@
         ];
 
         const userEmail = localStorage.getItem("neurosync_user_email") || "anonimo@neurosync.com";
-        const userName = userEmail.split('@')[0];
+        let userName = userEmail.split('@')[0];
+        
+        let userFlag = localStorage.getItem("neurosync_user_flag");
+        if(userFlag) {
+            userName += " " + userFlag;
+        } else {
+            fetchUserCountry();
+        }
+
+        async function fetchUserCountry() {
+            try {
+                const res = await fetch('https://get.geojs.io/v1/ip/country.json');
+                const data = await res.json();
+                if(data.country) {
+                    const codePoints = data.country.toUpperCase().split('').map(char => 127397 + char.charCodeAt());
+                    const flag = String.fromCodePoint(...codePoints);
+                    localStorage.setItem("neurosync_user_flag", flag);
+                    userName = userEmail.split('@')[0] + " " + flag;
+                }
+            } catch(e) { console.error("Error fetching country", e); }
+        }
 
         // --- SISTEMA DE ESTADÍSTICAS Y GAMIFICACIÓN (localStorage + Supabase) ---
         let currentStatus = {
@@ -1639,11 +1658,10 @@
         }
 
         async function submitPost() {
-            const inputEmail = document.getElementById('post-email');
             const text = document.getElementById('post-text').value.trim();
             if(!text) return;
             
-            const email = inputEmail && inputEmail.value.trim() ? inputEmail.value.trim() : userEmail;
+            const email = userEmail;
             let authorName = email === ADMIN_EMAIL ? "Guilmarzy" : userName || "Sincronizador " + Math.floor(Math.random() * 999);
             
             document.getElementById('post-text').value = 'Emitiendo frecuencia...';
@@ -1670,9 +1688,8 @@
             const text = prompt("Escribe tu respuesta a esta vibración:");
             if(!text) return;
             
-            const inputEmail = document.getElementById('post-email');
-            const email = inputEmail && inputEmail.value.trim() ? inputEmail.value.trim() : userEmail;
-            let authorName = email === ADMIN_EMAIL ? "Guilmarzy" : userName || "Sincronizador " + Math.floor(Math.random() * 999);
+            const email = userEmail;
+            let authorName = email === ADMIN_EMAIL ? "Guilmarzy 👑" : userName || "Sincronizador " + Math.floor(Math.random() * 999);
 
             try {
                 const res = await fetch('/.netlify/functions/postSocial', {

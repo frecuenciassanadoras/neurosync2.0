@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia Cuántica - NeuroSync</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- INTEGRACIÓN ESTÉTICA CON NEUROSYNC --- */
+        :root {
+            --bg-dark: #070714;
+            --bg-gradient: radial-gradient(circle at 50% 30%, #15112e 0%, #03030a 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc; 
+            --text-muted: #94a3b8; 
+            --accent: #8b5cf6; 
+            --accent-hover: #a64bf4; 
+            --cyan-glow: #00d4ff;
+            --success: #10b981; 
+            --error: #ef4444;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            background-image: var(--bg-gradient);
+            color: var(--text-main); 
+            min-height: 100vh; 
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .layout-container { 
+            max-width: 1600px; 
+            margin: 0 auto; 
+            padding: 1.5rem; 
+            display: flex; 
+            gap: 1.5rem; 
+            height: 100vh; 
+        }
+
+        /* SIDEBAR (Panel Izquierdo) */
+        .sidebar { 
+            width: 380px; 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); 
+            border-radius: 24px; 
+            padding: 1.5rem; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); 
+            flex-shrink: 0; 
+        }
+
+        .sidebar-header { 
+            margin-bottom: 1.5rem; 
+            padding-bottom: 1rem; 
+            border-bottom: 1px solid var(--glass-border); 
+            text-align: center; 
+        }
+
+        .sidebar-header h1 { 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: 1.4rem; 
+            letter-spacing: 2px; 
+            color: var(--text-main); 
+            margin: 0;
+        }
+
+        .sidebar-header h1 span { 
+            color: var(--cyan-glow); 
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+        }
+
+        .module-list-container { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding-right: 5px; 
+        }
+
+        .module-list-container::-webkit-scrollbar { width: 6px; }
+        .module-list-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+        .module-list { list-style: none; padding: 0; margin: 0; }
+        .module-list li { 
+            padding: 1rem 1.2rem; 
+            margin-bottom: 0.5rem; 
+            border-radius: 14px; 
+            cursor: pointer; 
+            font-size: 0.95rem; 
+            color: var(--text-muted); 
+            transition: all 0.3s ease; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            background: rgba(255,255,255,0.01); 
+            border: 1px solid transparent;
+        }
+
+        .module-list li.lesson::before { content: "\f144"; font-family: "Font Awesome 6 Free"; font-weight: 900; opacity: 0.6; font-size: 1.2rem;}
+        .module-list li.quiz-item::before { content: "\f059"; font-family: "Font Awesome 6 Free"; font-weight: 900; opacity: 0.8; color: var(--accent); font-size: 1.2rem;}
+        
+        .module-list li:hover:not(.locked) { 
+            background: rgba(255,255,255,0.05); 
+            color: var(--text-main); 
+            transform: translateX(5px); 
+        }
+        
+        .module-list li.active { 
+            background: rgba(0, 212, 255, 0.1); 
+            border: 1px solid rgba(0, 212, 255, 0.3); 
+            color: var(--text-main); 
+            font-weight: 600; 
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.1);
+        }
+        .module-list li.active::before { opacity: 1; color: var(--cyan-glow); }
+        
+        .module-list li.locked { 
+            opacity: 0.4; 
+            cursor: not-allowed; 
+        }
+        .module-list li.locked::before { content: "\f023"; color: var(--error); }
+
+        .action-btn { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            padding: 12px; 
+            font-weight: 600; 
+            text-decoration: none; 
+            border-radius: 12px; 
+            transition: all 0.3s ease; 
+            font-size: 0.9rem; 
+            margin-top: 0.75rem; 
+            cursor: pointer; 
+            border: none;
+            font-family: 'Outfit', sans-serif;
+        }
+        .btn-reset { 
+            background: rgba(255, 255, 255, 0.03); 
+            color: var(--text-muted); 
+            border: 1px solid var(--glass-border); 
+        }
+        .btn-reset:hover { 
+            background: rgba(239, 68, 68, 0.1); 
+            color: var(--error); 
+            border-color: rgba(239, 68, 68, 0.3); 
+        }
+        .btn-logout { 
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover)); 
+            color: white; 
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+        .btn-logout:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5); 
+        }
+
+        /* AREA DE CONTENIDO */
+        .content-area { 
+            flex-grow: 1; 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); 
+            border-radius: 24px; 
+            padding: 3rem 4rem; 
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.01), 0 10px 40px rgba(0,0,0,0.5); 
+            overflow-y: auto; 
+            scroll-behavior: smooth; 
+        }
+
+        .content-area::-webkit-scrollbar { width: 8px; }
+        .content-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+
+        .module-section { display: none; animation: fadeIn 0.4s ease; max-width: 900px; margin: 0 auto; }
+        .module-section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .content-area h1 { 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: 2.5rem; 
+            color: var(--cyan-glow); 
+            margin-bottom: 2rem; 
+            line-height: 1.2; 
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+        .content-area h2 { 
+            font-size: 1.6rem; 
+            color: var(--accent-hover); 
+            margin-top: 3rem; 
+            margin-bottom: 1.5rem; 
+            border-bottom: 1px solid var(--glass-border); 
+            padding-bottom: 10px;
+        }
+        .content-area h3 { font-size: 1.3rem; color: #fbbf24; margin-top: 2rem; margin-bottom: 1rem; }
+        .content-area p { color: #cbd5e1; line-height: 1.9; margin-bottom: 1.5rem; font-size: 1.1rem; }
+        .content-area ul, .content-area ol { color: #cbd5e1; margin-bottom: 2rem; padding-left: 1.5rem; font-size: 1.1rem; }
+        .content-area li { margin-bottom: 0.8rem; line-height: 1.7; }
+        .content-area strong { color: white; font-weight: 600; }
+        
+        .content-area img { 
+            width: 100%; 
+            height: auto; 
+            max-height: 400px; 
+            object-fit: cover; 
+            border-radius: 16px; 
+            margin: 2rem 0; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6); 
+            border: 1px solid var(--glass-border);
+        }
+        .img-caption { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: -1.5rem; margin-bottom: 2.5rem; font-style: italic; }
+        
+        .info-box { 
+            background: rgba(0, 212, 255, 0.05); 
+            border-left: 4px solid var(--cyan-glow); 
+            padding: 2rem; 
+            border-radius: 0 16px 16px 0; 
+            margin: 2.5rem 0; 
+            border-top: 1px solid var(--glass-border);
+            border-right: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .quote-box { 
+            font-size: 1.2rem; 
+            font-style: italic; 
+            text-align: center; 
+            padding: 2.5rem; 
+            border-top: 1px solid var(--glass-border); 
+            border-bottom: 1px solid var(--glass-border); 
+            margin: 2.5rem 0; 
+            color: #e2e8f0; 
+        }
+
+        /* ESTILOS DE LOS EXÁMENES (Quizzes) */
+        .quiz-container { 
+            background: rgba(0, 0, 0, 0.2); 
+            border: 1px solid var(--glass-border); 
+            padding: 2.5rem; 
+            border-radius: 20px; 
+        }
+        .question-block { 
+            margin-bottom: 2.5rem; 
+            background: rgba(255,255,255,0.02); 
+            padding: 1.5rem; 
+            border-radius: 16px; 
+            border: 1px solid var(--glass-border);
+        }
+        .question-text { 
+            font-size: 1.15rem; 
+            font-weight: 600; 
+            color: white; 
+            margin-bottom: 1.2rem; 
+            line-height: 1.5;
+        }
+        .options-list { display: flex; flex-direction: column; gap: 10px; }
+        .option-item { 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid var(--glass-border); 
+            padding: 14px 18px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            display: flex; 
+            align-items: flex-start; 
+            gap: 12px; 
+            font-size: 1.05rem; 
+            color: #cbd5e1;
+        }
+        .option-item:hover { 
+            background: rgba(0, 212, 255, 0.05); 
+            border-color: var(--cyan-glow); 
+            color: white;
+        }
+        .option-item input[type="radio"] { 
+            accent-color: var(--cyan-glow); 
+            transform: scale(1.3); 
+            margin-top: 4px; 
+            cursor: pointer;
+        }
+        
+        .btn-submit-quiz { 
+            background: linear-gradient(135deg, var(--accent), var(--cyan-glow)); 
+            color: white; 
+            font-weight: 800; 
+            border: none; 
+            padding: 18px; 
+            border-radius: 16px; 
+            cursor: pointer; 
+            font-size: 1.1rem; 
+            width: 100%; 
+            margin-top: 1.5rem; 
+            transition: 0.3s; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            font-family: 'Outfit', sans-serif;
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.2);
+        }
+        .btn-submit-quiz:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 15px 35px rgba(0, 212, 255, 0.4); 
+        }
+        .btn-submit-quiz:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .quiz-result { 
+            text-align: center; 
+            padding: 2rem; 
+            border-radius: 16px; 
+            margin-top: 2rem; 
+            display: none; 
+            animation: fadeIn 0.5s;
+        }
+        .result-pass { 
+            background: rgba(16, 185, 129, 0.1); 
+            border: 1px solid var(--success); 
+            color: var(--success); 
+        }
+        .result-fail { 
+            background: rgba(239, 68, 68, 0.1); 
+            border: 1px solid var(--error); 
+            color: var(--error); 
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--cyan-glow);
+            transition: opacity 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="loading-overlay" id="loading-overlay">
+        <i class="fas fa-atom fa-spin" style="font-size: 4rem; margin-bottom: 20px;"></i>
+        <h2>Sincronizando Archivos Cuánticos...</h2>
+    </div>
+
+    <div class="layout-container">
+        <!-- SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>ACADEMIA <span>CUÁNTICA</span></h1>
+            </div>
+            
+            <div class="module-list-container">
+                <ul class="module-list" id="main-nav">
+                    <li class="lesson active" data-target="welcome" data-level="1">Bienvenida</li>
+                    <li class="lesson" data-target="mod1" data-level="1">Módulo 1: Física del Despertar</li>
+                    <li class="quiz-item" data-target="quiz1" data-level="1">Examen Nivel 1</li>
+                    
+                    <li class="lesson locked" data-target="mod2" data-level="2">Módulo 2: Anatomía y Toroide</li>
+                    <li class="quiz-item locked" data-target="quiz2" data-level="2">Examen Nivel 2</li>
+                    
+                    <li class="lesson locked" data-target="mod3" data-level="3">Módulo 3: Higiene Energética</li>
+                    <li class="quiz-item locked" data-target="quiz3" data-level="3">Examen Nivel 3</li>
+                    
+                    <li class="lesson locked" data-target="mod4" data-level="4">Módulo 4: Cimática y Ondas</li>
+                    <li class="quiz-item locked" data-target="quiz4" data-level="4">Examen Nivel 4</li>
+                    
+                    <li class="lesson locked" data-target="mod5" data-level="5">Módulo 5: Los 7 Vórtices</li>
+                    <li class="quiz-item locked" data-target="quiz5" data-level="5">Examen Nivel 5</li>
+                    
+                    <li class="lesson locked" data-target="mod6" data-level="6">Módulo 6: Neuroplasticidad</li>
+                    <li class="quiz-item locked" data-target="quiz6" data-level="6">Examen Nivel 6</li>
+                    
+                    <li class="lesson locked" data-target="mod7" data-level="7">Módulo 7: Códigos Sagrados</li>
+                    <li class="quiz-item locked" data-target="quiz7" data-level="7">Examen Nivel 7</li>
+                    
+                    <li class="lesson locked" data-target="mod8" data-level="8">Módulo 8: Epigenética y ADN</li>
+                    <li class="quiz-item locked" data-target="quiz8" data-level="8">Examen Nivel 8</li>
+                    
+                    <li class="lesson locked" data-target="mod9" data-level="9">Módulo 9: Lazos Kármicos</li>
+                    <li class="quiz-item locked" data-target="quiz9" data-level="9">Examen Nivel 9</li>
+                    
+                    <li class="lesson locked" data-target="mod10" data-level="10">Módulo 10: Salto Cuántico</li>
+                    <li class="quiz-item locked" data-target="quiz10" data-level="10">Examen Final</li>
+                </ul>
+            </div>
+            
+            <button class="action-btn btn-reset" onclick="confirmReset()"><i class="fas fa-undo"></i> Resetear Progreso</button>
+            <a href="sincronizador.html" class="action-btn btn-logout"><i class="fas fa-sign-out-alt"></i> Salir al Sincronizador</a>
+        </div>
+
+        <!-- CONTENIDO -->
+        <div class="content-area" id="main-content-scroll">
+            
+            <!-- BIENVENIDA -->
+            <div id="welcome" class="module-section active" style="text-align: center; margin-top: 10%;">
+                <i class="fas fa-atom" style="font-size: 5rem; color: var(--cyan-glow); margin-bottom: 2rem; animation: spin 10s linear infinite;"></i>
+                <h1 style="font-size: 3rem; color: white;">Academia Cuántica <br>Nivel Experto</h1>
+                <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 700px; margin: 0 auto; line-height: 1.8;">
+                    Bienvenido al entrenamiento más profundo sobre la manipulación de la realidad. Este no es un taller motivacional; es un estudio riguroso de la física de la conciencia. <br><br>
+                    Para avanzar, debes aprobar cada examen con un mínimo del <strong>80% (8/10)</strong>. Tu progreso se guardará permanentemente en la base de datos global de NeuroSync.<br><br>
+                    Ve al Módulo 1 en el menú izquierdo para iniciar.
+                </p>
+            </div>
+
+            <!-- MÓDULO 1 -->
+            <div id="mod1" class="module-section">
+                <h1>Módulo 1: La Física del Despertar y la Deconstrucción del Ego</h1>
+                <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Cosmos">
+                <div class="img-caption">Gráfico 1.1: El entramado del Campo Cuántico.</div>
+                <p>A diferencia de lo que enseñan las corrientes "New Age" superficiales, el despertar espiritual rara vez comienza con luz, arcoíris y positividad constante. Todo gran salto evolutivo en la conciencia humana comienza con una ruptura. Una ruptura de la ilusión de la materia. A este punto de inflexión, el psiquiatra suizo Carl Jung lo llamó "El encuentro con la Sombra", mientras que la literatura mística lo documenta como <strong>"La Noche Oscura del Alma"</strong>.</p>
+                <div class="quote-box">"No te iluminas imaginando figuras de luz, sino haciendo consciente la oscuridad." <br><span style="font-size: 1rem; color: var(--cyan-glow); font-weight: bold; font-style: normal;">— Carl Jung</span></div>
+                
+                <h2>1. La Ciencia detrás del Velo (Física Cuántica)</h2>
+                <p>Para entender tu despertar y cómo NeuroSync altera tu realidad, primero debemos destruir la percepción que tienes del mundo físico. La física newtoniana nos hizo creer que éramos materia sólida moviéndose en un espacio vacío. La mecánica cuántica ha demostrado que esto es una ilusión perceptual del cerebro humano.</p>
+                
+                <div class="info-box">
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-microscope"></i> El Experimento de la Doble Rendija y el Efecto Observador</h3>
+                    <p>En el experimento de la doble rendija, los físicos dispararon electrones individuales hacia una pared. Descubrieron algo aterrador: cuando los electrones <strong>no eran observados</strong>, se comportaban como una "onda de probabilidad infinita". Pero en el instante en que se colocaba un detector para <strong>observar</strong>, la onda colapsaba instantáneamente y el electrón se comportaba como partícula. <strong>El Principio de Manifestación:</strong> El universo es una sopa cuántica que espera tu observación y expectativa para materializarse.</p>
+                </div>
+                
+                <h2>2. Neurociencia del Ego: La Red Neuronal por Defecto (DMN)</h2>
+                <p>La DMN es un conjunto de regiones cerebrales responsable de tu diálogo interno, la culpa y el miedo. Cuando ocurre el Despertar, la actividad eléctrica en la DMN se reduce, apagando la ilusión de separación.</p>
+            </div>
+            
+            <div id="quiz1" class="module-section">
+                <h1>Examen Nivel 1</h1>
+                <div class="quiz-container" id="quiz-form-1"></div>
+            </div>
+
+            <!-- MÓDULO 2 -->
+            <div id="mod2" class="module-section">
+                <h1>Módulo 2: La Anatomía Oculta y el Toroide Magnético</h1>
+                <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Aura humana">
+                <div class="img-caption">Gráfico 2.1: Representación de las capas sutiles y emisión de fotones.</div>
+                <p>La medicina tradicional trata al cuerpo humano como una máquina biológica. La física cuántica y el HeartMath Institute han corroborado que el cuerpo físico es solo la capa más densa de un sistema electromagnético de cuatro niveles.</p>
+                <h2>1. Los Cuatro Cuerpos Sutiles (El Cuaternario)</h2>
+                <ul>
+                    <li><strong>El Cuerpo Físico (Holograma Denso):</strong> Es la frecuencia más lenta. Es el último eslabón de la cadena de manifestación, no el primero. Ninguna enfermedad se origina aquí.</li>
+                    <li><strong>El Cuerpo Etérico/Emocional (Esponja Magnética):</strong> Almacena las emociones no procesadas como cargas magnéticas densas. El odio no expresado se acumula como lodo viscoso y filtra hacia el físico.</li>
+                    <li><strong>El Cuerpo Mental (El Arquitecto):</strong> De naturaleza eléctrica. Almacena las creencias limitantes. La dirección es siempre: <strong>Pensamiento → Emoción → Biología → Realidad Física.</strong></li>
+                    <li><strong>El Cuerpo Espiritual / Causal (Disco Duro Maestro):</strong> Conecta tu identidad con el Campo Cuántico Unificado. Cuando está bloqueado, la persona siente vacío existencial a pesar de tener todo lo material.</li>
+                </ul>
+                <div class="quote-box" style="border-color: #f87171; color: #fca5a5;">"La enfermedad no es el problema, es la solución biológica a un conflicto emocional no resuelto." <br><span style="font-size: 1rem; color: #f87171; font-weight: bold; font-style: normal;">— Dr. Ryke Geerd Hamer</span></div>
+                <h2>2. El Toroide Magnético del Corazón</h2>
+                <p>La energía fluye en un patrón geométrico tridimensional llamado <strong>Toroide</strong>. El Instituto HeartMath descubrió que el campo del corazón es <strong>5,000 veces más intenso que el del cerebro</strong> y puede detectarse a 3 metros del cuerpo.</p>
+                <div class="info-box" style="border-left-color: #fbbf24; background: rgba(251, 191, 36, 0.05);">
+                    <h3 style="color: #fbbf24; margin-top:0;"><i class="fas fa-exclamation-triangle"></i> Toroides Colapsados y Fugas Áuricas</h3>
+                    <p>El estrés crónico colapsa la geometría de tu toroide. Con estas fisuras, tu vitalidad se drena y absorbes la densidad emocional del entorno. Este es el mecanismo físico del "vampirismo energético".</p>
+                </div>
+                <h2>3. Coherencia Cardíaca: Reparando el Toroide</h2>
+                <p>La técnica <strong>Quick Coherence®</strong> del HeartMath: 1) Enfoca tu atención en el corazón. 2) Respira 5 segundos adentro, 5 segundos afuera. 3) Activa un sentimiento de gratitud genuina en el pecho. Practicado 3 minutos transforma el ritmo cardíaco de caótico a sinusoidal.</p>
+                <p>Al usar <strong>285 Hz o 432 Hz</strong> de NeuroSync durante 15 minutos, fuerzas al ritmo cardíaco a sincronizarse con la frecuencia en un proceso llamado <strong>Entrainment Cardíaco</strong>.</p>
+            </div>
+            <div id="quiz2" class="module-section"><h1>Examen Nivel 2</h1><div class="quiz-container" id="quiz-form-2"></div></div>
+
+            <!-- MÓDULO 3 -->
+            <div id="mod3" class="module-section">
+                <h1>Módulo 3: Higiene, Limpieza y Protección Energética</h1>
+                <img src="https://images.unsplash.com/photo-1507652313651-74ff74d3c8fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Limpieza y purificación">
+                <p>Te bañas todos los días para limpiar tu cuerpo físico. Sin embargo, tu cuerpo emocional transita por "basureros" energéticos constantemente sin recibir ninguna limpieza. El estrés colectivo genera <strong>"Iones Positivos"</strong> que se adhieren a las capas sutiles de tu aura como una película invisible.</p>
+                <h2>1. La Ciencia del Parasitismo Astral</h2>
+                <p>El vampirismo energético tiene sustento en la <strong>Segunda Ley de la Termodinámica</strong>: la energía siempre fluye del sistema de mayor concentración al de menor. Si tu campo está cargado y entras en contacto con una persona en déficit crónico, donarás energía automáticamente.</p>
+                <div class="info-box" style="background: rgba(239,68,68,0.05); border-left-color: #ef4444;">
+                    <h3 style="color: #ef4444; margin-top:0;"><i class="fas fa-battery-empty"></i> Señales de que Fuiste Vampirizado</h3>
+                    <ul>
+                        <li>Fatiga inmediata tras una conversación sin esfuerzo físico.</li>
+                        <li>Dolor de cabeza o presión que aparece durante la interacción.</li>
+                        <li>Irritabilidad o tristeza que no existía antes del contacto.</li>
+                        <li>Pensamientos circulares sobre esa persona que no puedes dejar ir.</li>
+                    </ul>
+                </div>
+                <h2>2. Protocolos de Descarga</h2>
+                <ul>
+                    <li><strong>Earthing (15-30 min):</strong> Caminar descalzo sobre tierra húmeda descarga la estática de estrés hacia la Tierra. El Journal of Environmental and Public Health (2012) documentó reducción de inflamación y cortisol en 40 minutos.</li>
+                    <li><strong>El Reseteo Salino:</strong> Fróta sal marina gruesa en movimientos descendentes (cuello a pies) bajo el agua, visualizando que borras capas de estática. Finaliza con 30 segundos de agua fría.</li>
+                </ul>
+                <h2>3. El Escudo de Protección: La Burbuja Espejo</h2>
+                <div class="info-box">
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-shield-alt"></i> Protocolo Completo (3 minutos)</h3>
+                    <ol>
+                        <li>Respira en ciclo 4-4-4 cuatro veces para desactivar la amígdala.</li>
+                        <li>Visualiza una esfera de luz blanca que emana desde tu corazón y rodea todo tu cuerpo.</li>
+                        <li>Decide que la capa exterior es de titanio espejado, mirando hacia afuera. Todo lo que llegue rebota hacia su origen.</li>
+                        <li>Sella declarando: <em>"Mi campo está sellado. Soy soberano de mi espacio electromagnético."</em></li>
+                    </ol>
+                </div>
+                <h2>4. Limpieza de Espacios: Asepsia Acústica</h2>
+                <ul>
+                    <li><strong>417 Hz — Transmutación:</strong> Ideal para espacios con discusiones. Reproducir 30 minutos en altavoz.</li>
+                    <li><strong>741 Hz — Desintoxicación:</strong> Para dormitorios con pesadillas o insomnio recurrente.</li>
+                </ul>
+                <div class="quote-box" style="border-color: var(--cyan-glow); color: #bae6fd;">"El cuerpo es un instrumento que debe ser afinado con la misma diligencia que cualquier instrumento musical." <br><span style="font-size: 1rem; color: var(--cyan-glow); font-weight: bold; font-style: normal;">— Dr. Mitchell Gaynor, Oncólogo, Cornell Medical Center</span></div>
+            </div>
+            <div id="quiz3" class="module-section"><h1>Examen Nivel 3</h1><div class="quiz-container" id="quiz-form-3"></div></div>
+
+            <!-- MÓDULO 4 -->
+            <div id="mod4" class="module-section">
+                <h1>Módulo 4: Cimática y la Arquitectura Estructural del Sonido</h1>
+                <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Cimática">
+                <div class="img-caption">Gráfico 4.1: La interferencia de ondas organiza la materia en patrones sagrados.</div>
+                <p>¿Cómo puede un audio sanar un órgano o aliviar ansiedad? El sonido es <strong>Fuerza Mecánica y Geométrica</strong> que actúa sobre la materia. Una vez que comprendes esto, la idea de que el sonido correcto puede reorganizar tu biología pasa de creencia alternativa a ingeniería aplicada.</p>
+                <h2>1. La Cimática: Haciendo Visible lo Invisible</h2>
+                <p>El físico <strong>Ernst Chladni</strong> espolvoreó arena sobre una placa de metal y la hizo vibrar con un arco de violín. El resultado fue impactante: la arena se organizaba en patrones geométricos precisos y simétricos — las <strong>Figuras de Chladni</strong>. A frecuencias bajas, patrones simples. A frecuencias altas, geometrías intrincadas. Los sonidos caóticos producían distribuciones aleatorias y asimétricas.</p>
+                <div class="quote-box" style="border-color: var(--cyan-glow); color: #bae6fd;">"Si quieres entender el Universo, piensa en términos de energía, frecuencia y vibración." <br><span style="font-size: 1rem; color: #fbbf24; font-weight: bold;">— Nikola Tesla</span></div>
+                <h2>2. El Experimento del Dr. Masaru Emoto</h2>
+                <p>Emoto expuso muestras de agua a diferentes estímulos y luego las congeló para fotografiar sus cristales. El agua expuesta a odio o música violenta formaba cristales rotos y asimétricos. El agua expuesta a <strong>528 Hz</strong>, palabras de amor o música de Bach, formaba copos hexagonales perfectos. El cuerpo adulto es 60-75% agua. La conclusión es directa: el tipo de información sonora que consumes remodela la arquitectura molecular de tu biología.</p>
+                <div class="info-box" style="background: rgba(139, 92, 246, 0.1); border-left-color: #a64bf4;">
+                    <h3 style="color: #a64bf4; margin-top:0;"><i class="fas fa-water"></i> Tu Célula es una Placa Cimática Viviente</h3>
+                    <ul>
+                        <li>Cada célula está llena de agua intracelular sensible a la vibración.</li>
+                        <li>Frecuencias coherentes (Solfeggio, 432 Hz) organizan las células en patrones de salud.</li>
+                        <li>Frecuencias caóticas (440 Hz comercial, música violenta) generan patrones de desorganización biológica.</li>
+                    </ul>
+                </div>
+                <h2>3. La Resonancia Schumann: El Latido de la Tierra</h2>
+                <p>El físico <strong>Winfried Otto Schumann</strong> confirmó que la cavidad electromagnética entre la superficie terrestre y la ionosfera resuena a <strong>7.83 Hz</strong>. Los astronautas desconectados de esta frecuencia sufrían disrupciones severas en el ritmo circadiano, ánimo e inmunidad — hasta que la NASA incorporó generadores artificiales de Resonancia Schumann en sus naves.</p>
+                <h2>4. Las 9 Frecuencias Solfeggio</h2>
+                <div class="info-box" style="background: rgba(0,212,255,0.05); border-left-color: var(--cyan-glow);">
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-music"></i> Aplicaciones Específicas</h3>
+                    <ul>
+                        <li><strong>174 Hz:</strong> Alivio del dolor físico, anclaje y seguridad.</li>
+                        <li><strong>285 Hz:</strong> Regeneración de tejidos y sanación de heridas energéticas.</li>
+                        <li><strong>396 Hz:</strong> Liberación de miedo, culpa y bloqueos en el Chakra Raíz.</li>
+                        <li><strong>417 Hz:</strong> Transmutación y facilitar el cambio. Limpieza de traumas.</li>
+                        <li><strong>528 Hz:</strong> Reparación del ADN, transformación y milagros. La más investigada.</li>
+                        <li><strong>639 Hz:</strong> Conexión, relaciones y cohesión. Chakra Corazón.</li>
+                        <li><strong>741 Hz:</strong> Expresión, solución de problemas, desintoxicación. Chakra Garganta.</li>
+                        <li><strong>852 Hz:</strong> Despertar de la intuición. Chakra Tercer Ojo.</li>
+                        <li><strong>963 Hz:</strong> Iluminación y conexión con el Campo Unificado. Chakra Corona.</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="quiz4" class="module-section"><h1>Examen Nivel 4</h1><div class="quiz-container" id="quiz-form-4"></div></div>
+
+            <!-- MÓDULO 5 -->
+            <div id="mod5" class="module-section">
+                <h1>Módulo 5: Los 7 Vórtices (Endocrinología y Chakras)</h1>
+                <img src="https://images.unsplash.com/photo-1545389336-eaee37b6c501?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Sistema Endocrino">
+                <p>La ubicación de los 7 Chakras coincide milimétricamente con los <strong>7 Plexos Nerviosos y las 7 Glándulas Endocrinas</strong>. Los chakras son los puntos donde los vórtices cuánticos transducen su frecuencia en señales eléctricas, que ordenan a las glándulas secretar hormonas específicas.</p>
+                <h2>Mapeo Bio-Energético de los 7 Vórtices</h2>
+                <h3>1. Chakra Raíz — Muladhara (396 Hz / Glándulas Suprarrenales)</h3>
+                <p>Governa la supervivencia, seguridad material y dinero. Bloqueado por estrés de supervivencia → cortisol crónico → miedo al dinero, problemas en caderas y columna lumbar.</p>
+                <h3>2. Chakra Sacro — Svadhisthana (417 Hz / Gónadas)</h3>
+                <p>Governa la creatividad, el placer y la sexualidad. El bloqueador número uno es la <strong>Culpa</strong>. Si te enseñaron que el placer era pecado, ese condicionamiento bloquea tu flujo creativo y económico.</p>
+                <h3>3. Chakra Plexo Solar — Manipura (528 Hz / Páncreas)</h3>
+                <p>El centro del poder personal y la autoestima. Se bloquea con la <strong>Vergüenza</strong>. Somatización: gastritis, colon irritable, sabotaje inconsciente del éxito.</p>
+                <h3>4. Chakra Corazón — Anahata (639 Hz / Timo)</h3>
+                <p>Puente entre los chakras de supervivencia y los espirituales. El bloqueo viene del luto y el rencor no resueltos. El Timo inmune opera bajo su influencia → inmunodeficiencia crónica.</p>
+                <h3>5. Chakra Garganta — Vishuddha (741 Hz / Tiroides)</h3>
+                <p>Governa la expresión auténtica. Se bloquea con las <strong>mentiras</strong> y las emociones que "te tragas". La tiroides responde con hipotiroidismo (energía baja, depresión) o hipertiroidismo (ansiedad).</p>
+                <h3>6. Tercer Ojo — Ajna (852 Hz / Pineal y Pituitaria)</h3>
+                <p>Sede de la intuición. La Glándula Pineal se calcifica por el flúor del agua, el calcio inorgánico y la luz azul de las pantallas, bloqueando la percepción intuitiva.</p>
+                <h3>7. Corona — Sahasrara (963 Hz / Hipotálamo)</h3>
+                <p>El vórtice de la unión con el Todo. Cuando está activo: ausencia de miedo a la muerte, propósito claro y sabiduría que trasciende el conocimiento intelectual.</p>
+                <div class="info-box">
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-arrow-up"></i> La Regla de Oro del Sistema de Vórtices</h3>
+                    <p><strong>La energía Kundalini sube. Nunca al revés.</strong> Protocolo correcto: Raíz (396 Hz) → Sacro (417 Hz) → Plexo (528 Hz) → Corazón (639 Hz) → Garganta (741 Hz) → Tercer Ojo (852 Hz) → Corona (963 Hz).</p>
+                </div>
+            </div>
+            <div id="quiz5" class="module-section"><h1>Examen Nivel 5</h1><div class="quiz-container" id="quiz-form-5"></div></div>
+
+            <!-- MÓDULO 6 -->
+            <div id="mod6" class="module-section">
+                <h1>Módulo 6: Neuroplasticidad y Reprogramación del Subconsciente</h1>
+                <img src="https://images.unsplash.com/photo-1559757175-5700dde675bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Neuroplasticidad">
+                <p>La <strong>Neuroplasticidad</strong> destruyó el mito del cerebro adulto estático: el cerebro es el órgano más dinámico del cuerpo, permaneciendo moldeable hasta el último día de tu vida. Las frecuencias de NeuroSync no son música motivacional, son agentes de neuroplasticidad dirigida.</p>
+                <h2>1. La Ley de Hebb: Cómo se Forjan las Cadenas Mentales</h2>
+                <p><em>"Las neuronas que se disparan juntas, se conectan físicamente."</em> Cada vez que repites una emoción asociada a un pensamiento, se fortalece el cable neuronal. Los cables no usados se debilitan por <strong>Poda Sináptica</strong>.</p>
+                <h2>2. Los 5 Estados Cerebrales</h2>
+                <ul>
+                    <li><strong>Beta (12-30 Hz):</strong> Mente analítica. El Ego actúa como guardia que rechaza ideas nuevas. Las afirmaciones en Beta son rechazadas instantáneamente.</li>
+                    <li><strong>Alfa (8-12 Hz):</strong> Umbral de entrada al subconsciente. El guardia empieza a adormecerse.</li>
+                    <li><strong>Theta (4-8 Hz):</strong> Acceso directo al disco duro subconsciente. Los niños de 0 a 7 años viven aquí — por eso sus creencias son tan profundas. NeuroSync arrastra el cerebro a este estado.</li>
+                    <li><strong>Delta (0.5-4 Hz):</strong> Sueño profundo. Consolida lo aprendido en Theta.</li>
+                </ul>
+                <div class="info-box" style="background: rgba(139,92,246,0.08); border-left-color: #8b5cf6;">
+                    <h3 style="color: #a64bf4; margin-top:0;"><i class="fas fa-wave-square"></i> Por qué las Afirmaciones Normales No Funcionan</h3>
+                    <p>En estado Beta, el sistema crítico analítico compara la afirmación con la evidencia del pasado y la rechaza. En Theta inducido por NeuroSync, no hay comparación: el subconsciente acepta la instrucción sin debate. Así funciona la hipnosis clínica.</p>
+                </div>
+                <h2>3. El Sistema Activador Reticular (RAS)</h2>
+                <p>De 400,000,000,000 bits de información por segundo, el RAS filtra solo 2,000 — aquellos que validan tus creencias dominantes. Si crees que las oportunidades escasean, tu RAS literalmente las bloquea de tu percepción.</p>
+                <div class="quote-box">"Crea un nuevo pensamiento hoy. Siente un nuevo sentimiento. Fuerza a tu cerebro a disparar en nuevas secuencias. Así reescribes tu destino biológico." <br><span style="font-size: 1rem; color: var(--cyan-glow); font-weight: bold; font-style: normal;">— Dr. Joe Dispenza</span></div>
+            </div>
+            <div id="quiz6" class="module-section"><h1>Examen Nivel 6</h1><div class="quiz-container" id="quiz-form-6"></div></div>
+
+            <!-- MÓDULO 7 -->
+            <div id="mod7" class="module-section">
+                <h1>Módulo 7: Códigos Sagrados y Geometría Matemática</h1>
+                <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Geometría sagrada">
+                <p>El universo se comunica exclusivamente a través de <strong>matemáticas y vibración electromagnética</strong>. La secuencia de Fibonacci y la Proporción Áurea (φ = 1.618) son la firma del Creador. Los Códigos Sagrados son el lenguaje numérico para hablarle directamente al Campo.</p>
+                <h2>1. ¿Qué son los Códigos Sagrados de Grabovoi?</h2>
+                <p>El matemático <strong>Grigori Grabovoi</strong> desarrolló secuencias numéricas que funcionan como una <strong>dirección IP en el universo cuántico</strong>: conectan tu campo electromagnético directamente con la frecuencia del resultado deseado.</p>
+                <h2>2. El Error de la Repetición Vacía</h2>
+                <p>Repetir un número sin emoción es marcar un teléfono con el auricular sobre la mesa. La emoción — específicamente la del <strong>deseo ya cumplido</strong> — es el voltaje que transmite el código del ruido a señal.</p>
+                <div class="info-box">
+                    <h3 style="color: var(--cyan-glow); margin-top:0;">Protocolo Completo de Activación</h3>
+                    <ol>
+                        <li>Induce estado Theta con NeuroSync en la frecuencia alineada con tu chakra objetivo.</li>
+                        <li>Activa la emoción de gratitud profunda en el pecho — certeza de que ya está resuelto.</li>
+                        <li>Visualiza los dígitos brillando en luz dorada frente a tu Tercer Ojo.</li>
+                        <li>Repite el código exactamente <strong>45 veces</strong> seguidas sin interrupciones.</li>
+                        <li>Sella con desapego: suelta el resultado. El apego emite la señal de "no lo tengo".</li>
+                    </ol>
+                </div>
+                <h2>3. Biblioteca de Códigos Maestros</h2>
+                <ul>
+                    <li><strong>520</strong> — Llegada inesperada de dinero.</li>
+                    <li><strong>71588</strong> — Atracción de clientes y oportunidades de negocio.</li>
+                    <li><strong>318 798 01</strong> — Abundancia económica sostenida.</li>
+                    <li><strong>1</strong> — Paz interior instantánea y retorno al presente.</li>
+                    <li><strong>8 888 412</strong> — Amor verdadero y conexión profunda.</li>
+                    <li><strong>1891011</strong> — Salud perfecta y regeneración celular.</li>
+                    <li><strong>52189</strong> — Sanación de memorias dolorosas y lazos ancestrales.</li>
+                    <li><strong>9187948</strong> — Protección y blindaje ante energías negativas.</li>
+                    <li><strong>000 888 000</strong> — Activación de la frecuencia de los milagros.</li>
+                </ul>
+                <div class="quote-box" style="border-color: #fbbf24; color: #fef08a;">"Los números son el lenguaje de Dios. En ellos, el universo escribió el código de creación de la realidad." <br><span style="font-size: 1rem; color: #fbbf24; font-weight: bold; font-style: normal;">— Pitágoras de Samos</span></div>
+            </div>
+            <div id="quiz7" class="module-section"><h1>Examen Nivel 7</h1><div class="quiz-container" id="quiz-form-7"></div></div>
+
+            <!-- MÓDULO 8 -->
+            <div id="mod8" class="module-section">
+                <h1>Módulo 8: Epigenética y Modificación del ADN</h1>
+                <img src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="ADN brillante">
+                <div class="img-caption">Gráfico 8.1: La expresión genética es alterada por el entorno electromagnético.</div>
+                <p>El <strong>Dr. Bruce Lipton</strong> y la <strong>Epigenética</strong> destruyeron el Determinismo Genético: la misma célula con idéntico ADN se convierte en músculo, hueso o grasa dependiendo del entorno químico que la rodea, no del gen en sí.</p>
+                <h2>1. La Bioquímica de la Percepción</h2>
+                <p><strong>Modo Supervivencia (Simpático):</strong> La percepción de amenaza libera Cortisol y Adrenalina → la sangre huye de los órganos, el sistema inmune baja, genes de inflamación se encienden.<br><strong>Modo Crecimiento (Parasimpático):</strong> La percepción de seguridad libera Oxitocina y Dopamina → reparación celular, inmunidad potenciada, genes de longevidad activos.</p>
+                <div class="quote-box" style="border-color: #34d399; color: #a7f3d0;">Tu mente tiene autoridad absoluta sobre el comportamiento celular. No eres víctima de tu ADN. Eres el arquitecto de tu expresión genética.<br><span style="font-size: 1rem; color: #34d399; font-weight: bold; font-style: normal;">— Dr. Bruce Lipton</span></div>
+                <h2>2. Los Telómeros: El Reloj Biológico que puedes Controlar</h2>
+                <p>La <strong>Dra. Elizabeth Blackburn</strong> (Nobel 2009) demostró que la enzima <strong>Telomerasa</strong> puede reparar y alargar los telómeros revirtiendo el envejecimiento celular, y su actividad correlaciona directamente con las emociones positivas sostenidas.</p>
+                <h2>3. La Frecuencia 528 Hz y el ADN</h2>
+                <p>Investigadores documentaron que la exposición a 528 Hz aumenta la absorción de luz ultravioleta por el ADN in vitro — un indicador de integridad estructural. Si el cuerpo es 70% agua y el ADN está inmerso en ese agua, 528 Hz crea el entorno acuoso más organizado y coherente para que el ADN opere en su óptimo.</p>
+                <div class="info-box" style="background: rgba(16,185,129,0.05); border-left-color: #10b981;">
+                    <h3 style="color: #10b981; margin-top:0;"><i class="fas fa-dna"></i> Protocolo de Activación Epigenética</h3>
+                    <ol>
+                        <li><strong>Antes de dormir:</strong> NeuroSync en 528 Hz. Declara con emoción: "Mis células se regeneran perfectamente."</li>
+                        <li><strong>Al despertar:</strong> 2 minutos de gratitud activa antes de revisar el celular. Esto activa oxitocina y reduce el cortisol matutino.</li>
+                        <li><strong>Durante el día:</strong> Aplicar respiración 4-4-4 ante el estrés para interrumpir la cascada de cortisol.</li>
+                    </ol>
+                </div>
+            </div>
+            <div id="quiz8" class="module-section"><h1>Examen Nivel 8</h1><div class="quiz-container" id="quiz-form-8"></div></div>
+
+            <!-- MÓDULO 9 -->
+            <div id="mod9" class="module-section">
+                <h1>Módulo 9: Corte de Lazos Kármicos y Perdón Cuántico</h1>
+                <img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Liberación y sanación">
+                <p><strong>No puedes llenar una taza que está llena de agua sucia.</strong> Las conexiones tóxicas del pasado son cables energéticos físicamente reales que siguen drenando tu batería vital mucho después de que la relación terminó.</p>
+                <h2>1. La Física de los Lazos Energéticos</h2>
+                <p>Los lazos energéticos persisten después de que la relación termina. Si todavía sientes rabia o rencor hacia alguien, el lazo está activo. Cada pensamiento con emoción intensa envía porciones de tu energía vital a esa persona.</p>
+                <h2>2. El Perdón como Tecnología Cuántica</h2>
+                <p>El perdón cuántico es el <strong>acto de cortar el cable energético y reintegrar esa energía en tu propio campo</strong>. No cambias el pasado ni apruebas lo que te hicieron. Solo dejas de ser energéticamente su prisionero. El rencor vibra entre 30-150 Hz. El perdón genuino salta a 350 Hz.</p>
+                <h2>3. Protocolo Ho'oponopono</h2>
+                <p>Las cuatro frases del proceso hawaiano de sanación:</p>
+                <ul>
+                    <li><strong>"Lo Siento"</strong> — Reconocimiento del programa en mi subconsciente que co-creó esta situación.</li>
+                    <li><strong>"Perdóname"</strong> — Solicitud al Campo Cuántico para limpiar esa memoria de mi disco duro.</li>
+                    <li><strong>"Gracias"</strong> — Gratitud por la lección que esta persona vino a mostrarme.</li>
+                    <li><strong>"Te Amo"</strong> — Reconocimiento de que ambos somos parte del Campo Unificado.</li>
+                </ul>
+                <div class="info-box">
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-cut"></i> Ejercicio de Corte de Lazos (15-20 min con 396 Hz)</h3>
+                    <ol>
+                        <li>Recuéstate y relájate completamente con 396 Hz en audífonos.</li>
+                        <li>Visualiza a la persona frente a ti en un espacio neutro.</li>
+                        <li>Observa los cables negros gruesos que los conectan desde el abdomen o pecho.</li>
+                        <li>Invoca unas tijeras de luz dorada y córtalos de un tajo limpio y definitivo.</li>
+                        <li>El extremo en tu lado regresa hacia ti como luz y se integra. El de ellos se disuelve en luz.</li>
+                        <li>Observa cómo la persona se da vuelta y camina hacia la luz. Ambos son libres.</li>
+                    </ol>
+                </div>
+            </div>
+            <div id="quiz9" class="module-section"><h1>Examen Nivel 9</h1><div class="quiz-container" id="quiz-form-9"></div></div>
+
+            <!-- MÓDULO 10 -->
+            <div id="mod10" class="module-section">
+                <h1>Módulo 10: El Salto Cuántico y la Integración Final</h1>
+                <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Universo cuántico">
+                <p>Has cruzado el velo. Lo que aprendiste no es un conjunto de creencias alternativas. Es el mapa operativo de la realidad. Ahora posees el conocimiento que los maestros iniciados han guardado durante siglos, avalado hoy por la física más avanzada del mundo.</p>
+                <h2>1. La Ley de la Asunción de Neville Goddard</h2>
+                <p>El error final del buscador es seguir <em>deseando</em>. El acto mismo del deseo emite la señal de <strong>separación y carencia</strong>. Goddard descubrió que:</p>
+                <ul>
+                    <li><strong>Desear (Carencia):</strong> "Quiero tener más dinero" → Señal cuántica: FALTA dinero → El campo colapsa más falta.</li>
+                    <li><strong>Asumir (Presencia):</strong> "SOY una persona próspera" → Señal cuántica: La prosperidad es mi estado natural → El campo colapsa eventos que la confirman.</li>
+                </ul>
+                <h2>2. La Técnica del Scripting</h2>
+                <p>Escribe a mano (la escritura manual activa más regiones cerebrales) sobre tu vida como si ya existiera la realidad deseada. El subconsciente no distingue entre una experiencia vivida e intensamente imaginada — ambas crean la misma química cerebral.</p>
+                <h2>3. Tu Rutina de Alquimista Cuántico: El Protocolo de 21 Días</h2>
+                <ul>
+                    <li><strong>Fase A.M. (10 min):</strong> Al despertar, sin tocar el celular, pon NeuroSync y reproduce tu escena de asunción con la emoción de la naturalidad durante 5-10 minutos.</li>
+                    <li><strong>Higiene Diurna:</strong> Ante conflictos, aplica Burbuja Espejo y Código Sagrado 1 (paz interior). No te enganches a la frecuencia densa del entorno.</li>
+                    <li><strong>Fase P.M. (Al dormir):</strong> NeuroSync en bucle infinito con volumen bajo. El estado Delta consolida las instrucciones instaladas durante el día sin interferencia del Ego.</li>
+                </ul>
+                <div class="quote-box" style="border-color: #10b981; color: #a7f3d0;">
+                    El Universo ya es tuyo en el Campo de Posibilidades. No tienes que pedirlo. Solo tienes que dejar de pedirle permiso a tus traumas para habitar la realidad que ya existe para ti en el plano cuántico. Sal de aquí. Siente que ya es tuyo. Y colapsa la onda.
+                </div>
+                <div class="info-box" style="background: rgba(0,212,255,0.05); border-left-color: var(--cyan-glow);">
+                    <h3 style="color: var(--cyan-glow); margin-top:0;"><i class="fas fa-crown"></i> La Advertencia Final</h3>
+                    <p>El conocimiento de las leyes cuánticas sin su aplicación activa y consistente es solo entretenimiento intelectual. El universo no responde a lo que sabes intelectualmente. Responde a lo que eres vibratoriamente. <strong>La diferencia entre el alumno que transforma su vida y el que no, es una sola decisión: aplicar cada herramienta con consistencia diaria por 21 días, sin esperar evidencia antes de creer.</strong></p>
+                </div>
+            </div>
+            <div id="quiz10" class="module-section"><h1>Examen Final de Acreditación</h1><div class="quiz-container" id="quiz-form-10"></div></div>
+
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // BASE DE DATOS DE LOS EXÁMENES (Quizzes)
+        // ==========================================
+        const allQuizzes = {
+            1: [
+                { q: "1. En el Experimento de la Doble Rendija, ¿qué sucede cuando la partícula es observada?", options: ["A) Aumenta su velocidad.", "B) El observador altera la gravedad.", "C) La onda de probabilidad colapsa y se materializa como partícula sólida.", "D) El electrón desaparece.", "E) La materia se vuelve antimateria."], ans: 2 },
+                { q: "2. Según el Módulo 1, ¿qué es la Default Mode Network (DMN)?", options: ["A) El sistema inmunológico celular.", "B) Red neuronal responsable del diálogo interno, la ansiedad y el sostenimiento del Ego.", "C) La región del cerebro visual.", "D) Frecuencia de radio.", "E) Nervios pulmonares."], ans: 1 },
+                { q: "3. ¿Por qué ocurre la 'Desrealización' (pérdida de identidad) durante el despertar?", options: ["A) Por toxinas en la sangre.", "B) Daño de frecuencias al oído.", "C) Proceso neurobiológico necesario donde la antigua red neuronal se desarma para crear un lienzo en blanco.", "D) Efecto secundario psiquiátrico.", "E) Castigo kármico."], ans: 2 },
+                { q: "4. ¿Cuál de estos síntomas es común en el despertar por hiperactividad de la Amígdala?", options: ["A) Visión perfecta.", "B) Pánico o llanto sin motivo lógico (purga de trauma celular).", "C) Ver fantasmas.", "D) Caída de cabello repentina.", "E) Ganas de consumir azúcar."], ans: 1 },
+                { q: "5. ¿Qué es el 'Spiritual Bypassing' (Evasión Espiritual)?", options: ["A) Usar doctrinas de alta vibración para reprimir y ocultar heridas psicológicas.", "B) Faltar a meditación.", "C) Viaje astral rápido.", "D) Ayunar muchos días.", "E) Rechazar dinero material."], ans: 0 },
+                { q: "6. Según el texto, ¿qué debes hacer energéticamente al sentir una tristeza profunda?", options: ["A) Repetir mantras positivos forzados.", "B) Ignorarla para no bajar la frecuencia.", "C) Aplicar la Aceptación Radical; abrazar la sombra es la vibración más alta disponible para transmutar.", "D) Distraerse con la TV.", "E) Buscar culpables."], ans: 2 },
+                { q: "7. Las sincronías numéricas (como 11:11) ocurren porque...", options: ["A) Seres manipulan los relojes.", "B) Al apagar la DMN, el cerebro expande su percepción y capta el código subyacente matemático de la realidad.", "C) Fallo en la vista.", "D) Pura casualidad estadística.", "E) Alguien piensa en ti."], ans: 1 },
+                { q: "8. ¿Cómo logran las frecuencias NeuroSync 'hackear' la resistencia del cerebro?", options: ["A) Relajando los hombros.", "B) Emisión de ultrasonidos.", "C) Inyectando dos tonos distintos que obligan al tallo cerebral a crear un Binaural Beat, arrastrando la mente a Theta.", "D) Mensajes de voz escondidos.", "E) Hipnosis frontal ocular."], ans: 2 },
+                { q: "9. ¿Cuál es el estado cerebral ideal para insertar nuevas instrucciones directas al subconsciente sin oposición del Ego?", options: ["A) Estado Beta", "B) Estado Gamma", "C) Estado Theta", "D) Estado Delta", "E) Estado Alfa Alto"], ans: 2 },
+                { q: "10. 'El Universo no te da lo que pides, te da lo que ERES'. Esto significa:", options: ["A) Que el karma castiga.", "B) El Campo Cuántico colapsa basándose en la firma electromagnética y vibracional profunda de tu subconsciente.", "C) Debes rezar más tiempo.", "D) Nada cambia.", "E) Dios decide aleatoriamente."], ans: 1 }
+            ],
+            2: [
+                { q: "1. Desde la perspectiva holística, ¿cuál es el origen real de una enfermedad física crónica?", options: ["A) Aire contaminado únicamente.", "B) Azar genético inamovible.", "C) Un bloqueo emocional o mental no resuelto que, por no limpiarse, se densificó hasta alcanzar el cuerpo físico.", "D) Castigo del destino.", "E) Efecto de frecuencias muy altas."], ans: 2 },
+                { q: "2. ¿Qué capa del aura almacena las creencias limitantes y los patrones de pensamiento lógicos?", options: ["A) Cuerpo Físico", "B) Cuerpo Etérico/Emocional", "C) Cuerpo Mental", "D) Cuerpo Espiritual", "E) Cuerpo Astral Superior"], ans: 2 }
+                // TODO: El resto de preguntas se truncaron. Pega aquí el resto de arrays de quizzes (del 2 al 10).
+            ]
+        };
+
+        // ==========================================
+        // MOTOR LÓGICO DE LA ACADEMIA Y SUPABASE
+        // ==========================================
+        const userEmail = localStorage.getItem("neurosync_user_email");
+        let currentUserLevel = 1;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!userEmail) {
+                alert("Acceso denegado. Debes iniciar sesión en NeuroSync para entrar a la Academia.");
+                window.location.href = "index.html";
+                return;
+            }
+
+            // 1. Obtener nivel de la base de datos
+            try {
+                const response = await fetch('/.netlify/functions/getAcademiaProgress', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail })
+                });
+                const data = await response.json();
+                if (data && data.level) {
+                    currentUserLevel = parseInt(data.level);
+                }
+            } catch (e) {
+                console.error("Error cargando progreso de la base de datos", e);
+                alert("Hubo un problema sincronizando tu progreso. Usaremos tu nivel temporal.");
+            }
+
+            // Ocultar pantalla de carga
+            document.getElementById('loading-overlay').style.opacity = '0';
+            setTimeout(() => { document.getElementById('loading-overlay').style.display = 'none'; }, 500);
+
+            // Iniciar UI
+            renderQuizzes();
+            updateSidebarLocks();
+            
+            // Asignar eventos de click a los botones del sidebar que no están bloqueados
+            document.querySelectorAll('.module-list li').forEach(item => {
+                item.addEventListener('click', () => {
+                    if (!item.classList.contains('locked')) {
+                        switchSection(item.getAttribute('data-target'), item);
+                    }
+                });
+            });
+        });
+
+        // 2. Control de Bloqueos en el Menú
+        function updateSidebarLocks() {
+            const listItems = document.querySelectorAll('.module-list li:not(.lesson[data-target="welcome"])');
+            listItems.forEach(item => {
+                const levelReq = parseInt(item.getAttribute('data-level'));
+                if (levelReq <= currentUserLevel) {
+                    item.classList.remove('locked');
+                } else {
+                    item.classList.add('locked');
+                }
+            });
+        }
+
+        // 3. Navegación de Pantallas
+        function switchSection(targetId, activeItem) {
+            document.querySelectorAll('.module-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+            
+            document.querySelectorAll('.module-list li').forEach(li => li.classList.remove('active'));
+            if(activeItem) activeItem.classList.add('active');
+            
+            document.getElementById('main-content-scroll').scrollTop = 0;
+        }
+
+        // 4. Renderizado Dinámico de Quizzes
+        function renderQuizzes() {
+            for (let i = 1; i <= 10; i++) {
+                const container = document.getElementById(`quiz-form-${i}`);
+                if (!container || !allQuizzes[i] || allQuizzes[i].length === 0) {
+                    if (container) container.innerHTML = `<p style="color: var(--text-muted); text-align:center;">El cuestionario para este nivel aún se está construyendo o no está disponible en este momento.</p>`;
+                    continue;
+                }
+                
+                let html = '';
+                allQuizzes[i].forEach((q, qIndex) => {
+                    html += `<div class="question-block">
+                                <div class="question-text">${q.q}</div>
+                                <div class="options-list">`;
+                    q.options.forEach((opt, optIndex) => {
+                        html += `<label class="option-item">
+                                    <input type="radio" name="q_${i}_${qIndex}" value="${optIndex}">
+                                    <span>${opt}</span>
+                                 </label>`;
+                    });
+                    html += `</div></div>`;
+                });
+                
+                html += `<button id="btn-submit-${i}" class="btn-submit-quiz" onclick="gradeQuiz(${i})">Calificar Examen</button>`;
+                html += `<div id="result-${i}" class="quiz-result"></div>`;
+                
+                container.innerHTML = html;
+            }
+        }
+
+        // 5. Sistema de Calificación y Actualización a Supabase
+        async function gradeQuiz(level) {
+            const questions = allQuizzes[level];
+            let score = 0;
+            let answeredCount = 0;
+            
+            questions.forEach((q, qIndex) => {
+                const selected = document.querySelector(`input[name="q_${level}_${qIndex}"]:checked`);
+                if (selected) {
+                    answeredCount++;
+                    if (parseInt(selected.value) === q.ans) {
+                        score++;
+                    }
+                }
+            });
+            
+            if (answeredCount < questions.length) {
+                alert(`⚠️ Faltan ${questions.length - answeredCount} preguntas por responder.`);
+                return;
+            }
+            
+            const percentage = (score / questions.length) * 100;
+            const resultDiv = document.getElementById(`result-${level}`);
+            resultDiv.style.display = "block";
+            
+            if (percentage >= 80) {
+                resultDiv.className = "quiz-result result-pass";
+                resultDiv.innerHTML = `<h2><i class="fas fa-check-circle"></i> ¡Aprobado! Puntaje: ${score}/${questions.length} (${percentage}%)</h2>
+                                       <p>Has dominado este nivel. El siguiente módulo ha sido desbloqueado en tu panel.</p>`;
+                
+                // Si aprobó y es el nivel máximo que tiene actualmente, lo subimos de nivel
+                if (currentUserLevel === level && level < 10) {
+                    currentUserLevel = level + 1;
+                    
+                    const btn = document.getElementById(`btn-submit-${level}`);
+                    btn.innerText = "Sincronizando con la red global...";
+                    btn.disabled = true;
+                    
+                    try {
+                        // Guardar en Supabase
+                        const response = await fetch('/.netlify/functions/updateAcademiaProgress', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: userEmail, newLevel: currentUserLevel })
+                        });
+                        
+                        if(response.ok) {
+                            btn.innerText = "Examen Completado y Sincronizado";
+                            updateSidebarLocks();
+                            
+                            // Saltar automáticamente al siguiente módulo después de 2 segundos
+                            setTimeout(() => {
+                                const nextItem = document.querySelector(`.lesson[data-level="${currentUserLevel}"]`);
+                                if (nextItem) switchSection(nextItem.getAttribute('data-target'), nextItem);
+                            }, 2500);
+                        } else {
+                            throw new Error("Error en el servidor");
+                        }
+                    } catch(e) {
+                        console.error("Error guardando progreso", e);
+                        btn.innerText = "Error Sincronizando (Reintenta)";
+                        btn.disabled = false;
+                        currentUserLevel = level; // Revertir si falló
+                    }
+                } else if (level === 10) {
+                    resultDiv.innerHTML = `<h2><i class="fas fa-crown"></i> ¡FELICIDADES MAESTRO! Puntaje: ${score}/${questions.length}</h2>
+                                       <p>Has completado la Academia Cuántica en su totalidad. Eres un alquimista de tu propia realidad.</p>`;
+                }
+            } else {
+                resultDiv.className = "quiz-result result-fail";
+                resultDiv.innerHTML = `<h2><i class="fas fa-times-circle"></i> No Aprobado. Puntaje: ${score}/${questions.length} (${percentage}%)</h2>
+                                       <p>Necesitas un mínimo del 80% para avanzar. Por favor, repasa el módulo e inténtalo de nuevo.</p>`;
+            }
+        }
+
+        // 6. Botón de Reseteo Extremo
+        async function confirmReset() {
+            const isConfirmed = confirm("⚠️ ATENCIÓN: BORRADO TOTAL ⚠️\n\n¿Estás absolutamente seguro de que deseas reiniciar TODO tu progreso? Esta acción borrará permanentemente tu nivel de la base de datos global y te regresará al Módulo 1.\n\nEsta acción NO se puede deshacer.");
+            if (isConfirmed) {
+                const secondConfirm = confirm("Última confirmación de seguridad:\n¿Proceder con el reseteo cuántico total?");
+                if (secondConfirm) {
+                    
+                    // Mostrar pantalla de carga
+                    document.getElementById('loading-overlay').querySelector('h2').innerText = "Borrando registros cuánticos...";
+                    document.getElementById('loading-overlay').style.display = 'flex';
+                    setTimeout(() => { document.getElementById('loading-overlay').style.opacity = '1'; }, 10);
+                    
+                    try {
+                        const response = await fetch('/.netlify/functions/updateAcademiaProgress', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: userEmail, newLevel: 1 })
+                        });
+                        
+                        if(response.ok) {
+                            alert("Bases de datos actualizadas. Comenzarás desde cero.");
+                            location.reload();
+                        } else {
+                            throw new Error("Error en el servidor");
+                        }
+                    } catch(e) {
+                        alert("Hubo un error contactando la base de datos. Inténtalo de nuevo.");
+                        document.getElementById('loading-overlay').style.opacity = '0';
+                        setTimeout(() => { document.getElementById('loading-overlay').style.display = 'none'; }, 500);
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
