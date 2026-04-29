@@ -1799,6 +1799,7 @@
         ];
 
         let natureAudioElements = {};
+        let natureNodes = {}; // GainNodes para control de volumen preciso
         let natureMasterLoop = true;
         let natureTimerInterval = null;
         let natureTimerSeconds = 0;
@@ -1832,6 +1833,9 @@
         }
 
         function toggleNatureSound(id) {
+            initWebAudioAPI(); // Asegurar contexto
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+
             const card = document.getElementById(`card-${id}`);
             const soundConfig = natureSounds.find(s => s.id === id);
             
@@ -1846,11 +1850,27 @@
                     const audio = new Audio(soundConfig.url);
                     audio.loop = natureMasterLoop;
                     audio.crossOrigin = "anonymous";
+                    
+                    // Conectar a Web Audio API para control de volumen real
+                    try {
+                        const source = audioCtx.createMediaElementSource(audio);
+                        const gainNode = audioCtx.createGain();
+                        source.connect(gainNode).connect(audioCtx.destination);
+                        natureNodes[id] = gainNode;
+                    } catch(e) {
+                        console.warn("No se pudo conectar a AudioContext (posible reconexión):", e);
+                    }
+                    
                     natureAudioElements[id] = audio;
                 }
                 
-                // Asegurar que el volumen sea el del slider actual al activarlo
-                natureAudioElements[id].volume = document.getElementById(`vol-${id}`).value;
+                // Sincronizar volumen inicial del GainNode (o fallback .volume)
+                const vol = document.getElementById(`vol-${id}`).value;
+                if(natureNodes[id]) {
+                    natureNodes[id].gain.value = parseFloat(vol);
+                } else {
+                    natureAudioElements[id].volume = parseFloat(vol);
+                }
                 
                 let playPromise = natureAudioElements[id].play();
                 if (playPromise !== undefined) {
@@ -1859,8 +1879,6 @@
                         if (e.name === 'NotAllowedError') {
                             alert("Por favor interactúa con la página antes de reproducir audios.");
                             card.classList.remove('active');
-                        } else if (e.name === 'NotSupportedError') {
-                            card.classList.remove('active');
                         }
                     });
                 }
@@ -1868,13 +1886,17 @@
         }
 
         function changeNatureVolume(id) {
-            const audio = natureAudioElements[id];
             const slider = document.getElementById(`vol-${id}`);
-            if(audio && slider) {
-                const vol = parseFloat(slider.value);
-                audio.volume = vol;
-                console.log(`Cambiando volumen de ${id} a ${vol}`);
+            if(!slider) return;
+            const vol = parseFloat(slider.value);
+            
+            // Prioridad al GainNode del AudioContext
+            if(natureNodes[id]) {
+                natureNodes[id].gain.setValueAtTime(vol, audioCtx.currentTime);
+            } else if(natureAudioElements[id]) {
+                natureAudioElements[id].volume = vol;
             }
+            console.log(`Cambiando volumen de ${id} a ${vol} via GainNode`);
         }
 
         function natureMasterPlay() {
@@ -1884,8 +1906,14 @@
                 const audio = natureAudioElements[id];
                 if(card && card.classList.contains('active') && audio) {
                     hasActive = true;
-                    // Actualizar volumen antes de play por si se movió el slider
-                    audio.volume = document.getElementById(`vol-${id}`).value;
+                    // Actualizar volumen del GainNode antes de play
+                    const vol = document.getElementById(`vol-${id}`).value;
+                    if(natureNodes[id]) {
+                        natureNodes[id].gain.value = parseFloat(vol);
+                    } else {
+                        audio.volume = parseFloat(vol);
+                    }
+                    
                     let playPromise = audio.play();
                     if (playPromise !== undefined) {
                         playPromise.catch(e => console.log("Master play error:", e));
