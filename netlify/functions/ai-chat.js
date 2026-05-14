@@ -56,15 +56,20 @@ Tu objetivo es guiar al usuario (${userName}) a sincronizar su mente y cuerpo us
 
 Responde de manera directa. Siempre intenta recomendar una frecuencia exacta para el problema o deseo que tenga el usuario.`;
 
-        // Preparamos el cuerpo de la petición hacia la API de xAI (Grok) usando la nueva documentación
+        // Preparamos el cuerpo de la petición hacia la API de xAI (Grok) con formato estándar
         const requestBody = JSON.stringify({
-            model: "grok-4.20-reasoning",
-            input: `${systemPrompt}\n\nPregunta del usuario: ${message}`
+            model: "grok-beta",
+            messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: message }
+            ],
+            stream: false,
+            temperature: 0.7
         });
 
         const options = {
             hostname: 'api.x.ai',
-            path: '/v1/responses',
+            path: '/v1/chat/completions',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -77,7 +82,13 @@ Responde de manera directa. Siempre intenta recomendar una frecuencia exacta par
             const req = https.request(options, (res) => {
                 let data = '';
                 res.on('data', (chunk) => data += chunk);
-                res.on('end', () => resolve(JSON.parse(data)));
+                res.on('end', () => {
+                    try {
+                        resolve(JSON.parse(data));
+                    } catch(e) {
+                        reject(new Error("Error parseando respuesta de Grok: " + data));
+                    }
+                });
             });
             req.on('error', (e) => reject(e));
             req.write(requestBody);
@@ -90,17 +101,10 @@ Responde de manera directa. Siempre intenta recomendar una frecuencia exacta par
             return { statusCode: 500, body: JSON.stringify({ error: grokResponse.error.message || "Error en la API de Grok" }) };
         }
 
-        // Extraemos el texto de la respuesta basándonos en la posible nueva estructura de /v1/responses
-        // (Ajustado provisionalmente, puede variar si el output es diferente a la interfaz de openai)
-        let reply = "Respuesta no procesable.";
-        if(grokResponse.output && typeof grokResponse.output === 'string') {
-            reply = grokResponse.output;
-        } else if (grokResponse.choices && grokResponse.choices.length > 0) {
-            reply = grokResponse.choices[0].message ? grokResponse.choices[0].message.content : grokResponse.choices[0].text;
-        } else if (grokResponse.text) {
-             reply = grokResponse.text;
-        } else {
-             reply = JSON.stringify(grokResponse); // Para debugear si el formato cambia
+        // Extraer respuesta del formato estándar de chat completions
+        let reply = "Lo siento, mi conexión cuántica está inestable.";
+        if (grokResponse.choices && grokResponse.choices.length > 0) {
+            reply = grokResponse.choices[0].message.content;
         }
 
         return {

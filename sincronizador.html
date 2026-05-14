@@ -78,16 +78,16 @@
 
         .energy-ring { 
             position: relative; 
-            width: 45vw; height: 45vw; 
-            max-width: 280px; max-height: 280px; 
-            min-width: 180px; min-height: 180px;
+            width: 38vw; height: 38vw; /* Un poco más pequeño para dar espacio a los selectores apilados */
+            max-width: 240px; max-height: 240px; 
+            min-width: 150px; min-height: 150px;
             display: flex; justify-content: center; align-items: center; cursor: pointer; 
-            overflow: visible; /* Importante para que el brillo no se corte */
+            overflow: visible;
         }
 
         .glow-circle {
             position: absolute; 
-            width: 120%; height: 120%; /* Un poco más grande para evitar cortes en el borde */
+            width: 130%; height: 130%; 
             border-radius: 50%;
             background: radial-gradient(circle, var(--color-right) 0%, var(--color-left) 60%, transparent 80%);
             box-shadow: 0 0 70px 20px var(--color-right);
@@ -139,15 +139,47 @@
         .ai-chip { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.8); cursor: pointer; transition: 0.3s; }
         .ai-chip:hover { background: rgba(255, 255, 255, 0.15); color: #fff; border-color: rgba(255, 255, 255, 0.3); }
         
-        /* Modal Binaural */
+        /* Modal Binaural Estilo Premium */
         .binaural-modal-body { 
-            flex: 1; 
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-around; 
-            gap: 10px; 
-            overflow-y: auto; 
+            flex: 1; padding: 0; display: flex; flex-direction: column; gap: 0; overflow-y: auto; background: transparent; 
+        }
+        
+        .orb-zone {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 40px 20px 20px 20px; position: relative; min-height: 350px;
+        }
+
+        .energy-ring { 
+            position: relative; width: 250px; height: 250px; 
+            display: flex; justify-content: center; align-items: center; cursor: pointer; 
+            z-index: 5;
+        }
+
+        .glow-circle {
+            position: absolute; width: 180%; height: 180%; border-radius: 50%;
+            background: radial-gradient(circle, var(--color-right) 0%, var(--color-left) 40%, transparent 70%);
+            filter: blur(40px); opacity: 0.4; transition: all 0.8s ease;
+        }
+
+        .energy-ring.playing .glow-circle { 
+            opacity: 0.7; transform: scale(1.2); filter: blur(50px);
+            animation: pulse-glow 3s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulse-glow { 0% { opacity: 0.4; transform: scale(1); } 100% { opacity: 0.8; transform: scale(1.2); } }
+
+        .play-btn-inner {
+            width: 90px; height: 90px; background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; font-size: 2.2rem; color: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10;
+        }
+
+        .binaural-bottom-card {
+            background: rgba(15, 15, 25, 0.7); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-top: 1px solid rgba(255,255,255,0.08); border-radius: 40px 40px 0 0;
+            padding: 30px 25px 40px 25px; flex: 1; display: flex; flex-direction: column; gap: 25px;
         }
         .binaural-main-play { 
             width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--color-left), var(--color-right)); 
@@ -175,21 +207,21 @@
         }
         .timer-select:focus { background: rgba(0, 0, 0, 0.4); border-color: rgba(255,255,255,0.2); }
 
-        /* Controles de Frecuencia */
+        /* Controles de Frecuencia en Fila */
         .frequency-panel {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            display: flex; justify-content: space-between; gap: 15px;
         }
 
         .selector-box { 
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px;
-            padding: 10px; display: flex; flex-direction: column; align-items: center; text-align: center;
+            flex: 1; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px;
+            padding: 15px 10px; display: flex; flex-direction: column; align-items: center; text-align: center;
         }
         
-        .selector-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%; }
+        .selector-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%; }
         
         .freq-select {
-            width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); color: var(--text-main);
-            font-family: var(--font-main); font-weight: 700; font-size: 0.95rem; padding: 8px; border-radius: 10px; outline: none; cursor: pointer; text-align: center;
+            width: 100%; background: transparent; border: none; color: var(--text-main);
+            font-family: var(--font-main); font-weight: 700; font-size: 0.9rem; padding: 2px; border-radius: 0; outline: none; cursor: pointer; text-align: center;
         }
         .freq-select option { background: #15112e; color: var(--text-main); font-weight: normal; }
         .left .freq-select { color: var(--color-left); border-color: rgba(0, 212, 255, 0.2); }
@@ -780,57 +812,57 @@
         </div>
         
         <div class="binaural-modal-body">
-            <div style="display: flex; justify-content: center; width: 100%;">
+            <div class="orb-zone">
                 <div class="energy-ring" id="energy-ring" onclick="toggleMasterPlay()">
                     <div class="glow-circle"></div>
                     <div class="play-btn-inner" id="binaural-play-btn">
                         <i class="fas fa-play" style="margin-left: 5px;"></i>
                     </div>
                 </div>
-            </div>
-            
-            <div class="timer-header">
-                <h3>Temporizador Cuántico</h3>
-            </div>
-            <div style="margin-top: -10px;">
-                <select id="time-select" class="timer-select" onchange="handleTimerChange()">
-                    <option value="bucle">Bucle Infinito ∞</option>
-                    <option value="900">Sesión de 15 min</option>
-                    <option value="1800">Sesión de 30 min</option>
-                    <option value="3600">Sesión de 60 min</option>
-                </select>
-            </div>
-
-            <!-- Frecuencias -->
-            <div class="frequency-panel">
-                <div class="selector-box left">
-                    <span class="selector-label">Oído Izquierdo <i class="fas fa-info-circle info-icon" onclick="showFreqInfo('left')" title="Ver información de esta frecuencia"></i></span>
-                    <select id="select-left" class="freq-select" onchange="updateUI()"></select>
-                </div>
-                <div class="selector-box right">
-                    <span class="selector-label">Oído Derecho <i class="fas fa-info-circle info-icon" onclick="showFreqInfo('right')" title="Ver información de esta frecuencia"></i></span>
-                    <select id="select-right" class="freq-select" onchange="updateUI()"></select>
-                </div>
-            </div>
-
-            <!-- Progreso y Volumen -->
-            <div class="playback-controls" style="margin-top: 5px; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);">
-                <div class="progress-wrapper">
-                    <span id="time-current" class="time-text">00:00</span>
-                    <input type="range" id="progress-bar" class="progress-bar" value="0" min="0" max="100" step="0.1">
-                    <span id="time-total" class="time-text" style="text-align: right;">00:00</span>
-                </div>
-                <div class="volume-control" style="margin-top: 10px;">
-                    <i class="fas fa-volume-down" style="font-size: 1rem;"></i>
-                    <input type="range" id="vol-slider" class="vol-slider" min="0" max="1" step="0.05" value="0.8" onchange="changeVolume()">
-                    <i class="fas fa-volume-up" style="font-size: 1rem;"></i>
-                </div>
-            </div>
-            
-            <div style="display: flex; justify-content: center; margin-top: 10px;">
-                <button class="reset-audio-btn" onclick="resetAudio()" style="margin-top: 0;">
+                
+                <button class="reset-audio-btn" onclick="resetAudio()" style="margin-top: 30px; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); font-size: 0.8rem; letter-spacing: 1px;">
                     <i class="fas fa-sync-alt"></i> REINICIAR SISTEMA
                 </button>
+            </div>
+            
+            <div class="binaural-bottom-card">
+                <div class="timer-header">
+                    <h3>Temporizador Cuántico</h3>
+                </div>
+                <div style="margin-top: -10px;">
+                    <select id="time-select" class="timer-select" onchange="handleTimerChange()">
+                        <option value="bucle">Bucle Infinito ∞</option>
+                        <option value="900">Sesión de 15 min</option>
+                        <option value="1800">Sesión de 30 min</option>
+                        <option value="3600">Sesión de 60 min</option>
+                    </select>
+                </div>
+
+                <!-- Frecuencias en Fila -->
+                <div class="frequency-panel">
+                    <div class="selector-box left">
+                        <span class="selector-label">Oído Izquierdo <i class="fas fa-info-circle info-icon" onclick="showFreqInfo('left')"></i></span>
+                        <select id="select-left" class="freq-select" onchange="updateUI()"></select>
+                    </div>
+                    <div class="selector-box right">
+                        <span class="selector-label">Oído Derecho <i class="fas fa-info-circle info-icon" onclick="showFreqInfo('right')"></i></span>
+                        <select id="select-right" class="freq-select" onchange="updateUI()"></select>
+                    </div>
+                </div>
+
+                <!-- Progreso y Volumen -->
+                <div class="playback-controls">
+                    <div class="progress-wrapper">
+                        <span id="time-current" class="time-text">00:00</span>
+                        <input type="range" id="progress-bar" class="progress-bar" value="0" min="0" max="100" step="0.1">
+                        <span id="time-total" class="time-text" style="text-align: right;">00:00</span>
+                    </div>
+                    <div class="volume-control" style="margin-top: 15px;">
+                        <i class="fas fa-volume-down" style="font-size: 1rem; color: rgba(255,255,255,0.3);"></i>
+                        <input type="range" id="vol-slider" class="vol-slider" min="0" max="1" step="0.05" value="0.8" onchange="changeVolume()">
+                        <i class="fas fa-volume-up" style="font-size: 1rem; color: rgba(255,255,255,0.6);"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1002,6 +1034,38 @@
             updateGreeting();
         }
 
+        // --- CAPA DE SABIDURÍA LOCAL DE CASSIE (Para respuestas gratuitas e instantáneas) ---
+        const cassieLocalKnowledge = {
+            frecuencias: {
+                keywords: ["frecuencia", "hz", "significado", "sirve", "beneficio"],
+                response: "Cada frecuencia tiene un propósito biológico: 111Hz (Paz), 174Hz (Alivio físico), 285Hz (Regeneración), 396Hz (Liberar miedo), 417Hz (Cambio), 432Hz (Armonía), 528Hz (Amor/ADN), 639Hz (Relaciones), 741Hz (Intuición), 852Hz (Visión), 888Hz (Riqueza), 963Hz (Divino) y 999Hz (Cierre)."
+            },
+            ansiedad: {
+                keywords: ["ansiedad", "panico", "nervios", "estres", "angustia"],
+                response: "Para calmar la ansiedad, te recomiendo la 'Mezcla de Valor': Selecciona 396 Hz (izquierdo) y 432 Hz (derecho). Combínalo con el sonido de Lluvia en el panel de Naturaleza. Respira profundo, la tribu está contigo."
+            },
+            insomnio: {
+                keywords: ["dormir", "insomnio", "sueño", "descansar", "noche"],
+                response: "Para un sueño profundo, prueba la 'Mezcla de Reparación': 174 Hz (Alivio) y 528 Hz (Amor/Reparación). Activa los sonidos de Bosque o Grillos y pon el temporizador en 30 minutos."
+            },
+            dolor: {
+                keywords: ["dolor", "cabeza", "espalda", "fisico", "migraña"],
+                response: "Usa la frecuencia 174 Hz en ambos oídos. Es conocida como el 'anestésico cuántico' y ayuda a reducir la tensión física y el dolor."
+            },
+            dinero: {
+                keywords: ["dinero", "riqueza", "abundancia", "exito", "prosperidad"],
+                response: "Sintoniza la frecuencia 888 Hz (Riqueza) y 963 Hz (Conexión Divina). Esta combinación alinea tu vibración con la abundancia universal."
+            },
+            estudiar: {
+                keywords: ["estudiar", "concentracion", "enfoque", "leer", "trabajar"],
+                response: "Usa 432 Hz (Armonía) y 741 Hz (Intuición). Esta mezcla limpia el ruido mental y te permite un enfoque láser en tus tareas."
+            },
+            ayuda: {
+                keywords: ["como usar", "tutorial", "ayuda", "funciona", "instrucciones"],
+                response: "Es fácil: 1. Ve al 'Control Binaural' y elige tus frecuencias (usa audífonos). 2. En 'Naturaleza', activa sonidos ambientales. 3. Haz clic en el tiempo '--:--' para sumar 15 min. ¡Disfruta la sincronización!"
+            }
+        };
+
         function handleAIChatKeyPress(e) {
             if (e.key === 'Enter') {
                 sendToAI();
@@ -1010,7 +1074,7 @@
 
         async function sendToAI(chipText = null) {
             const inputEl = document.getElementById('ai-chat-input');
-            const message = chipText || inputEl.value.trim();
+            const message = (chipText || inputEl.value.trim()).toLowerCase();
             if(!message) return;
 
             inputEl.value = '';
@@ -1021,10 +1085,26 @@
             const responseBox = document.getElementById('ai-response-box');
             const responseText = document.getElementById('ai-response-text');
             responseBox.style.display = 'block';
-            responseText.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Conectando con CASSIE...';
+            responseText.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> CASSIE está analizando tu vibración...';
 
+            // --- LÓGICA DE RESPUESTA LOCAL (SIN COSTO) ---
+            let localResponse = null;
+            for (const key in cassieLocalKnowledge) {
+                if (cassieLocalKnowledge[key].keywords.some(k => message.includes(k))) {
+                    localResponse = cassieLocalKnowledge[key].response;
+                    break;
+                }
+            }
+
+            if (localResponse) {
+                setTimeout(() => {
+                    typeWriterEffect(localResponse, responseText, btn);
+                }, 600);
+                return;
+            }
+
+            // --- LLAMADA A LA API (SI NO HAY RESPUESTA LOCAL) ---
             try {
-                // LLAMADA A LA FUNCIÓN DE NETLIFY EN LUGAR DE LA API DIRECTA PARA PROTEGER LA CLAVE
                 const res = await fetch('/.netlify/functions/ai-chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1033,27 +1113,28 @@
 
                 if(!res.ok) throw new Error("Error en el servidor");
                 const data = await res.json();
-                
-                // Efecto máquina de escribir
-                responseText.innerHTML = '';
-                let textToType = data.reply;
-                let i = 0;
-                let typeInterval = setInterval(() => {
-                    if (i < textToType.length) {
-                        responseText.innerHTML += textToType.charAt(i);
-                        i++;
-                    } else {
-                        clearInterval(typeInterval);
-                        btn.innerHTML = '<i class="fas fa-paper-plane"></i>';
-                        btn.disabled = false;
-                    }
-                }, 15);
+                typeWriterEffect(data.reply, responseText, btn);
 
             } catch (error) {
-                responseText.innerHTML = 'Lo siento, hubo un cruce de frecuencias. Intenta de nuevo.';
+                responseText.innerHTML = '¡Ups! He sentido una pequeña interferencia en mi conexión cuántica. Mi sintonía avanzada está un poco inestable ahora, pero recuerda que siempre puedo ayudarte con dudas sobre frecuencias, ansiedad o el uso de la app si usas palabras clave. ¡Inténtalo de nuevo, tribu!';
                 btn.innerHTML = '<i class="fas fa-paper-plane"></i>';
                 btn.disabled = false;
             }
+        }
+
+        function typeWriterEffect(text, element, btn) {
+            element.innerHTML = '';
+            let i = 0;
+            let interval = setInterval(() => {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    btn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                    btn.disabled = false;
+                }
+            }, 15);
         }
 
         function updateGreeting() {
