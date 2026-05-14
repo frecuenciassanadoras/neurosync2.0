@@ -46,7 +46,7 @@
         /* --- HEADER --- */
         .top-nav {
             width: 100%;
-            padding: 40px 30px 20px 30px;
+            padding: 20px 20px 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
@@ -80,11 +80,16 @@
 
         .glow-circle {
             position: absolute; width: 100%; height: 100%; border-radius: 50%;
-            background: linear-gradient(135deg, var(--color-left), var(--color-right));
-            opacity: 0.15; filter: blur(30px); transition: all 0.5s ease; transform: scale(0.9);
+            background: radial-gradient(circle, rgba(166,75,244,0.3) 0%, rgba(0,212,255,0.1) 70%, transparent 100%);
+            box-shadow: 0 0 50px 10px rgba(166, 75, 244, 0.2);
+            transition: all 0.5s ease; transform: scale(1.1);
         }
 
-        .energy-ring.playing .glow-circle { opacity: 0.5; filter: blur(40px); animation: pulse-ring 2.5s infinite alternate ease-in-out; }
+        .energy-ring.playing .glow-circle { 
+            box-shadow: 0 0 80px 20px rgba(166, 75, 244, 0.4), inset 0 0 30px rgba(0, 212, 255, 0.3);
+            animation: pulse-ring 2.5s infinite alternate ease-in-out; 
+            transform: scale(1.2);
+        }
 
         @keyframes pulse-ring { 0% { transform: scale(0.95); opacity: 0.4; } 100% { transform: scale(1.1); opacity: 0.7; } }
 
@@ -151,21 +156,23 @@
 
         /* Controles de Frecuencia */
         .frequency-panel {
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px;
-            padding: 15px 20px; display: flex; flex-direction: column; gap: 10px;
+            display: flex; flex-direction: column; gap: 15px;
         }
 
-        .selectors-container { display: flex; justify-content: space-between; gap: 15px; }
-        .selector-box { flex: 1; display: flex; flex-direction: column; }
-        .selector-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; font-weight: 500; }
+        .selector-box { 
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px;
+            padding: 15px 20px; display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
+        
+        .selector-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
         
         .freq-select {
-            width: 100%; background: transparent; border: none; color: var(--text-main);
-            font-family: var(--font-main); font-weight: 700; font-size: 1.05rem; outline: none; cursor: pointer; appearance: none; 
+            width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); color: var(--text-main);
+            font-family: var(--font-main); font-weight: 700; font-size: 1.1rem; padding: 12px; border-radius: 12px; outline: none; cursor: pointer; text-align: center;
         }
         .freq-select option { background: #15112e; color: var(--text-main); font-weight: normal; }
-        .left .freq-select { color: var(--color-left); }
-        .right .freq-select { color: var(--color-right); }
+        .left .freq-select { color: var(--color-left); border-color: rgba(0, 212, 255, 0.2); }
+        .right .freq-select { color: var(--color-right); border-color: rgba(166, 75, 244, 0.2); }
 
         /* Controles de Reproducción */
         .playback-controls { display: flex; flex-direction: column; gap: 10px; }
@@ -187,7 +194,7 @@
         /* --- MENÚ LATERAL (SIDEBAR) --- */
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99; backdrop-filter: blur(5px); opacity: 0; visibility: hidden; transition: 0.3s; }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
-        .sidebar { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: rgba(15, 15, 25, 0.95); backdrop-filter: blur(20px); z-index: 100; box-shadow: 10px 0 30px rgba(0,0,0,0.5); transition: 0.3s ease-in-out; padding: 40px 25px; display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.05); }
+        .sidebar { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: rgba(15, 15, 25, 0.95); backdrop-filter: blur(20px); z-index: 100; box-shadow: 10px 0 30px rgba(0,0,0,0.5); transition: 0.3s ease-in-out; padding: 40px 25px; display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.05); overflow-y: auto; }
         .sidebar.active { left: 0; }
         
         .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -382,8 +389,11 @@
         .nature-card.active .nature-icon { transform: scale(1.15); color: #34d399; text-shadow: 0 0 10px rgba(52, 211, 153, 0.5); }
         .nature-title { font-size: 0.85rem; font-weight: 500; color: #fff; margin-bottom: 10px; }
         .nature-vol { width: 100%; -webkit-appearance: none; appearance: none; height: 4px; background: rgba(255,255,255,0.1); outline: none; border-radius: 5px; margin-top: 5px; opacity: 0; pointer-events: none; transition: 0.3s; }
-        .nature-card.active .nature-vol { opacity: 1; pointer-events: auto; }
         .nature-vol::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 12px; height: 12px; background: #34d399; border-radius: 50%; cursor: pointer; }
+
+        .nature-card.unavailable { opacity: 0.4; cursor: not-allowed; border-color: rgba(248, 113, 113, 0.3); background: rgba(248, 113, 113, 0.05); }
+        .nature-card.unavailable .nature-icon { color: #f87171; }
+        .nature-card.unavailable .nature-title { text-decoration: line-through; color: #f87171; }
 
         .nature-master-controls { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(15, 15, 25, 0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.1); padding: 20px; z-index: 10; display: flex; flex-direction: column; gap: 10px; border-radius: 0 0 20px 20px;}
         .nature-controls-row { display: flex; justify-content: center; align-items: center; gap: 10px; }
@@ -683,8 +693,8 @@
             </div>
             <div class="nature-controls-row" style="margin-top: 10px;">
                 <button class="n-btn n-loop active" id="nature-loop-btn" onclick="toggleNatureLoop()"><i class="fas fa-sync-alt"></i> Bucle</button>
-                <div class="n-timer-display" id="nature-timer-display">--:--</div>
-                <button class="n-btn" onclick="toggleMeditation()" style="color: #60a5fa;"><i class="fas fa-lock"></i> Pantalla Rápida</button>
+                <div class="n-timer-display" id="nature-timer-display" onclick="addNatureTime()" style="cursor: pointer;" title="Añadir 15 minutos">--:--</div>
+                <button class="n-btn" onclick="toggleMeditationMode()" style="color: #60a5fa;"><i class="fas fa-lock"></i> Pantalla Rápida</button>
             </div>
         </div>
     </div>
@@ -772,29 +782,27 @@
 
             <!-- Frecuencias -->
             <div class="frequency-panel">
-                <div class="selectors-container">
-                    <div class="selector-box left">
-                        <span class="selector-label">Oído Izquierdo <i class="fas fa-info-circle info-icon" onclick="showFreqInfo('left')" title="Ver información de esta frecuencia"></i></span>
-                        <select id="select-left" class="freq-select" onchange="updateUI()"></select>
-                    </div>
-                    <div class="selector-box right" style="text-align: right;">
-                        <span class="selector-label"><i class="fas fa-info-circle info-icon" onclick="showFreqInfo('right')" title="Ver información de esta frecuencia"></i> Oído Derecho</span>
-                        <select id="select-right" class="freq-select" dir="rtl" onchange="updateUI()"></select>
-                    </div>
+                <div class="selector-box left">
+                    <span class="selector-label">Oído Izquierdo <i class="fas fa-info-circle info-icon" onclick="showFreqInfo('left')" title="Ver información de esta frecuencia"></i></span>
+                    <select id="select-left" class="freq-select" onchange="updateUI()"></select>
+                </div>
+                <div class="selector-box right">
+                    <span class="selector-label">Oído Derecho <i class="fas fa-info-circle info-icon" onclick="showFreqInfo('right')" title="Ver información de esta frecuencia"></i></span>
+                    <select id="select-right" class="freq-select" onchange="updateUI()"></select>
                 </div>
             </div>
 
             <!-- Progreso y Volumen -->
-            <div class="playback-controls">
+            <div class="playback-controls" style="margin-top: 15px; background: rgba(255,255,255,0.02); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05);">
                 <div class="progress-wrapper">
                     <span id="time-current" class="time-text">00:00</span>
                     <input type="range" id="progress-bar" class="progress-bar" value="0" min="0" max="100" step="0.1">
                     <span id="time-total" class="time-text" style="text-align: right;">00:00</span>
                 </div>
-                <div class="volume-control">
-                    <i class="fas fa-volume-down" style="font-size: 0.8rem;"></i>
+                <div class="volume-control" style="margin-top: 15px;">
+                    <i class="fas fa-volume-down" style="font-size: 1rem;"></i>
                     <input type="range" id="vol-slider" class="vol-slider" min="0" max="1" step="0.05" value="0.8" onchange="changeVolume()">
-                    <i class="fas fa-volume-up" style="font-size: 0.8rem;"></i>
+                    <i class="fas fa-volume-up" style="font-size: 1rem;"></i>
                 </div>
             </div>
             
@@ -1978,9 +1986,9 @@
             { id: "nat-13", name: "Fuego", icon: "fas fa-fire", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Fuego.mp3" },
             { id: "nat-14", name: "Grillos", icon: "fas fa-bug", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Grillos.mp3" },
             { id: "nat-15", name: "Pájaros", icon: "fas fa-dove", url: "https://f005.backblazeb2.com/file/mis-frecuencias-musicales/SONIDOS+NATURALEZA/Pajaros.mp3" },
-            { id: "nat-16", name: "Rana", icon: "fas fa-frog", url: "https://mixrelax.com/wp-content/uploads/sounds/frog.mp3" },
-            { id: "nat-17", name: "Hojas", icon: "fas fa-leaf", url: "https://mixrelax.com/wp-content/uploads/sounds/leaves.mp3" },
-            { id: "nat-18", name: "Bajo el Agua", icon: "fas fa-swimmer", url: "https://mixrelax.com/wp-content/uploads/sounds/underwater.mp3" }
+            { id: "nat-16", name: "Rana", icon: "fas fa-frog", url: "https://mixrelax.com/wp-content/uploads/sounds/frog.mp3", unavailable: true },
+            { id: "nat-17", name: "Hojas", icon: "fas fa-leaf", url: "https://mixrelax.com/wp-content/uploads/sounds/leaves.mp3", unavailable: true },
+            { id: "nat-18", name: "Bajo el Agua", icon: "fas fa-swimmer", url: "https://mixrelax.com/wp-content/uploads/sounds/underwater.mp3", unavailable: true }
         ];
 
         let natureAudioElements = {};
@@ -2006,13 +2014,22 @@
             
             let html = "";
             natureSounds.forEach(sound => {
-                html += `
-                    <div class="nature-card" id="card-${sound.id}" onclick="toggleNatureSound('${sound.id}')">
-                        <i class="${sound.icon} nature-icon"></i>
-                        <div class="nature-title">${sound.name}</div>
-                        <input type="range" class="nature-vol" id="vol-${sound.id}" min="0" max="1" step="0.05" value="0.5" oninput="changeNatureVolume('${sound.id}')" onclick="event.stopPropagation()">
-                    </div>
-                `;
+                if (sound.unavailable) {
+                    html += `
+                        <div class="nature-card unavailable" id="card-${sound.id}" title="Temporalmente no disponible por mantenimiento de servidores globales">
+                            <i class="${sound.icon} nature-icon"></i>
+                            <div class="nature-title">${sound.name}</div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="nature-card" id="card-${sound.id}" onclick="toggleNatureSound('${sound.id}')">
+                            <i class="${sound.icon} nature-icon"></i>
+                            <div class="nature-title">${sound.name}</div>
+                            <input type="range" class="nature-vol" id="vol-${sound.id}" min="0" max="1" step="0.05" value="0.5" oninput="changeNatureVolume('${sound.id}')" onclick="event.stopPropagation()">
+                        </div>
+                    `;
+                }
             });
             grid.innerHTML = html;
         }
@@ -2120,10 +2137,6 @@
                 audio.pause();
                 audio.currentTime = 0;
             });
-            natureSounds.forEach(sound => {
-                const card = document.getElementById(`card-${sound.id}`);
-                if(card) card.classList.remove('active');
-            });
             clearInterval(natureTimerInterval);
             natureTimerSeconds = 0;
             updateNatureTimerDisplay();
@@ -2154,6 +2167,16 @@
                     updateNatureTimerDisplay();
                 }
             }, 1000);
+        }
+
+        function addNatureTime() {
+            // Añade 15 minutos al temporizador actual (900 segundos)
+            if(natureTimerSeconds <= 0) {
+                startNatureTimer(900);
+            } else {
+                natureTimerSeconds += 900;
+                updateNatureTimerDisplay();
+            }
         }
 
         function toggleNatureModal() {
