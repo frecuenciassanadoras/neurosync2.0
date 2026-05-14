@@ -1,0 +1,148 @@
+============================================================
+       RESPUESTAS EXÁMENES ACADEMIA CUÁNTICA NEUROSYNC
+============================================================
+
+Este archivo contiene las claves para los 10 exámenes. 
+Las opciones están indexadas de la siguiente manera:
+A = 0, B = 1, C = 2, D = 3, E = 4
+
+------------------------------------------------------------
+NIVEL 1: LA FÍSICA DEL DESPERTAR
+------------------------------------------------------------
+1. Doble Rendija: C) La onda de probabilidad colapsa... (Índice: 2)
+2. ¿Qué es la DMN?: B) Red neuronal del Ego/diálogo interno (Índice: 1)
+3. Desrealización: C) Proceso neurobiológico de reseteo (Índice: 2)
+4. Hiperactividad Amígdala: B) Pánico o llanto sin motivo (Índice: 1)
+5. Spiritual Bypassing: A) Usar espiritualidad para reprimir heridas (Índice: 0)
+6. Tristeza profunda: C) Aplicar Aceptación Radical (Índice: 2)
+7. Sincronías 11:11: B) Cerebro capta código matemático (Índice: 1)
+8. Hackear resistencia: C) Binaural Beat arrastrando a Theta (Índice: 2)
+9. Estado ideal: C) Estado Theta (Índice: 2)
+10. El Universo te da lo que ERES: B) Basado en firma electromagnética (Índice: 1)
+
+------------------------------------------------------------
+NIVEL 2: ANATOMÍA OCULTA Y TOROIDE
+------------------------------------------------------------
+1. Origen enfermedad: C) Bloqueo emocional/mental no resuelto (Índice: 2)
+2. Capa de creencias: C) Cuerpo Mental (Índice: 2)
+3. Intensidad Corazón: C) 5,000 veces más que el cerebro (Índice: 2)
+4. Colapso Toroide: B) Estrés crónico y trauma (Índice: 1)
+5. Quick Coherence: B) Instituto HeartMath (Índice: 1)
+6. Biofotones: C) Luz ultravioleta coherente de las células (Índice: 2)
+7. Entrainment: B) Sincronización eléctrica con el audio (Índice: 1)
+8. Células sanas: A) Coherente, como un láser biológico (Índice: 0)
+9. Frecuencia Entrainment: B) 285 Hz o 432 Hz (Índice: 1)
+10. Cuerpo Espiritual bloqueado: C) Vacío existencial (Índice: 2)
+
+------------------------------------------------------------
+NIVEL 3: HIGIENE Y PROTECCIÓN ENERGÉTICA
+------------------------------------------------------------
+1. Vampirismo: B) Segunda Ley Termodinámica (Índice: 1)
+2. NO es señal: D) Sentirse con más energía (Índice: 3)
+3. Earthing: C) Absorción de carga negativa de la tierra (Índice: 2)
+4. Agua fría: B) Activa el nervio vago (Índice: 1)
+5. Burbuja Espejo: C) Campo coherente estable (Índice: 2)
+6. Limpiar espacios: B) 417 Hz (Índice: 1)
+7. Iones positivos: A) Pantallas, aire acondicionado (Índice: 0)
+8. Respiración 4-7-8: C) Exhalación larga activa parasimpático (Índice: 2)
+9. Ciclos 4-4-4: A) Cuatro veces (Índice: 0)
+10. Dormitorios: C) 741 Hz (Índice: 2)
+
+------------------------------------------------------------
+NIVEL 4: CIMÁTICA Y SONIDO
+------------------------------------------------------------
+1. Término Cymatics: B) Hans Jenny (Índice: 1)
+2. Emoto 528 Hz: C) Copos hexagonales perfectos (Índice: 2)
+3. Resonancia Schumann: B) 7.83 Hz (Índice: 1)
+4. Astronautas: C) Insomnio y desorientación (Índice: 2)
+5. Binaural Beat 6Hz: B) 200 Hz y 206 Hz (Índice: 1)
+6. Córtex prefrontal: D) 741 Hz (Índice: 3)
+7. Células cancerosas: A) Caótica e incoherente (Índice: 0)
+8. Reparación celular: B) 285 Hz (Índice: 1)
+9. Conexión/Relaciones: C) 639 Hz (Índice: 2)
+10. Núcleo NeuroSync: B) Theta 4-8 Hz (Índice: 1)
+
+------------------------------------------------------------
+NIVEL 5: LOS 7 VÓRTICES
+------------------------------------------------------------
+1. Chakra Raíz: A) 396 Hz (Índice: 0)
+2. Glándula Plexo Solar: C) Páncreas (Índice: 2)
+3. Bloqueo Sacro: B) La Culpa (Índice: 1)
+4. Bloqueo Corazón: C) Luto y rencor (Índice: 2)
+5. Hipotiroidismo: B) Chakra Garganta (Índice: 1)
+6. Calcificación Pineal: C) Flúor y luz azul (Índice: 2)
+7. Chakra Corona: D) 963 Hz (Índice: 3)
+8. Kundalini: A) Ascendente (Índice: 0)
+9. Vergüenza: C) Chakra Plexo Solar (Índice: 2)
+10. Tercer Ojo: B) 852 Hz (Índice: 1)
+
+------------------------------------------------------------
+NIVEL 6: NEUROPLASTICIDAD
+------------------------------------------------------------
+1. Ley de Hebb: B) Neuronas que se disparan juntas... (Índice: 1)
+2. Niños 0-7 años: C) Estado Theta (Índice: 2)
+3. Beta falla: B) Sistema crítico rechaza (Índice: 1)
+4. Filtro RAS: C) 2,000 bits (Índice: 2)
+5. Poda Sináptica: A) Eliminar conexiones no usadas (Índice: 0)
+6. Puentear mente: B) Theta 4-8 Hz (Índice: 1)
+7. Estado Gamma: C) Alta complejidad / Insights (Índice: 2)
+8. Paso final: D) Consolidación en Delta (Índice: 3)
+9. Cambio creencia: B) RAS muestra nuevas oportunidades (Índice: 1)
+10. Fin mito cerebro estático: B) Década de 1990 (Índice: 1)
+
+------------------------------------------------------------
+NIVEL 7: CÓDIGOS SAGRADOS
+------------------------------------------------------------
+1. Resonancia Escalar: C) Visualización + Emoción en Theta (Índice: 2)
+2. Código 520: A) Dinero inesperado (Índice: 0)
+3. ¿Por qué 45?: C) Ciclos de ondas en Theta (Índice: 2)
+4. Código 1: B) Paz interior / Presente (Índice: 1)
+5. Sellado: B) Evitar señal de carencia (Índice: 1)
+6. Proporción Áurea: B) 1.618 (Índice: 1)
+7. Protección EMF: D) 9187948 (Índice: 3)
+8. Amor: C) 8 888 412 (Índice: 2)
+9. Paso 1: A) Inducir Theta con NeuroSync (Índice: 0)
+10. Milagros: C) 000 888 000 (Índice: 2)
+
+------------------------------------------------------------
+NIVEL 8: EPIGENÉTICA Y ADN
+------------------------------------------------------------
+1. Destino celular: C) Entorno químico/electromagnético (Índice: 2)
+2. Metilación: B) Silencia genes de reparación (Índice: 1)
+3. Sangre Supervivencia: D) Músculos (Índice: 3)
+4. Genes longevidad: B) SIRT1 y FOXO3 (Índice: 1)
+5. Elizabeth Blackburn: C) Telomerasa / Telómeros (Índice: 2)
+6. Glen Rein 528 Hz: B) 11% aumento absorción UV (Índice: 1)
+7. Real vs Imaginado: A) Falso - el SNA no distingue (Índice: 0)
+8. Reparación 90%: D) Sueño profundo Delta (Índice: 3)
+9. Entrenamiento NeuroSync: B) Modo crecimiento parasimpático (Índice: 1)
+10. Telómeros cortos: C) Senescencia o apoptosis (Índice: 2)
+
+------------------------------------------------------------
+NIVEL 9: CORTE DE LAZOS
+------------------------------------------------------------
+1. Detección lazo: B) Cambio energía al pensar en ellos (Índice: 1)
+2. Perdón Hawkins: C) 350 Hz (Aceptación) (Índice: 2)
+3. Lo Siento: A) Reconocimiento del programa (Índice: 0)
+4. Rencor/Rabia: B) 30-150 Hz (Índice: 1)
+5. No rabia al cortar: C) Rencor refuerza el lazo (Índice: 2)
+6. Frecuencia corte: A) 396 Hz (Índice: 0)
+7. Patrones repetitivos: B) Lazos y programas activos (Índice: 1)
+8. Base Ho'oponopono: C) Responsabilidad total (Índice: 2)
+9. Cables del otro: B) Se disuelven en luz (Índice: 1)
+10. Paso final: D) Burbuja Espejo (Índice: 3)
+
+------------------------------------------------------------
+NIVEL 10: EL SALTO CUÁNTICO
+------------------------------------------------------------
+1. Desear vs Asumir: C) Deseo=Carencia, Asunción=Presencia (Índice: 2)
+2. Scripting a mano: B) Activa más regiones cerebrales (Índice: 1)
+3. Días rutas nuevas: B) 21 días (Índice: 1)
+4. Gratitud Hawkins: C) 540 Hz (Alegría) (Índice: 2)
+5. Error crítico: A) Esperar evidencia antes de creer (Índice: 0)
+6. Paradoja desapego: C) No necesitar desesperadamente (Índice: 2)
+7. Tiempo Scripting: B) Primera persona / Presente (Índice: 1)
+8. Audio Noche: B) 396-528 Hz (Índice: 1)
+9. Asunción Dinero: A) Señal de presencia/abundancia (Índice: 0)
+10. El universo responde: C) A lo que ERES vibratoriamente (Índice: 2)
+============================================================
