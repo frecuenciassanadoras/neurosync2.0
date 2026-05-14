@@ -1164,19 +1164,14 @@
         function typeWriterEffect(text, element, btn) {
             element.innerHTML = '';
             let i = 0;
-            const container = document.querySelector('.ai-container');
             let interval = setInterval(() => {
                 if (i < text.length) {
                     element.innerHTML += text.charAt(i);
                     i++;
-                    // Auto-scroll hacia abajo mientras escribe
-                    if (container) container.scrollTop = container.scrollHeight;
                 } else {
                     clearInterval(interval);
                     btn.innerHTML = '<i class="fas fa-paper-plane"></i>';
                     btn.disabled = false;
-                    // Asegurar scroll final
-                    if (container) container.scrollTop = container.scrollHeight;
                 }
             }, 15);
         }
