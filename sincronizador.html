@@ -151,33 +151,60 @@
         }
 
         .energy-ring { 
-            position: relative; width: 180px; height: 180px; 
+            position: relative; width: 220px; height: 220px; 
             display: flex; justify-content: center; align-items: center; cursor: pointer; 
             z-index: 5;
         }
 
-        .glow-circle {
-            position: absolute; 
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 320px; height: 320px; border-radius: 50%;
-            background: radial-gradient(circle, var(--color-right) 0%, var(--color-left) 45%, transparent 75%);
-            filter: blur(60px); opacity: 0.5; transition: all 0.8s ease;
-            pointer-events: none;
+        /* El Anillo de Neón */
+        .energy-ring::before {
+            content: ''; position: absolute; 
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            padding: 4px; /* Grosor del anillo */
+            background: conic-gradient(
+                var(--color-left) 0deg, var(--color-left) 180deg, 
+                var(--color-right) 180deg, var(--color-right) 360deg
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            filter: drop-shadow(0 0 10px var(--color-left)) drop-shadow(0 0 10px var(--color-right));
+            transition: all 0.6s ease;
         }
 
-        .energy-ring.playing .glow-circle { 
-            opacity: 0.8; transform: translate(-50%, -50%) scale(1.15); filter: blur(70px);
-            animation: pulse-glow 4s infinite alternate ease-in-out;
+        /* Onda de Energía expansiva */
+        .energy-wave {
+            position: absolute; width: 100%; height: 100%;
+            border: 2px solid white; border-radius: 50%;
+            opacity: 0; pointer-events: none;
         }
 
-        @keyframes pulse-glow { 0% { opacity: 0.4; transform: translate(-50%, -50%) scale(0.95); } 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); } }
+        .energy-ring.playing .energy-wave {
+            animation: energy-pulse 2s infinite;
+        }
+
+        .energy-ring.playing::before {
+            animation: neon-flicker 3s infinite alternate ease-in-out;
+        }
+
+        @keyframes energy-pulse {
+            0% { transform: scale(1); opacity: 0.3; border-color: var(--color-left); }
+            50% { border-color: var(--color-right); }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+
+        @keyframes neon-flicker {
+            0% { filter: drop-shadow(0 0 8px var(--color-left)) drop-shadow(0 0 8px var(--color-right)); transform: scale(1); }
+            100% { filter: drop-shadow(0 0 15px var(--color-left)) drop-shadow(0 0 15px var(--color-right)); transform: scale(1.03); }
+        }
 
         .play-btn-inner {
-            width: 80px; height: 80px; background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; font-size: 1.8rem; color: #fff;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10;
+            width: 70px; height: 70px; background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; font-size: 1.5rem; color: #fff;
+            z-index: 10; transition: 0.3s;
         }
 
         .binaural-bottom-card {
@@ -818,7 +845,7 @@
         <div class="binaural-modal-body">
             <div class="orb-zone">
                 <div class="energy-ring" id="energy-ring" onclick="toggleMasterPlay()">
-                    <div class="glow-circle"></div>
+                    <div class="energy-wave"></div>
                     <div class="play-btn-inner" id="binaural-play-btn">
                         <i class="fas fa-play" style="margin-left: 5px;"></i>
                     </div>
