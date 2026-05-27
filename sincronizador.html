@@ -2849,17 +2849,38 @@
             }
         }
 
-        function loadCourseProgress() {
-            const userEmail = localStorage.getItem('neurosync_user_email') || 'anonimo';
-            const progressKey = 'neurosync_course_cocreacion_' + userEmail;
-            const savedProgress = parseFloat(localStorage.getItem(progressKey) || '0');
-            const bar = document.getElementById('progress-cocreacion');
-            const label = document.getElementById('progress-cocreacion-label');
-            if (bar && label) {
-                setTimeout(() => {
-                    bar.style.width = savedProgress + '%';
-                    label.textContent = savedProgress + '% completado';
-                }, 300);
+        async function loadCourseProgress() {
+            const userEmail = localStorage.getItem('neurosync_user_email');
+            if (!userEmail) return;
+
+            try {
+                const response = await fetch('/.netlify/functions/getAcademiaProgress', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail })
+                });
+                const data = await response.json();
+                
+                let currentLevel = 1;
+                if (data && data.level) {
+                    currentLevel = parseInt(data.level);
+                }
+                
+                // Curso de 10 módulos. Porcentaje = (Nivel actual - 1) * 10
+                let percentage = (currentLevel - 1) * 10;
+                if (percentage > 100) percentage = 100;
+
+                const bar = document.getElementById('progress-cocreacion');
+                const label = document.getElementById('progress-cocreacion-label');
+                
+                if (bar && label) {
+                    setTimeout(() => {
+                        bar.style.width = percentage + '%';
+                        label.textContent = percentage + '% completado';
+                    }, 300);
+                }
+            } catch (e) {
+                console.error("Error al cargar progreso del curso", e);
             }
         }
 
