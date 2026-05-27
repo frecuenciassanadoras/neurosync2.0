@@ -1392,7 +1392,27 @@
             } else {
                 resultDiv.className = "quiz-result result-fail";
                 resultDiv.innerHTML = `<h2><i class="fas fa-times-circle"></i> No Aprobado. Puntaje: ${score}/${questions.length} (${percentage}%)</h2>
-                                       <p>Necesitas un mínimo del 80% para avanzar. Por favor, repasa el módulo e inténtalo de nuevo.</p>`;
+                                       <p>Necesitas un mínimo del 80% para avanzar. Las preguntas marcadas en <span style="color:#ef4444;font-weight:600;">rojo</span> son las que respondiste incorrectamente. Repasa el módulo e inténtalo de nuevo.</p>`;
+                
+                // Marcar en rojo las preguntas que respondió mal (sin revelar la correcta)
+                questions.forEach((q, qIndex) => {
+                    const selected = document.querySelector(`input[name="q_${level}_${qIndex}"]:checked`);
+                    if (selected && parseInt(selected.value) !== q.ans) {
+                        // Encontrar el bloque de la pregunta y marcarlo en rojo
+                        const questionBlocks = document.querySelectorAll(`#quiz-form-${level} .question-block`);
+                        if (questionBlocks[qIndex]) {
+                            questionBlocks[qIndex].style.border = '2px solid #ef4444';
+                            questionBlocks[qIndex].style.background = 'rgba(239, 68, 68, 0.08)';
+                            questionBlocks[qIndex].style.borderRadius = '12px';
+                            questionBlocks[qIndex].style.transition = 'all 0.4s ease';
+                            // Agregar icono de error al texto de la pregunta
+                            const qText = questionBlocks[qIndex].querySelector('.question-text');
+                            if (qText && !qText.querySelector('.q-error-icon')) {
+                                qText.insertAdjacentHTML('beforeend', ' <i class="fas fa-exclamation-circle q-error-icon" style="color:#ef4444; margin-left:6px;"></i>');
+                            }
+                        }
+                    }
+                });
             }
         }
 
