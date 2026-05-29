@@ -3025,112 +3025,142 @@
 
     <!-- ================= MODO CREACION (EMBAJADORES) ================= -->
     <style>
-        .modo-creacion-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 8, 15, 0.95); z-index: 10000;
-            display: none; justify-content: center; align-items: flex-start;
-            overflow-y: auto; padding: 40px 20px; backdrop-filter: blur(10px);
+        #mc-pantalla-completa {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #05080f; z-index: 10000; display: none; justify-content: center;
+            overflow-y: auto; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff;
         }
-        .modo-creacion-container {
-            background-color: #111625; border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 16px; padding: 30px; width: 100%; max-width: 900px;
+        #mc-pantalla-completa * {
+            box-sizing: border-box;
+        }
+        #mc-pantalla-completa .dashboard-container {
+            background-color: #111625;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 16px; padding: 40px; width: 100%; max-width: 900px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); position: relative;
+            margin-top: 20px; margin-bottom: 50px;
         }
-        .mc-close-btn {
+        #mc-pantalla-completa .mc-close-btn {
             position: absolute; top: 20px; right: 20px; color: #8b949e;
-            font-size: 1.5rem; cursor: pointer; transition: color 0.3s;
+            font-size: 24px; cursor: pointer; transition: color 0.3s;
+            z-index: 10;
         }
-        .mc-close-btn:hover { color: #fff; }
-        .mc-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a3441; padding-bottom: 15px; margin-bottom: 25px; }
-        .mc-header h1 { margin: 0; font-size: 1.5rem; color: #fff; }
-        .mc-badge { background: rgba(0, 240, 255, 0.1); border: 1px solid #00f0ff; color: #00f0ff; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
-        .mc-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .mc-card { background: linear-gradient(145deg, #1a2133, #0d121d); border: 1px solid rgba(0, 240, 255, 0.1); border-radius: 12px; padding: 20px; text-align: center; }
-        .mc-card.highlight { border-color: #00f0ff; box-shadow: 0 0 15px rgba(0, 240, 255, 0.1); }
-        .mc-label { font-size: 12px; color: #8b949e; text-transform: uppercase; margin-bottom: 8px; display: block; }
-        .mc-value { font-size: 28px; font-weight: bold; color: #fff; margin: 0; }
-        .mc-card.highlight .mc-value { color: #00f0ff; }
-        .mc-actions { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 30px; }
-        .mc-link-box { background: #05080f; border: 1px solid #333; padding: 12px; border-radius: 6px; color: #00f0ff; font-family: monospace; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1; }
-        .mc-btn { background: #00f0ff; color: #000; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .mc-btn:hover { box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
-        .mc-history { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        .mc-history h3 { font-size: 14px; color: #8b949e; border-bottom: 1px solid #2a3441; padding-bottom: 8px; margin-bottom: 10px; }
-        .mc-list { list-style: none; padding: 0; margin: 0; font-size: 13px; }
-        .mc-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .mc-item .date { color: #8b949e; }
-        .mc-item .plus { color: #00ff88; font-weight: bold; }
+        #mc-pantalla-completa .mc-close-btn:hover { color: #fff; }
+
+        #mc-pantalla-completa .header-section { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a3441; padding-bottom: 20px; margin-bottom: 30px; }
+        #mc-pantalla-completa .header-section h1 { margin: 0; font-weight: 600; letter-spacing: 1px; color: #ffffff; font-size: 24px;}
+        #mc-pantalla-completa .badge { background: rgba(0, 240, 255, 0.1); border: 1px solid #00f0ff; color: #00f0ff; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+
+        #mc-pantalla-completa .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        #mc-pantalla-completa .metric-card { background: linear-gradient(145deg, #1a2133, #0d121d); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; padding: 25px; text-align: center; }
+        #mc-pantalla-completa .metric-card.highlight { border-color: #00f0ff; box-shadow: 0 0 20px rgba(0, 240, 255, 0.15); }
+        #mc-pantalla-completa .metric-label { font-size: 13px; color: #8b949e; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; display: block; }
+        #mc-pantalla-completa .metric-value { font-size: 38px; font-weight: bold; color: #ffffff; margin: 0; }
+        #mc-pantalla-completa .metric-card.highlight .metric-value { color: #00f0ff; text-shadow: 0 0 10px rgba(0, 240, 255, 0.3); }
+
+        #mc-pantalla-completa .action-section { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 40px; }
+        #mc-pantalla-completa .link-box-container { background-color: rgba(0, 0, 0, 0.4); border-radius: 10px; padding: 20px; border: 1px solid #2a3441; }
+        #mc-pantalla-completa .link-input-group { display: flex; gap: 10px; margin-top: 10px; }
+        #mc-pantalla-completa .link-box { background-color: #05080f; border: 1px solid #333; padding: 12px 15px; border-radius: 6px; font-family: monospace; color: #00f0ff; flex-grow: 1; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         
-        .mc-terms-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 10001;
-            display: none; justify-content: center; align-items: center; padding: 20px;
+        #mc-pantalla-completa .btn { background-color: #00f0ff; color: #000; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; }
+        #mc-pantalla-completa .btn:hover { background-color: #00c4d1; box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
+        #mc-pantalla-completa .btn-withdraw { background-color: transparent; color: #10b981; border: 2px solid #10b981; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; font-size: 16px; width: 100%;}
+        #mc-pantalla-completa .btn-withdraw:hover { background-color: rgba(0, 255, 136, 0.1); box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); }
+
+        #mc-pantalla-completa .history-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; }
+        #mc-pantalla-completa .history-box h3 { font-size: 16px; color: #8b949e; border-bottom: 1px solid #2a3441; padding-bottom: 10px; margin-bottom: 15px; margin-top: 0; }
+        #mc-pantalla-completa .history-list { list-style: none; padding: 0; margin: 0; }
+        #mc-pantalla-completa .history-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+        #mc-pantalla-completa .history-item span.date { color: #8b949e; }
+        #mc-pantalla-completa .history-item span.amount-plus { color: #10b981; font-weight: bold; }
+        #mc-pantalla-completa .history-item span.amount-minus { color: #ff4757; font-weight: bold; }
+        #mc-pantalla-completa .history-item span.status { font-size: 12px; padding: 3px 8px; border-radius: 4px; background: rgba(255,255,255,0.1); }
+
+        @media (max-width: 768px) {
+            #mc-pantalla-completa .action-section, #mc-pantalla-completa .history-container { grid-template-columns: 1fr; }
+            #mc-pantalla-completa .header-section { flex-direction: column; gap: 15px; text-align: center; }
+            #mc-pantalla-completa { padding: 0; }
+            #mc-pantalla-completa .dashboard-container { border-radius: 0; border-left: none; border-right: none; border-top: none; min-height: 100vh; margin: 0; padding: 20px;}
+        }
+
+        #mc-terms-modal-2 {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 10005; display: none; justify-content: center; align-items: center; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #mc-terms-modal-2 .dashboard-container {
+            background-color: #111625; border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 16px; padding: 40px; width: 100%; max-width: 600px; max-height: 80vh; overflow-y: auto; color: #fff;
         }
     </style>
 
-    <div class="modo-creacion-overlay" id="modo-creacion-overlay">
-        <div class="modo-creacion-container">
-            <div class="mc-close-btn" onclick="document.getElementById('modo-creacion-overlay').style.display='none'"><i class="fas fa-times"></i></div>
-            <div class="mc-header">
-                <h1 id="mc-titulo">MODO CREACIÓN</h1>
-                <div class="mc-badge" id="mc-rango">Cargando...</div>
+    <div id="mc-pantalla-completa">
+        <div class="dashboard-container">
+            <div class="mc-close-btn" onclick="document.getElementById('mc-pantalla-completa').style.display='none'">✕</div>
+            
+            <div class="header-section">
+                <h1 id="titulo-embajador">RESONANCIA VIP</h1>
+                <div class="badge" id="rango-badge">Cargando...</div>
             </div>
             
-            <div class="mc-metrics">
-                <div class="mc-card highlight">
-                    <span class="mc-label">Saldo Disponible</span>
-                    <p class="mc-value" id="mc-saldo">...</p>
+            <div class="metrics-grid">
+                <div class="metric-card highlight">
+                    <span class="metric-label">Saldo Disponible</span>
+                    <p class="metric-value" id="monto-comision">...</p>
                 </div>
-                <div class="mc-card">
-                    <span class="mc-label">Ventas</span>
-                    <p class="mc-value" id="mc-ventas">...</p>
+                <div class="metric-card">
+                    <span class="metric-label">Ventas Totales</span>
+                    <p class="metric-value" id="total-ventas">...</p>
                 </div>
-                <div class="mc-card">
-                    <span class="mc-label">Clics</span>
-                    <p class="mc-value" id="mc-clics">...</p>
+                <div class="metric-card">
+                    <span class="metric-label">Clics en tu Enlace</span>
+                    <p class="metric-value" id="total-clics">...</p>
                 </div>
             </div>
 
-            <div class="mc-actions">
-                <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid #2a3441;">
-                    <span class="mc-label">Tu Enlace de Embajador</span>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <div class="mc-link-box" id="mc-enlace">...</div>
-                        <button class="mc-btn" onclick="mcCopiarEnlace()" id="mc-btn-copiar">Copiar</button>
+            <div class="action-section">
+                <div class="link-box-container">
+                    <span class="metric-label">Tu Enlace de Embajador Seguro</span>
+                    <div class="link-input-group">
+                        <div class="link-box" id="enlace-referido">...</div>
+                        <button class="btn" id="btn-copiar-2" onclick="copiarEnlace2()">Copiar</button>
                     </div>
                 </div>
-                <button class="mc-btn" style="background: transparent; border: 2px solid #00ff88; color: #00ff88; height: 100%;" onclick="alert('Próximamente se activará la pasarela de pagos.')">💸 Solicitar Retiro</button>
+                <button class="btn btn-withdraw" onclick="alert('Próximamente se activará la pasarela de pagos.')">
+                    <span>💸 SOLICITAR RETIRO</span>
+                </button>
             </div>
 
-            <div class="mc-history">
-                <div>
+            <div class="history-container">
+                <div class="history-box">
                     <h3>Últimas Ventas Generadas</h3>
-                    <ul class="mc-list" id="mc-lista-ventas"></ul>
+                    <ul class="history-list" id="lista-ventas-2">
+                    </ul>
                 </div>
-                <div>
+
+                <div class="history-box">
                     <h3>Historial de Retiros</h3>
-                    <ul class="mc-list">
-                        <li class="mc-item"><span class="date">Aún no hay retiros.</span></li>
+                    <ul class="history-list">
+                        <li class="history-item"><span class="date">Aún no hay retiros registrados.</span></li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="mc-terms-modal" id="mc-terms-modal">
-        <div class="modo-creacion-container" style="max-width: 600px;">
-            <h2 style="color: #00f0ff; margin-top: 0;">Términos y Condiciones del Embajador</h2>
-            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; font-size: 14px; color: #8b949e; line-height: 1.6; margin-bottom: 20px;">
-                <p>1. <strong>Naturaleza de Contratista Independiente:</strong> Actúas como contratista independiente. No existe relación laboral con NeuroSync.</p>
-                <p>2. <strong>No Garantía de Resultados:</strong> Las frecuencias son una herramienta, pero no garantizan resultados médicos ni financieros. Eres responsable de comunicarlo éticamente.</p>
-                <p>3. <strong>Exoneración de Responsabilidad:</strong> NeuroSync no se hace responsable por el mal uso ni por promesas falsas a terceros.</p>
+    <!-- MODAL DE TÉRMINOS Y CONDICIONES -->
+    <div id="mc-terms-modal-2">
+        <div class="dashboard-container">
+            <h2 style="color: #00f0ff; margin-top: 0;">Términos y Condiciones de Embajador</h2>
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; font-size: 14px; color: #8b949e; line-height: 1.6; margin-bottom: 25px;">
+                <p style="margin-top: 0;">1. <strong>RELACIÓN LEGAL:</strong> El embajador actúa como contratista independiente. No existe relación laboral con NeuroSync.</p>
+                <p>2. <strong>COMISIONES:</strong> Las comisiones se generan tras la confirmación de venta por Lemon Squeezy y son abonadas en un pago único de por vida al usuario final.</p>
+                <p style="margin-bottom: 0;">3. <strong>EXONERACIÓN:</strong> NeuroSync no garantiza resultados financieros específicos. El éxito del embajador depende de su propia gestión y estrategia ética.</p>
             </div>
-            <button class="mc-btn" style="width: 100%; background: #00ff88; color: #000;" onclick="mcAceptarTerminos()" id="mc-btn-terms">Acepto los Términos y Condiciones</button>
+            <button class="btn" style="width: 100%; background-color: #10b981; color: #000;" onclick="mcAceptarTerminos2()" id="btn-terms-2">ACEPTO LOS TÉRMINOS Y CONDICIONES</button>
         </div>
     </div>
 
     <script>
-        // CONFIGURACIÓN OBLIGATORIA: PON AQUÍ TU URL DE RENDER
         const RENDER_API_URL = "https://neurosync-api-0stl.onrender.com"; 
         let mcDataSesion = null;
 
@@ -3141,8 +3171,8 @@
                 return;
             }
 
-            document.getElementById('modo-creacion-overlay').style.display = 'flex';
-            document.getElementById('mc-titulo').innerText = "Cargando...";
+            document.getElementById('mc-pantalla-completa').style.display = 'flex';
+            document.getElementById('titulo-embajador').innerText = "Cargando...";
 
             try {
                 const res = await fetch(`${RENDER_API_URL}/api/dashboard-data/${emailActivo}`);
@@ -3152,47 +3182,46 @@
                 mcDataSesion = datos;
 
                 if(datos.terminos_aceptados === false) {
-                    document.getElementById('mc-terms-modal').style.display = 'flex';
+                    document.getElementById('mc-terms-modal-2').style.display = 'flex';
                 } else {
-                    mcPintarDatos();
+                    mcPintarDatos2();
                 }
-
             } catch(e) {
-                alert("Error de Modo Creación: " + e.message + "\n\nAsegúrate de poner la URL correcta de Render en el código (RENDER_API_URL).");
-                document.getElementById('modo-creacion-overlay').style.display = 'none';
+                alert("Error de Modo Creación: " + e.message);
+                document.getElementById('mc-pantalla-completa').style.display = 'none';
             }
         }
 
-        function mcPintarDatos() {
+        function mcPintarDatos2() {
             const datos = mcDataSesion;
             const nombreCorto = datos.email.split('@')[0];
-            document.getElementById('mc-titulo').innerText = `PANEL DE ${nombreCorto.toUpperCase()}`;
-            document.getElementById('mc-rango').innerText = datos.total_ventas >= 10 ? "MAESTRO DE RESONANCIA" : "EMBAJADOR INICIADO";
+            document.getElementById('titulo-embajador').innerText = `PANEL DE ${nombreCorto.toUpperCase()}`;
+            document.getElementById('rango-badge').innerText = datos.total_ventas >= 10 ? "MAESTRO DE RESONANCIA" : "EMBAJADOR INICIADO";
             
-            document.getElementById('mc-saldo').innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(datos.saldo_acumulado);
-            document.getElementById('mc-ventas').innerText = datos.total_ventas;
-            document.getElementById('mc-clics').innerText = datos.total_clics;
-            document.getElementById('mc-enlace').innerText = `${RENDER_API_URL}/invitacion/${datos.codigo_referido}`;
+            document.getElementById('monto-comision').innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(datos.saldo_acumulado);
+            document.getElementById('total-ventas').innerText = datos.total_ventas;
+            document.getElementById('total-clics').innerText = datos.total_clics;
+            document.getElementById('enlace-referido').innerText = `${RENDER_API_URL}/invitacion/${datos.codigo_referido}`;
 
-            const listaVentas = document.getElementById('mc-lista-ventas');
+            const listaVentas = document.getElementById('lista-ventas-2');
             listaVentas.innerHTML = ''; 
             if (datos.historial_ventas.length === 0) {
-                listaVentas.innerHTML = '<li class="mc-item"><span class="date">No hay ventas registradas aún.</span></li>';
+                listaVentas.innerHTML = '<li class="history-item"><span class="date">No hay ventas registradas aún.</span></li>';
             } else {
                 datos.historial_ventas.forEach(venta => {
                     listaVentas.innerHTML += `
-                        <li class="mc-item">
+                        <li class="history-item">
                             <span class="date">${venta.fecha}</span>
-                            <span>NeuroSync - Frecuencias</span>
-                            <span class="plus">+$${venta.monto.toFixed(2)}</span>
+                            <span>NeuroSync</span>
+                            <span class="amount-plus">+$${venta.monto.toFixed(2)}</span>
                         </li>
                     `;
                 });
             }
         }
 
-        async function mcAceptarTerminos() {
-            const btn = document.getElementById('mc-btn-terms');
+        async function mcAceptarTerminos2() {
+            const btn = document.getElementById('btn-terms-2');
             btn.disabled = true;
             btn.innerText = "Registrando firma...";
 
@@ -3205,23 +3234,27 @@
                 
                 if(!res.ok) throw new Error("Error al guardar términos.");
                 
-                document.getElementById('mc-terms-modal').style.display = 'none';
-                mcPintarDatos();
+                document.getElementById('mc-terms-modal-2').style.display = 'none';
+                mcPintarDatos2();
             } catch(e) {
                 alert(e.message);
                 btn.disabled = false;
-                btn.innerText = "Acepto los Términos y Condiciones";
+                btn.innerText = "ACEPTO LOS TÉRMINOS Y CONDICIONES";
             }
         }
 
-        function mcCopiarEnlace() {
-            const textoEnlace = document.getElementById('mc-enlace').innerText;
+        function copiarEnlace2() {
+            const textoEnlace = document.getElementById('enlace-referido').innerText;
             navigator.clipboard.writeText(textoEnlace).then(() => {
-                const btn = document.getElementById('mc-btn-copiar');
+                const btn = document.getElementById('btn-copiar-2');
                 const prev = btn.innerText;
                 btn.innerText = "¡Copiado!";
-                btn.style.background = "#00ff88";
-                setTimeout(() => { btn.innerText = prev; btn.style.background = "#00f0ff"; }, 2000);
+                btn.style.backgroundColor = "#10b981";
+                btn.style.color = "#000";
+                setTimeout(() => { 
+                    btn.innerText = prev; 
+                    btn.style.backgroundColor = "#00f0ff"; 
+                }, 2000);
             });
         }
     </script>
