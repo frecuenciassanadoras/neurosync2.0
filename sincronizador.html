@@ -1198,7 +1198,7 @@
         </div>
         <div class="header-actions">
             <!-- Botón directo al Dashboard -->
-            <div class="icon-btn" onclick="toggleDashboard()" title="Referidos / Progreso">
+            <div class="icon-btn" onclick="toggleModoCreacion()" title="Modo Creación (Referidos)">
                 <i class="fas fa-dollar-sign" style="color: #10b981;"></i>
             </div>
             <div class="icon-btn" onclick="toggleMeditationMode()" title="Bloquear Pantalla">
@@ -3022,5 +3022,208 @@
             50% { opacity: 0.3; transform: scale(0.7); }
         }
     </style>
+
+    <!-- ================= MODO CREACION (EMBAJADORES) ================= -->
+    <style>
+        .modo-creacion-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 8, 15, 0.95); z-index: 10000;
+            display: none; justify-content: center; align-items: flex-start;
+            overflow-y: auto; padding: 40px 20px; backdrop-filter: blur(10px);
+        }
+        .modo-creacion-container {
+            background-color: #111625; border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 16px; padding: 30px; width: 100%; max-width: 900px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); position: relative;
+        }
+        .mc-close-btn {
+            position: absolute; top: 20px; right: 20px; color: #8b949e;
+            font-size: 1.5rem; cursor: pointer; transition: color 0.3s;
+        }
+        .mc-close-btn:hover { color: #fff; }
+        .mc-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a3441; padding-bottom: 15px; margin-bottom: 25px; }
+        .mc-header h1 { margin: 0; font-size: 1.5rem; color: #fff; }
+        .mc-badge { background: rgba(0, 240, 255, 0.1); border: 1px solid #00f0ff; color: #00f0ff; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        .mc-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .mc-card { background: linear-gradient(145deg, #1a2133, #0d121d); border: 1px solid rgba(0, 240, 255, 0.1); border-radius: 12px; padding: 20px; text-align: center; }
+        .mc-card.highlight { border-color: #00f0ff; box-shadow: 0 0 15px rgba(0, 240, 255, 0.1); }
+        .mc-label { font-size: 12px; color: #8b949e; text-transform: uppercase; margin-bottom: 8px; display: block; }
+        .mc-value { font-size: 28px; font-weight: bold; color: #fff; margin: 0; }
+        .mc-card.highlight .mc-value { color: #00f0ff; }
+        .mc-actions { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 30px; }
+        .mc-link-box { background: #05080f; border: 1px solid #333; padding: 12px; border-radius: 6px; color: #00f0ff; font-family: monospace; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1; }
+        .mc-btn { background: #00f0ff; color: #000; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .mc-btn:hover { box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
+        .mc-history { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .mc-history h3 { font-size: 14px; color: #8b949e; border-bottom: 1px solid #2a3441; padding-bottom: 8px; margin-bottom: 10px; }
+        .mc-list { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+        .mc-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .mc-item .date { color: #8b949e; }
+        .mc-item .plus { color: #00ff88; font-weight: bold; }
+        
+        .mc-terms-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 10001;
+            display: none; justify-content: center; align-items: center; padding: 20px;
+        }
+    </style>
+
+    <div class="modo-creacion-overlay" id="modo-creacion-overlay">
+        <div class="modo-creacion-container">
+            <div class="mc-close-btn" onclick="document.getElementById('modo-creacion-overlay').style.display='none'"><i class="fas fa-times"></i></div>
+            <div class="mc-header">
+                <h1 id="mc-titulo">MODO CREACIÓN</h1>
+                <div class="mc-badge" id="mc-rango">Cargando...</div>
+            </div>
+            
+            <div class="mc-metrics">
+                <div class="mc-card highlight">
+                    <span class="mc-label">Saldo Disponible</span>
+                    <p class="mc-value" id="mc-saldo">...</p>
+                </div>
+                <div class="mc-card">
+                    <span class="mc-label">Ventas</span>
+                    <p class="mc-value" id="mc-ventas">...</p>
+                </div>
+                <div class="mc-card">
+                    <span class="mc-label">Clics</span>
+                    <p class="mc-value" id="mc-clics">...</p>
+                </div>
+            </div>
+
+            <div class="mc-actions">
+                <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid #2a3441;">
+                    <span class="mc-label">Tu Enlace de Embajador</span>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <div class="mc-link-box" id="mc-enlace">...</div>
+                        <button class="mc-btn" onclick="mcCopiarEnlace()" id="mc-btn-copiar">Copiar</button>
+                    </div>
+                </div>
+                <button class="mc-btn" style="background: transparent; border: 2px solid #00ff88; color: #00ff88; height: 100%;" onclick="alert('Próximamente se activará la pasarela de pagos.')">💸 Solicitar Retiro</button>
+            </div>
+
+            <div class="mc-history">
+                <div>
+                    <h3>Últimas Ventas Generadas</h3>
+                    <ul class="mc-list" id="mc-lista-ventas"></ul>
+                </div>
+                <div>
+                    <h3>Historial de Retiros</h3>
+                    <ul class="mc-list">
+                        <li class="mc-item"><span class="date">Aún no hay retiros.</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mc-terms-modal" id="mc-terms-modal">
+        <div class="modo-creacion-container" style="max-width: 600px;">
+            <h2 style="color: #00f0ff; margin-top: 0;">Términos y Condiciones del Embajador</h2>
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; font-size: 14px; color: #8b949e; line-height: 1.6; margin-bottom: 20px;">
+                <p>1. <strong>Naturaleza de Contratista Independiente:</strong> Actúas como contratista independiente. No existe relación laboral con NeuroSync.</p>
+                <p>2. <strong>No Garantía de Resultados:</strong> Las frecuencias son una herramienta, pero no garantizan resultados médicos ni financieros. Eres responsable de comunicarlo éticamente.</p>
+                <p>3. <strong>Exoneración de Responsabilidad:</strong> NeuroSync no se hace responsable por el mal uso ni por promesas falsas a terceros.</p>
+            </div>
+            <button class="mc-btn" style="width: 100%; background: #00ff88; color: #000;" onclick="mcAceptarTerminos()" id="mc-btn-terms">Acepto los Términos y Condiciones</button>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN OBLIGATORIA: PON AQUÍ TU URL DE RENDER
+        const RENDER_API_URL = "https://neurosync-api-0stl.onrender.com"; 
+        let mcDataSesion = null;
+
+        async function toggleModoCreacion() {
+            const emailActivo = localStorage.getItem("neurosync_user_email");
+            if(!emailActivo) {
+                alert("Error: No se encontró sesión activa. Por favor vuelve a iniciar sesión en la app principal.");
+                return;
+            }
+
+            document.getElementById('modo-creacion-overlay').style.display = 'flex';
+            document.getElementById('mc-titulo').innerText = "Cargando...";
+
+            try {
+                const res = await fetch(`${RENDER_API_URL}/api/dashboard-data/${emailActivo}`);
+                if(!res.ok) throw new Error("No se pudo conectar con el sistema de embajadores.");
+                
+                const datos = await res.json();
+                mcDataSesion = datos;
+
+                if(datos.terminos_aceptados === false) {
+                    document.getElementById('mc-terms-modal').style.display = 'flex';
+                } else {
+                    mcPintarDatos();
+                }
+
+            } catch(e) {
+                alert("Error de Modo Creación: " + e.message + "\n\nAsegúrate de poner la URL correcta de Render en el código (RENDER_API_URL).");
+                document.getElementById('modo-creacion-overlay').style.display = 'none';
+            }
+        }
+
+        function mcPintarDatos() {
+            const datos = mcDataSesion;
+            const nombreCorto = datos.email.split('@')[0];
+            document.getElementById('mc-titulo').innerText = `PANEL DE ${nombreCorto.toUpperCase()}`;
+            document.getElementById('mc-rango').innerText = datos.total_ventas >= 10 ? "MAESTRO DE RESONANCIA" : "EMBAJADOR INICIADO";
+            
+            document.getElementById('mc-saldo').innerText = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(datos.saldo_acumulado);
+            document.getElementById('mc-ventas').innerText = datos.total_ventas;
+            document.getElementById('mc-clics').innerText = datos.total_clics;
+            document.getElementById('mc-enlace').innerText = `${RENDER_API_URL}/invitacion/${datos.codigo_referido}`;
+
+            const listaVentas = document.getElementById('mc-lista-ventas');
+            listaVentas.innerHTML = ''; 
+            if (datos.historial_ventas.length === 0) {
+                listaVentas.innerHTML = '<li class="mc-item"><span class="date">No hay ventas registradas aún.</span></li>';
+            } else {
+                datos.historial_ventas.forEach(venta => {
+                    listaVentas.innerHTML += `
+                        <li class="mc-item">
+                            <span class="date">${venta.fecha}</span>
+                            <span>NeuroSync - Frecuencias</span>
+                            <span class="plus">+$${venta.monto.toFixed(2)}</span>
+                        </li>
+                    `;
+                });
+            }
+        }
+
+        async function mcAceptarTerminos() {
+            const btn = document.getElementById('mc-btn-terms');
+            btn.disabled = true;
+            btn.innerText = "Registrando firma...";
+
+            try {
+                const res = await fetch(`${RENDER_API_URL}/api/aceptar-terminos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codigo_referido: mcDataSesion.codigo_referido })
+                });
+                
+                if(!res.ok) throw new Error("Error al guardar términos.");
+                
+                document.getElementById('mc-terms-modal').style.display = 'none';
+                mcPintarDatos();
+            } catch(e) {
+                alert(e.message);
+                btn.disabled = false;
+                btn.innerText = "Acepto los Términos y Condiciones";
+            }
+        }
+
+        function mcCopiarEnlace() {
+            const textoEnlace = document.getElementById('mc-enlace').innerText;
+            navigator.clipboard.writeText(textoEnlace).then(() => {
+                const btn = document.getElementById('mc-btn-copiar');
+                const prev = btn.innerText;
+                btn.innerText = "¡Copiado!";
+                btn.style.background = "#00ff88";
+                setTimeout(() => { btn.innerText = prev; btn.style.background = "#00f0ff"; }, 2000);
+            });
+        }
+    </script>
 </body>
 </html>
