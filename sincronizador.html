@@ -3220,6 +3220,18 @@
                     `;
                 });
             }
+
+            const listaRetiros = document.getElementById('historial-retiros-lista');
+            if (datos.historial_retiros && datos.historial_retiros.length > 0) {
+                listaRetiros.innerHTML = datos.historial_retiros.map(r => `
+                    <li class="history-item">
+                        <span class="date">${r.fecha}</span>
+                        <span style="color: #00E5FF">${r.estado}</span>
+                        <span class="amount-minus">-$${r.monto.toFixed(2)}</span>
+                    </li>`).join('');
+            } else {
+                listaRetiros.innerHTML = '<li class="history-item"><span class="date">Aún no hay retiros registrados.</span></li>';
+            }
         }
 
         async function mcAceptarTerminos2() {
